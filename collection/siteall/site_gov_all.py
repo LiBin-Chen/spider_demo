@@ -1,3 +1,4 @@
+# ! /usr/bin/python
 # -*- coding: utf-8 -*-
 
 
@@ -10,19 +11,18 @@ import logging
 import requests
 import argparse
 import threading
-
 from lxml import etree
 
 try:
-    import Util as util
-    import yzwl
-    from packages.siteall.check_list import get_gov_expexc
+    from packages import yzwl
+    from packages import Util as util
+    from siteall.check_list import get_gov_expexc
 except ImportError:
     _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.insert(0, _path)
-    import yzwl
-    import Util as util
-    from packages.siteall.check_list import get_gov_expexc
+    import packages.yzwl as yzwl
+    import packages.Util as util
+    from siteall.check_list import get_gov_expexc
 
 __author__ = 'snow'
 __time__ = '2019/3/17'
@@ -405,12 +405,12 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
     }
     # print('*' * 100)
     # print('item', item)
-    try:
-        sign = kwargs.get('sign', '')
-        save_data(url, db_name, item, sign)
-    except Exception as e:
-        _logger.exception('mysql异常： %s' % util.traceback_info(e))
-    return result
+    # try:
+    #     sign = kwargs.get('sign', '')
+    #     save_data(url, db_name, item, sign)
+    # except Exception as e:
+    #     _logger.exception('mysql异常： %s' % util.traceback_info(e))
+    # return result
 
 
 def fetch_update_data(url=None, id=None, **kwargs):

@@ -1,16 +1,16 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-import time
-
-__author__ = 'snow'
-__time__ = '2019/3/4'
 
 import re
+import time
 import random
 import logging
 import requests
-from packages import Util as util, db, yzwl
 from lxml import etree
+from packages import Util as util, yzwl
+
+__author__ = 'snow'
+__time__ = '2019/3/4'
 
 '''
 极速虎网封装函数    jsh365

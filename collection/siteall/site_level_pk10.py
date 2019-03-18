@@ -1,16 +1,17 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-__author__ = 'snow'
-__time__ = '2019/3/12'
 
-import time
 import re
+import time
 import random
 import logging
 import requests
-from packages import Util as util, db, yzwl
 from lxml import etree
+from packages import Util as util, yzwl
+
+__author__ = 'snow'
+__time__ = '2019/3/12'
 
 '''
 pk10开奖网 封装函数    PK10
@@ -121,7 +122,7 @@ def _parse_detail_data(data=None, url_key=None, url=None, **kwargs):
         prase_item = {
             'province': './/div[@class="abcdefg"]',  # 无
             'lottery_name': './a/text()',
-            'expect':'.//div[@class="abcdefg"]',  # 无
+            'expect': './/div[@class="abcdefg"]',  # 无
             'open_time': './/div[@class="abcdefg"]',  # 无
             'open_code': './/div[@class="abcdefg"]',  # 无
             'play_type': './/div[@class="abcdefg"]',  # 页面无玩法 abcdefg设置取空
@@ -157,7 +158,7 @@ def _parse_detail_data(data=None, url_key=None, url=None, **kwargs):
         province = tr.xpath(prase_item['province'])  # 彩种
         lottery_name = tr.xpath(prase_item['lottery_name'])  # 最新开奖链接
         expect = tr.xpath(prase_item['expect'])  # 期号
-        print('expect',expect)
+        print('expect', expect)
         open_time = tr.xpath(prase_item['open_time'])  # 开奖日期
         open_code = tr.xpath(prase_item['open_code'])  # 开奖结果
         play_type = tr.xpath(prase_item['play_type'])  # 开奖结果
@@ -213,7 +214,7 @@ def _parse_detail_data(data=None, url_key=None, url=None, **kwargs):
             'abbreviation': abbreviation,
             'lottery_result': lottery_result,
             'lottery_type': 'pk10me',
-            'lottery_chart_url': url+lottery_detail_url,
+            'lottery_chart_url': url + lottery_detail_url,
             'lottery_history_url': lottery_history_url,
             'lottery_zs_url': lottery_zs_url,
             'lottery_news_url': lottery_news_url,
