@@ -40,7 +40,7 @@ default_headers = {
 }
 
 db = yzwl.DbClass()
-mysql = db.local_yzwl
+mysql = db.yzwl
 lock = threading.Lock()
 
 
