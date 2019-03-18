@@ -1,16 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''
-  @desc    :
-  @time    : 2018/11/28 15:27
-  @file    : database.py
-  @author  : snow
-  @modify  :
-'''
 
 # 比较式
 from packages import Util
+
+__author__ = 'snow'
+__time__ = '2019/3/11'
 
 _comparison = {'eq': '=', 'neq': '<>', 'gt': '>', 'egt': '>=', 'lt': '<', 'elt': '<=', 'notlike': 'NOT LIKE',
                'notin': 'NOT IN', '!like': 'NOT LIKE'}

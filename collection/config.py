@@ -20,11 +20,11 @@ APP_PATH and sys.path.insert(0, APP_PATH)
 消息队列相关
 '''
 # 队列主机地址
-# QUEUE_HOST = 'queue.elecfans.net'
+# QUEUE_HOST =
 
 # 队列主机
-AMQP_URL = 'amqp://guest:guest@127.0.0.1:5672/'
-# 更新xunsearch(商城导入使用)
+AMQP_URL = 'amqp://guest:guest@127.0.0.1:5672/'   #本地测试
+# 更新xunsearch
 PUT_XS_HQCHIP = 'put_xunsearch'
 # 更新或建立迅搜索引
 PUT_XS_QUEUE = 'update_xunsearch'
@@ -32,9 +32,9 @@ PUT_XS_QUEUE = 'update_xunsearch'
 PROXY_QUEUE = 'search_proxy'
 # 待抓取热门数据
 HOT_QUEUE = 'hot_goods'
-# 待更新芯片
+# 待更新
 UPDATE_QUEUE = 'default_goods'
-# 已更新待同步芯片
+# 已更新待同步
 WAIT_UPDATE_QUEUE = 'wait_post_goods'
 # 等待在各个网站搜索的关键词队列
 SEARCH_QUEUE = 'search_queue'
@@ -56,12 +56,6 @@ QUEUE_LIMIT = 100
 get_sports_info = lambda id: DB_KEY[int(str(id)[0:2])] if int(str(id)[0:2]) in DB_KEY else None
 get_web_url = lambda id: URL_KEY[int(str(id)[0:2])] if int(str(id)[0:2]) in URL_KEY else None
 
-'''
-商城API接口相关
-'''
-HQCHIP_API = 'http://ic.elecfans.net/api/'
-HQCHIP_SITE = 'http://ic.elecfans.net'
-HQCHIP_AUTH_KEY = '94fdd5b9ed6cb3da333e7ebc3dfd742f'
 
 '''
 数据采集相关
@@ -74,7 +68,7 @@ USE_PROXY = True  # 是否使用代理
 '''
 DATABASES = {
     'mysql': (
-        {  # 第一个为主配置
+        {  # 本地测试数据库
             'user': 'root',
             'passwd': 'root',
             'host': '127.0.0.1',
@@ -84,7 +78,7 @@ DATABASES = {
             'tablepre': '',
             'db_fields_cache': False,
         },
-        {
+        {  # 开发数据库
             'host': '192.168.2.22',
             'user': 'root',
             'passwd': 'root',
@@ -94,15 +88,6 @@ DATABASES = {
             'tablepre': '',
             'db_fields_cache': False,
         },
-        # {  # 第三个为web管理配置
-        #     'host': '192.168.13.61',
-        #     'user': 'root',
-        #     'passwd': '123456',
-        #     'port': 3306,
-        #     'charset': 'utf8',
-        #     'db': 'spidermanager',
-        #     'tablepre': 'ic_',
-        # }
     ),
     'localhost': {
         # ------------- localhost 本地跑数据使用
@@ -118,6 +103,7 @@ DATABASES = {
     },
     'sqlite': 'database.db',
     # mongodb://[username:password@]host1[:port1][,host2[:port2],…[,hostN[:portN]]][/[database][?options]]
+    # 本地测试数据库
     'mongo': (
         'mongodb://localhost:27017/spider_',
     ),
@@ -144,98 +130,7 @@ URL_KEY = {
     14: 'cwl',
     15: 'five',
     16: 'pks',
-    17: 'gov',  #体彩
-}
-CPT_KEY = {
-    0: "ahfceswxw",
-    1: "ahks",
-    2: "ahsyxw",
-    3: "bjks",
-    4: "bjpks",
-    5: "bjsyxw",
-    6: "cqklsf",
-    7: "cqssc",
-    8: "dfljy",
-    9: "fjks",
-    10: "fjsyxw",
-    11: "fjtceexw",
-    12: "fjtcsslxq",
-    13: "gdklsf",
-    14: "gdnyfcenxw",
-    15: "gdnyfchc",
-    16: "gdnyfcsnxq",
-    17: "gdsyxu",
-    18: "gdszfc",
-    19: "gsks",
-    20: "gssyxw",
-    21: "gxklsf",
-    22: "gxks",
-    23: "gxssxw",
-    24: "gzks",
-    25: "gzssxw",
-    26: "hbks",
-    27: "hbsyxw",
-    28: "hbyzfcesxw",
-    29: "hbyzfchyce",
-    30: "hbyzfcplq",
-    31: "hbyzfcplw",
-    32: "hdswxw",
-    33: "hebeiks",
-    34: "heyzfchycs",
-    35: "hljfcpne",
-    36: "hljklsf",
-    37: "hljljfceexw",
-    38: "hljljfcsnxq",
-    39: "hljssc",
-    40: "hljsyxw",
-    41: "hljtcljy",
-    42: "hnklsf",
-    43: "hnxysc",
-    44: "hnzyfceexw",
-    45: "hubeissyw",
-    46: "jlks",
-    47: "jlsyxw",
-    48: "jsklsc",
-    49: "jsks",
-    50: "jssyxw",
-    51: "jstc",
-    52: "jxks",
-    53: "jxsyxw",
-    54: "lnfcswxq",
-    55: "lnklse",
-    56: "lnsyxw",
-    57: "metxyft",
-    58: "nmgks",
-    59: "nmgssc",
-    60: "nmgsyxw",
-    61: "scklse",
-    62: "sdqyh",
-    63: "sdxyxw",
-    64: "shanxiklsf",
-    65: "shanxisyxw",
-    66: "shks",
-    67: "shssl",
-    68: "shsyxw",
-    69: "shttcxs",
-    70: "sxklsf",
-    71: "sxsyxw",
-    72: "tjklsf",
-    73: "tjssc",
-    74: "tjsyxw",
-    75: "xjfcewxq",
-    76: "xjfcsbxq",
-    77: "xjfcsswxq",
-    78: "xjssc",
-    79: "xjsyxw",
-    80: "xjxlc",
-    81: "ynklsf",
-    82: "ynssc",
-    83: "ynsyxw",
-    84: "zjklse",
-    85: "zjsyxw",
-    86: "zjtcesxw",
-    87: "zjtcljy"
-
+    17: 'gov',  # 体彩
 }
 
 SPORTS_SITE = {
@@ -356,9 +251,7 @@ USER_AGENT_LIST = [
 APP_LOG = getattr(sys, '__APP_LOG__', True)
 level = logging.DEBUG if DEBUG else logging.ERROR
 LOGDIR = os.path.join(APP_ROOT, "logs")
-# print(APP_ROOT)
-#
-# print(LOGDIR)
+
 
 # 仅应用日志
 if APP_LOG:
@@ -401,10 +294,10 @@ EMAIL_NOTICE = {
 '''
 WEIXIN_NOTICE = {
     'accept_list': (
-        'oe2u-vox2x2s1SteNJLSmapVpPx8',
+        '',
     ),
-    'server': 'http://proxy.elecfans.net/sendweixin.php'
+    'server': ''
 }
 
-SMT_DOMAIN = 'http://smt.elecfans.net'
-SMT_API_KEY = '94fdd5b9ed6cb3da333e7ebc3dfd742f'
+SMT_DOMAIN = ''
+SMT_API_KEY = ''

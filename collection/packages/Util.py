@@ -10,7 +10,6 @@
 '''
 
 import logging
-# from pytz import unicode
 import math
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart

@@ -4,7 +4,7 @@
 __author__ = 'snow'
 __time__ = '2019/3/11'
 
-#! /usr/bin/python
+# ! /usr/bin/python
 # -*- coding: utf-8 -*-
 
 
@@ -20,7 +20,7 @@ import json
 import random
 import logging
 import requests
-from packages import Util as util, db, yzwl
+from packages import Util as util, yzwl
 
 '''
 极速虎网封装函数    jsh365
@@ -32,7 +32,7 @@ from packages import Util as util, db, yzwl
 
 _logger = logging.getLogger('yzwl_spider')
 _cookies = {'MAINT_NOTIFY_201410': 'notified'}
-
+db = yzwl.DbSession()
 collection = db.mongo['pay_proxies']
 default_headers = {
     # 'Referer': '',

@@ -17,10 +17,8 @@ try:
     import json
 except ImportError:
     import simplejson as json
-# thrid-party
-import requests
-# project
 import config
+import requests
 from packages import rabbitmq, supplier
 from packages import yzwl
 from packages import Util as util
