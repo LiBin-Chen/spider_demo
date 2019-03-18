@@ -1,0 +1,13 @@
+# spider
+
+/collection/uploads*
+*.log
+.vscode/
+*.pyc
+.vs
+*.idea
+test.py
+/webcron/data/
+release_bak/
+/collection/database/
+/collection/data/
