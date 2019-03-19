@@ -1,14 +1,14 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-import argparse
-import threading
-from lxml import etree
+
 import time
-import json
 import random
 import logging
 import requests
-from packages import Util as util, db, yzwl
+import argparse
+import threading
+from lxml import etree
+from packages import Util as util, yzwl
 
 __author__ = 'snow'
 __time__ = '2019/3/7'
@@ -21,8 +21,6 @@ _cookies = {'MAINT_NOTIFY_201410': 'notified'}
 
 collection = db.mongo['pay_proxies']
 default_headers = {
-    # 'Referer': '',
-    # 'Host': 'http://zq.win007.com',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36',
 }
 
@@ -261,4 +259,3 @@ if __name__ == '__main__':
         cmd()
         print('-------------- sleep %s sec -------------' % 3600)
         time.sleep(3600)
-

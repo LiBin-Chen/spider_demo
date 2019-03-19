@@ -1,35 +1,31 @@
+# ! /usr/bin/python
 # -*- coding: utf-8 -*-
-from packages.siteall.check_list import get_gov_expexc
 
-__author__ = 'snow'
-__time__ = '2019/3/17'
 
-# -*- coding: utf-8 -*-
 import os
-import re
-import argparse
 import sys
-import threading
-from lxml import etree
 import time
 import json
 import random
 import logging
 import requests
+import argparse
+import threading
+from lxml import etree
 
-# try:
-#     import Util as util
-#     import yzwl
-# except ImportError:
-#     from packages import Util as util, yzwl
+
+
 try:
     import Util as util
     import yzwl
+    from siteall.check_list import get_gov_expexc
 except ImportError:
     _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.insert(0, _path)
-    import yzwl
+    from packages import yzwl
     import Util as util
+    from siteall.check_list import get_gov_expexc
+
 
 __author__ = 'snow'
 __time__ = '2019/3/16'

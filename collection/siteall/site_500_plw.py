@@ -1,29 +1,37 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-from packages.siteall.check_list import get_expect
 
-__author__ = 'snow'
-__time__ = '2019/3/14'
 
-import re
-import argparse
-import threading
-from lxml import etree
 import time
 import json
 import random
 import logging
 import requests
-from packages import Util as util, db, yzwl
+import argparse
+import threading
+from lxml import etree
+from packages import Util as util, yzwl
+from siteall.check_list import get_expect
+
+__author__ = 'snow'
+__time__ = '2019/3/7'
+
+'''
+
+@description
+    收集彩票数据
+
+'''
 
 _logger = logging.getLogger('yzwl_spider')
 _cookies = {'MAINT_NOTIFY_201410': 'notified'}
 
+db = yzwl.DbSession()
 collection = db.mongo['pay_proxies']
 default_headers = {
     'Host': 'kaijiang.500.com',
     'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36',
 }
 
 db = yzwl.DbClass()

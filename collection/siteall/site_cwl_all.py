@@ -1,29 +1,25 @@
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
+
 import os
-import re
-import argparse
 import sys
-import threading
-from lxml import etree
 import time
 import json
 import random
 import logging
 import requests
+import argparse
+import threading
+from lxml import etree
 
-# try:
-#     import Util as util
-#     import yzwl
-# except ImportError:
-#     from packages import Util as util, yzwl
 try:
-    import Util as util
-    import yzwl
+    from packages import yzwl
+    from packages import Util as util
 except ImportError:
     _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.insert(0, _path)
-    import yzwl
-    import Util as util
+    import packages.yzwl as yzwl
+    import packages.Util as util
 
 __author__ = 'snow'
 __time__ = '2019/3/16'
@@ -44,7 +40,7 @@ default_headers = {
 }
 
 db = yzwl.DbClass()
-mysql = db.local_yzwl
+mysql = db.yzwl
 lock = threading.Lock()
 
 
@@ -361,15 +357,11 @@ def fetch_update_data(url=None, id=None, **kwargs):
         id
         等等
     '''
-    headers = kwargs.get('headers')
-    proxy = kwargs.get('proxy')
-    expect = kwargs.get('expect')  # 最新的期数
-    open_time = kwargs.get('open_time')  # 最新的开奖时间，如果是第一期，则由上期作为识别
-    open_url = kwargs.get('open_url')  # 同上
-    provider_name = kwargs.get('provider_name')
-    hot_update = kwargs.get('hot_update', False)
-    kw = kwargs.get('kw', '')
-    return
+
+    '''
+    待开发
+    '''
+    pass
 
 
 def main(**kwargs):
@@ -377,7 +369,6 @@ def main(**kwargs):
     sd = kwargs.get('sd', '')
     ed = kwargs.get('ed', '')
     cp = kwargs.get('cp', '1')
-    task_list = []
     past = kwargs.get('past', 0)
     sign = kwargs.get('sign', 0)
     interval = kwargs.get('interval', 10)

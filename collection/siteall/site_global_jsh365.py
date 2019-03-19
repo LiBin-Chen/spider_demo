@@ -1,22 +1,21 @@
 # ! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-__author__ = 'snow'
-__time__ = '2019/3/7'
 
-import re
-import argparse
-import threading
-from lxml import etree
-import time
 import json
 import random
 import logging
 import requests
-from packages import Util as util, db, yzwl
+import argparse
+import threading
+from lxml import etree
+from packages import Util as util, yzwl
+
+__author__ = 'snow'
+__time__ = '2019/3/7'
+
 
 '''
-极速虎网封装函数    jsh365
 
 @description
     收集彩票数据
@@ -26,10 +25,9 @@ from packages import Util as util, db, yzwl
 _logger = logging.getLogger('yzwl_spider')
 _cookies = {'MAINT_NOTIFY_201410': 'notified'}
 
+db = yzwl.DbSession()
 collection = db.mongo['pay_proxies']
 default_headers = {
-    # 'Referer': '',
-    # 'Host': 'http://zq.win007.com',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36',
 }
 
@@ -319,7 +317,6 @@ def _parse_detail_data(data=None, url=None, **kwargs):
             sixth_prize_num = tr.xpath('.//td[15]//text()')
             sixth_prize = tr.xpath('.//td[16]//text()')
 
-
             if not expect:
                 print('expect', expect)
                 continue
@@ -370,7 +367,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
                 'open_time': open_time,
                 'open_code': open_code,
                 'bet_amount': sales_count,
-                'open_result':open_result,
+                'open_result': open_result,
                 'create_time': util.date(),
             }
             save_data(url, db_name, expect, item)
@@ -481,7 +478,6 @@ def _parse_detail_data(data=None, url=None, **kwargs):
 
             sixth_prize_num = tr.xpath('.//td[15]//text()')
             sixth_prize = tr.xpath('.//td[16]//text()')
-
 
             if not expect:
                 print('expect', expect)

@@ -1,23 +1,23 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-__author__ = 'snow'
-__time__ = '2019/3/14'
 
-import re
-import argparse
-import threading
-from lxml import etree
-import time
 import json
 import random
 import logging
 import requests
-from packages import Util as util, db, yzwl
+import argparse
+import threading
+from lxml import etree
+from packages import Util as util, yzwl
+
+__author__ = 'snow'
+__time__ = '2019/3/14'
 
 _logger = logging.getLogger('yzwl_spider')
 _cookies = {'MAINT_NOTIFY_201410': 'notified'}
 
+db = yzwl.DbSession()
 collection = db.mongo['pay_proxies']
 default_headers = {
     # 'Referer': '',
@@ -848,7 +848,7 @@ def main(**kwargs):
         90: 'https://www.jsh365.com/award/qg-his/qlc.html',
         91: 'https://www.jsh365.com/award/qg-his/ssq.html',
         92: 'https://kaijiang.500.com/dlt.shtml',
-        93: 'http://kaijiang.500.com/shtml/dlt/07002.shtml',   #
+        93: 'http://kaijiang.500.com/shtml/dlt/07002.shtml',  #
         94: 'https://www.jsh365.com/award/qg-his/pls.html',
         95: 'https://www.jsh365.com/award/qg-his/qxc.html',
     }

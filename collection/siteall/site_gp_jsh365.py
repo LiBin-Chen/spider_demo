@@ -1,21 +1,20 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-import datetime
 
-__author__ = 'snow'
-__time__ = '2019/3/2'
 
-import re
-import argparse
-import threading
-from lxml import etree
 import time
 import json
 import random
 import logging
 import requests
+import argparse
+import datetime
+import threading
+from lxml import etree
 from packages import Util as util, yzwl
 
+__author__ = 'snow'
+__time__ = '2019/3/2'
 '''
 极速虎网封装函数    jsh365
 

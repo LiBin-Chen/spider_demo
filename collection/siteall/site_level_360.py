@@ -1,16 +1,17 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-__author__ = 'snow'
-__time__ = '2019/3/12'
 
 import time
 import re
 import random
 import logging
 import requests
-from packages import Util as util, db, yzwl
 from lxml import etree
+from packages import Util as util, yzwl
+
+__author__ = 'snow'
+__time__ = '2019/3/12'
 
 '''
 360彩票网封装函数    360
