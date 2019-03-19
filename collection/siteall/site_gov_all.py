@@ -405,11 +405,11 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
     }
     # print('*' * 100)
     # print('item', item)
-    # try:
-    #     sign = kwargs.get('sign', '')
-    #     save_data(url, db_name, item, sign)
-    # except Exception as e:
-    #     _logger.exception('mysql异常： %s' % util.traceback_info(e))
+    try:
+        sign = kwargs.get('sign', '')
+        save_data(url, db_name, item, sign)
+    except Exception as e:
+        _logger.exception('mysql异常： %s' % util.traceback_info(e))
     # return result
 
 
