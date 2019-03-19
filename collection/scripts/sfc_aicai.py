@@ -5,11 +5,19 @@
 # @File    : sfc_aicai.py
 # @Software: PyCharm
 import json
+import logging
 
 import requests
 import pymysql
 
 from lxml import etree
+from packages import yzwl
+from packages import Util as util
+
+db = yzwl.DbSession()
+mysql = db.yzwl
+
+_logger = logging.getLogger('yzwl_spider')
 
 
 def get_data():
@@ -50,36 +58,43 @@ def get_data():
     return result_dict
 
 
-def get_data_from_mysql():
-    db = pymysql.connect(host='192.168.2.22', user='root', password='root', database="lottery_info")
-    cursor = db.cursor()
-    sql = 'SELECT expect, open_result FROM game_sfc_result;'
-    cursor.execute(sql)
-    data = cursor.fetchall()
-    db.close()
-    return data
+def save_data(expect, db_name, dlist):
+    '''
+    有则更新 无则插入
+    :param key:
+    :param db_name:
+    :param item:
+    :return:
+    '''
+    info = mysql.select(db_name, fields=('open_result',), condition=[('expect', '=', expect)], limit=1)
+    if not info:
+        #新增
+        # mysql.insert(db_name, data=item)
+        # _logger.info('INFO:  DB:%s 数据保存成功, 期号%s ;' % (db_name, item['expect'], ))
+        pass
+    else:
+        open_result = json.loads(info.get('open_result'), encoding='utf-8')
+        matchResults = open_result['matchResults']
+        for i in range(len(matchResults)):
+            matchResults[i]['homeTeamView'] = dlist[i][0]
+            matchResults[i]['awayTeamView'] = dlist[i][1]
+            matchResults[i]['score'] = dlist[i][2]
+        info['open_result'] = json.dumps(open_result, ensure_ascii=True)
+        mysql.update(db_name, condition=[('expect', '=', expect)], data=info)
+        _logger.info('INFO:  DB:%s 数据已存在 更新成功, 期号: %s ; ' % (db_name, expect))
 
 
-def update_mysql():
+def main():
     data_dict = get_data()
-    db = pymysql.connect(host='192.168.2.22', user='root', password='root', database="lottery_info")
-    cursor = db.cursor()
-    sql_data = get_data_from_mysql()
-    for data in sql_data:
-        issue = data[0]
-        if data_dict.get(issue):
-            open_result = json.loads(data[1])
-            for i in range(len(data_dict[issue])):
-                if open_result['matchResults'][i]['results'] != '*':
-                    open_result['matchResults'][i]['score'] = data_dict[issue][i][2]
-            sql = "UPDATE game_sfc_result SET open_result='{}' WHERE expect={}".format(json.dumps(open_result, ensure_ascii=True), issue)
-            try:
-                cursor.execute(sql)
-                db.commit()
-            except Exception as e:
-                print(e)
-                db.rollback()
+    for expect in data_dict:
+        dlist = data_dict[expect]
+        try:
+            save_data(expect, 'game_sfc_result', dlist)
+        except Exception as e:
+            _logger.exception('mysql异常： %s' % util.traceback_info(e))
+
+
 
 
 if __name__ == '__main__':
-    update_mysql()
+    main()
