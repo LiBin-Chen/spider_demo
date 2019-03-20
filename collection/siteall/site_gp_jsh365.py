@@ -210,13 +210,17 @@ def _parse_detail_data(data=None, url=None, **kwargs):
             if not _code:
                 continue
             code_list.append(_code)
-        expect = util.cleartext(use_date, '-') + str(int(util.number_format(expect_xpath)))
+        # print('expect_xpath', expect_xpath)
+        # expect = util.number_format(expect_xpath)
+        # expect = str(expect).split('.')[0]
+        expect = util.cleartext(use_date, '-') + expect_xpath[1] if lottery_type == 'HIGH_RATE' else util.cleartext(
+            expect_xpath[0],'期')
         open_code = ','.join(code_list)
         cp_code = ''.join(code_list)
         open_time = use_date + time_xpath[0] if ':' in time_xpath[0] else use_date
         create_time = util.date()
         cp_id = cp_code  # 以中奖号+作为唯一id 并且开奖时间间隔大于15分钟  高频彩最低为20分钟，连着开同号概率极小
-        cp_sn = int(str(11) + expect)
+        cp_sn = int(str(11) + str(expect))
         item = {
             'cp_id': cp_id,
             'cp_sn': cp_sn,
@@ -302,6 +306,7 @@ def api_fetch_data(goods_sn=None, keyword=None, proxy=None, numofresult=1, **kwa
             'http': 'http://' + proxy[1][i],
             'https': 'http://' + proxy[1][i]
         }
+
 
     api_url = ''
     if not api_url:
