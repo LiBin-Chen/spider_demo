@@ -148,6 +148,8 @@ def save_data(url, db_name, item, sign=None):
     info = mysql.select(db_name, condition=[('expect', '=', item['expect'])], limit=1)
     if not info:
         mysql.insert(db_name, data=item)
+        # if db_name =='game_sfc_result':
+
         _logger.info('INFO:  DB:%s 数据保存成功, 期号%s ; URL:%s' % (db_name, item['expect'], url))
         if sign:
             sys.exit()
@@ -212,6 +214,7 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
     '''
     从接口获取数据
     '''
+    sign = kwargs.get('sign', '')
     db_name = kwargs.get('db_name', '')
     if not db_name:
         return
@@ -389,6 +392,16 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             match_results[i]['results'] = util.cleartext(matchResults[i]['results'])
         open_time = open_date.split(' ')[0].replace('年', '-').replace('月', '-').replace('日', '-') + ' 10:00:00'
         # 3代表主队胜1代表主客队平0代表主负
+        if sign:
+            # 更新一期时进行分数获取(新浪爱彩) 可能存在不同时更新的问题
+            data_dict = fetch_update_data(expect)
+            try:
+                for i in range(len(matchResults)):
+                    matchResults[i]['homeTeamView'] = data_dict[i][0]
+                    matchResults[i]['awayTeamView'] = data_dict[i][1]
+                    matchResults[i]['score'] = data_dict[i][2]
+            except:
+                matchResults[i]['score'] = '0:0'
     item = {
         'cp_id': cp_id,
         'cp_sn': cp_sn,
@@ -406,14 +419,13 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
     # print('*' * 100)
     # print('item', item)
     try:
-        sign = kwargs.get('sign', '')
         save_data(url, db_name, item, sign)
     except Exception as e:
         _logger.exception('mysql异常： %s' % util.traceback_info(e))
     # return result
 
 
-def fetch_update_data(url=None, id=None, **kwargs):
+def fetch_update_data(issue=None, id=None, **kwargs):
     '''
     更新彩票的开奖结果
 
@@ -422,15 +434,40 @@ def fetch_update_data(url=None, id=None, **kwargs):
         id
         等等
     '''
-    headers = kwargs.get('headers')
-    proxy = kwargs.get('proxy')
-    expect = kwargs.get('expect')  # 最新的期数
-    open_time = kwargs.get('open_time')  # 最新的开奖时间，如果是第一期，则由上期作为识别
-    open_url = kwargs.get('open_url')  # 同上
-    provider_name = kwargs.get('provider_name')
-    hot_update = kwargs.get('hot_update', False)
-    kw = kwargs.get('kw', '')
-    return
+    session = requests.Session()
+    session.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
+    })
+    r = session.get('https://kaijiang.aicai.com/sfc/')
+    result_dict = {}
+    if r.status_code == 200:
+        content = r.content.decode('utf8')
+        selector = etree.HTML(content)
+        issues = selector.xpath('//*[@id="jq_last10_issue_no"]/option/text()')
+        session.headers.update({
+            'Accept': 'application/json, text/javascript, */*; q=0.01',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Language': 'zh-CN,zh;q=0.9',
+        })
+        url = 'https://kaijiang.aicai.com/open/historyIssue.do'
+        post_data = {
+            'gameIndex': 401,
+            'issueNo': issue
+        }
+        r = session.post(url, post_data)
+        if r.status_code == 200:
+            data = json.loads(r.content.decode('utf8'))
+            if data['raceHtml']:
+                s = etree.HTML(data['raceHtml'])
+                results = s.xpath('//tr')
+                match_list = []
+                for result in results:
+                    host_team = result.xpath('./td[2]/i[1]/text()')[0]
+                    score = result.xpath('./td[2]/i[2]/text()')[0]
+                    away_team = result.xpath('./td[2]/i[3]/text()')[0]
+                    match_list.append([host_team, away_team, score])
+                result_dict[issue] = match_list
+    return result_dict
 
 
 def main(**kwargs):
@@ -516,9 +553,9 @@ def cmd():
     parser.add_argument('-h', '--help', dest='help', help=u'获取帮助信息',
                         action='store_true', default=False)
     parser.add_argument('-p', '--past', help=u'下载历史数据',
-                        dest='past', action='store', default=1)
+                        dest='past', action='store', default=0)
     parser.add_argument('-s', '--sign', help=u'定时任务时使用获取到开奖结果即关闭程序的标记',
-                        dest='sign', action='store', default=0)
+                        dest='sign', action='store', default=1)
     parser.add_argument('-sd', '--sd', help=u'指定开始下载日期',
                         dest='sd', action='store', default='2010-10-23')
     parser.add_argument('-ed', '--ed', help=u'指定结束下载日期',
@@ -529,7 +566,6 @@ def cmd():
                         help='指定暂停时间(默认0)，小于或等于0时则只会执行一次', default=0, type=int)
 
     args = parser.parse_args()
-    args.cp = ['9']
     if not args.cp:
         args.cp = ['4', '5', '6', '8', '9']
     if args.help:
