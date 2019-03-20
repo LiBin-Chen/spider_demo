@@ -122,7 +122,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
     # print('tr_list', tr_list)
     # print('tr_list', len(tr_list))
     # tr_list = reversed(tr_list)
-
+    tr_list = tr_list[:3] if 'today' in url else tr_list  # 获取最新一天的数据，只拿更新的数据
     for tr in tr_list:
         expect_xpath = tr.xpath('.//td[1]//text()')
         open_code = tr.xpath('.//td[2]/div[1]//span//text()')
@@ -143,7 +143,8 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         open_date = url.split('-')[-1].split('.')[0]
         expect = expect_list[0]
         open_time = open_date[:4] + '-' + open_date[4:6] + '-' + open_date[6:] + ' ' + expect_list[1]
-        print('*' * 100)
+        if 'toda' in open_time:
+            open_time = util.date(format='%Y-%m-%d') + ' ' + open_time.split(' ')[-1]
         cp_id = open_code.replace(',', '')  # 以中奖号+作为唯一id 并且开奖时间间隔大于15分钟  高频彩最低为20分钟，连着开同号概率极小
         cp_sn = int(str(16) + expect)
         item = {
@@ -155,14 +156,16 @@ def _parse_detail_data(data=None, url=None, **kwargs):
             'open_url': url,
             'create_time': util.date(),
         }
-        # print('item', item)
-        # [('id','>','10'),|,('status',1)]
-        info = mysql.select(db_name, condition=[('expect', '=', expect)], limit=1)
-        if not info:
-            mysql.insert(db_name, data=item)
-            _logger.info('INFO:数据保存成功, 期号%s ; URL:%s' % (expect, url))
-        else:
-            _logger.info('INFO:数据已存在不做重复存入, 期号: %s ; URL:%s' % (expect, url))
+
+        try:
+            info = mysql.select(db_name, condition=[('expect', '=', expect)], limit=1)
+            if not info:
+                mysql.insert(db_name, data=item)
+                _logger.info('INFO:数据保存成功, 期号%s ; URL:%s' % (expect, url))
+            else:
+                _logger.info('INFO:数据已存在不做重复存入, 期号: %s ; URL:%s' % (expect, url))
+        except Exception as e:
+            _logger.info('INFO: DB %s ;数据存入错误, 期号: %s ; URL:%s' % (db_name, expect, url))
 
 
 def fetch_search_data(keyword=None, id=None, data_dict=None, headers=None, proxy=None, **kwargs):
@@ -269,64 +272,54 @@ def fetch_update_data(url=None, id=None, **kwargs):
     return
 
 
-def run(lottery_chart_url, dlist, **kwargs):
-    proxy = kwargs.get('proxy', '')
-    hs = kwargs.get('hs', '')
-
-    if not hs:
-        '下载历史数据'
-        result = fetch_data(url=lottery_chart_url, proxy=proxy, headers=default_headers, **kwargs)
-    else:
-        for str_time in dlist:
-            str_time = ''.join(str_time.split('-'))
-            url = lottery_chart_url.replace('today', str_time)
-            result = fetch_data(url=url, proxy=proxy, headers=default_headers, **kwargs)
-
-
 def main(**kwargs):
     sd = kwargs.get('sd', '')
     ed = kwargs.get('ed', '')
     interval = kwargs.get('interval', 0)
+    past = kwargs.get('past', 0)
     dlist = util.specified_date(sd, ed)
 
     sql_data = mysql.select('t_lottery_pks',
                             fields=('abbreviation', 'lottery_name', 'lottery_result', 'lottery_chart_url'))
-    task_list = []
-    max_thread = 3
-    for _data in sql_data:
-        if _data['lottery_name'] not in ['北京赛车PK10', '重庆时时彩', '天津时时彩', '江苏快三', '新疆时时彩', '广东快乐十分']:
-            # print('非所需彩种，忽略..')
-            continue
+    while 1:
+        proxy = util.get_prolist(10)
+        for _data in sql_data:
+            if _data['lottery_name'] not in ['北京赛车PK10', '重庆时时彩', '天津时时彩', '江苏快三', '新疆时时彩', '广东快乐十分']:
+                # print('非所需彩种，忽略..')
+                continue
+            kwargs = {
+                'db_name': _data.get('lottery_result'),
+                'abbreviation': _data.get('abbreviation'),
+            }
+            lottery_chart_url = _data.get('lottery_chart_url')
+            if not past:
+                # 下载历史数据
+                for str_time in dlist:
+                    str_time = ''.join(str_time.split('-'))
+                    url = lottery_chart_url.replace('today', str_time)
+                    result = fetch_data(url=url, proxy=proxy, headers=default_headers, **kwargs)
+            else:
+                # 下载更新最新数据
+                result = fetch_data(url=lottery_chart_url, proxy=proxy, headers=default_headers, **kwargs)
 
-        lottery_chart_url = _data.get('lottery_chart_url')
-        kwargs = {
-            'db_name': _data.get('lottery_result'),
-            'abbreviation': _data.get('abbreviation'),
-            'hs': kwargs['hs']
-        }
-
-        task = threading.Thread(target=run, args=(lottery_chart_url, dlist), kwargs=kwargs,
-                                name="thread_{0}".format(len(task_list)))
-        task.start()
-        task_list.append(task)
-        if len(task_list) >= max_thread:
-            for task in task_list:
-                task.join()
-            task_list = []
+        if not interval:
+            break
+        print('-------------- sleep %s sec -------------' % interval)
+        time.sleep(interval)
 
 
 def cmd():
     parser = argparse.ArgumentParser(description=__doc__, add_help=False)
     parser.add_argument('-h', '--help', dest='help', help=u'获取帮助信息',
                         action='store_true', default=False)
+    parser.add_argument('-p', '--past', help=u'默认最新一期数据',
+                        dest='past', action='store', default=1)
     parser.add_argument('-sd', '--sd', help=u'从指定日期开始下载数据',
                         dest='sd', action='store', default='03/17/2019')
     parser.add_argument('-ed', '--ed', help=u'从指定日期结束下载数据',
                         dest='ed', action='store', default=None)
-    parser.add_argument('-hs', '--hs', help=u'是否是下载历史数据',
-                        dest='hs', action='store', default=1)
     parser.add_argument('-i', '--interval', dest='interval',
-                        help='指定暂停时间(默认0)，小于或等于0时则只会执行一次', default=0, type=int)
+                        help='指定暂停时间(默认0)，小于或等于0时则只会执行一次', default=60, type=int)
 
     args = parser.parse_args()
     if args.help:
@@ -339,8 +332,4 @@ def cmd():
 
 
 if __name__ == '__main__':
-
-    while 1:
-        cmd()
-        print('waiting ...')
-        time.sleep(480)
+    cmd()
