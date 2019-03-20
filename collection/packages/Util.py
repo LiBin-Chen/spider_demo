@@ -668,7 +668,7 @@ def modify_unit(number=None):
         number = round(number / (10 ** 8), 3)
         return str(number) + '亿'
     elif 9 > len(str(number)) >= 4:
-        number = round(number / (10 ** 3), 3)
+        number = round(number / (10 ** 4), 3)
         return str(number) + '万'
     else:
         return str(number) + '元'
@@ -693,3 +693,5 @@ def get_prolist(limit=10):
         return [_num, prolist]
     except Exception as e:
         return None
+
+
