@@ -1,7 +1,7 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-
-
+import os
+import sys
 import time
 import json
 import random
@@ -11,7 +11,14 @@ import requests
 import threading
 from lxml import etree
 
-from packages import Util as util, yzwl
+try:
+    from packages import yzwl
+    from packages import Util as util
+except ImportError:
+    _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    sys.path.insert(0, _path)
+    import packages.yzwl as yzwl
+    import packages.Util as util
 
 __author__ = 'snow'
 __time__ = '2019/3/12'
@@ -324,7 +331,7 @@ def cmd():
     args = parser.parse_args()
     if args.help:
         parser.print_help()
-        # print(u"\n示例")
+        print(u"\n示例")
     elif args.sd:
         main(**args.__dict__)
     else:
