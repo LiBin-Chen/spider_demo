@@ -214,7 +214,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         # expect = util.number_format(expect_xpath)
         # expect = str(expect).split('.')[0]
         expect = util.cleartext(use_date, '-') + expect_xpath[1] if lottery_type == 'HIGH_RATE' else util.cleartext(
-            expect_xpath[0],'期')
+            expect_xpath[0], '期')
         open_code = ','.join(code_list)
         cp_code = ''.join(code_list)
         open_time = use_date + time_xpath[0] if ':' in time_xpath[0] else use_date
@@ -307,7 +307,6 @@ def api_fetch_data(goods_sn=None, keyword=None, proxy=None, numofresult=1, **kwa
             'https': 'http://' + proxy[1][i]
         }
 
-
     api_url = ''
     if not api_url:
         return None
@@ -382,6 +381,9 @@ def main(**kwargs):
         jsh_open_url = _data.get('jsh_open_url')
         abbreviation = _data['key_python']
         lottery_name = _data['lottery_name']
+        if lottery_result in ['game_pk10_result', 'game_cqssc_result', 'game_tjssc_result', 'game_jsks_result',
+                              'game_xjssc_result', 'game_gdklsf_result']:
+            continue
         kwargs = {
             'db_name': lottery_result,
             'lottery_type': lottery_type,
