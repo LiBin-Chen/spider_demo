@@ -357,6 +357,8 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
         details = result[0]['details']
 
     open_code = lottery['number'].replace(' ', ',').replace('-', '+')
+    if cp_genre == '9' and '+' in open_code:
+        return
     expect = lottery['term']
     open_time = lottery['fTime'].split(' ')[0] + ' 20:30:00'
     open_date = lottery['openTime_fmt']
