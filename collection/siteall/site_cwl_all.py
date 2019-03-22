@@ -195,6 +195,30 @@ def fetch_search_data(keyword=None, id=None, data_dict=None, headers=None, proxy
     return 200
 
 
+def get_3d_test_code(expect):
+    """
+        从360彩票获取福彩3D试机号
+    :param expect: 期号
+    :return: 试机号
+    """
+    url = 'https://chart.cp.360.cn/kaijiang/sd?lotId=210053&chartType=undefined&spanType=3&span={}_{}'.format(expect,
+                                                                                                              expect)
+    session = requests.Session()
+    session.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
+    })
+    r = session.get(url)
+    if r.status_code == 200:
+        content = r.content.decode('gbk')
+        selector = etree.HTML(content)
+        data = selector.xpath('//*[@id="data-tab"]/tr[1]')
+        for d in data:
+            shijihao = d.xpath('./td[4]/text()')
+            test_code = ','.join(list(shijihao[0][:3])) if shijihao else ''
+            return test_code
+    return ''
+
+
 def fetch_search_list(url, id=None, headers=None, proxy=None, **kwargs):
     '''
     抓取搜索列表数据
@@ -323,28 +347,61 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
                     prize['singleNoteBonus'], places=0)
 
         data_item['currentAward'] = util.modify_unit(count)
-
-        item = {
-            'cp_id': cp_id,
-            'cp_sn': cp_sn,
-            'expect': expect,
-            'open_time': open_time,
-            'open_code': open_code,
-            'open_date': open_date,
-            'open_url': '',
-            'open_details_url': details_link,
-            'details_link': details_link,
-            'open_video_url': video_link,
-            'open_content': content,
-            'open_result': json.dumps(data_item, ensure_ascii=True),
-            'create_time': util.date()
-        }
+        if cp_genre in ['1', '3']:
+            item = {
+                'cp_id': cp_id,
+                'cp_sn': cp_sn,
+                'expect': expect,
+                'open_time': open_time,
+                'open_code': open_code,
+                'open_date': open_date,
+                'open_url': '',
+                'open_details_url': details_link,
+                'details_link': details_link,
+                'open_video_url': video_link,
+                'open_content': content,
+                'open_result': json.dumps(data_item, ensure_ascii=True),
+                'create_time': util.date()
+            }
+            try:
+                sign = kwargs.get('sign', '')
+                save_data(url, db_name, item, sign)
+            except Exception as e:
+                _logger.exception('mysql异常： %s' % util.traceback_info(e))
+        else:
+            # 福彩3d，试机号从360彩票网站获取
+            test_code = get_3d_test_code(expect)
+            item = {
+                'cp_id': cp_id,
+                'cp_sn': cp_sn,
+                'expect': expect,
+                'open_time': open_time,
+                'open_code': open_code,
+                'test_code': test_code,
+                'open_date': open_date,
+                'open_url': '',
+                'open_details_url': details_link,
+                'details_link': details_link,
+                'open_video_url': video_link,
+                'open_content': content,
+                'open_result': json.dumps(data_item, ensure_ascii=True),
+                'create_time': util.date()
+            }
         # print('item', item)
-        try:
-            sign = kwargs.get('sign', '')
-            save_data(url, db_name, item, sign)
-        except Exception as e:
-            _logger.exception('mysql异常： %s' % util.traceback_info(e))
+            try:
+                if item['test_code']:
+                    sign = kwargs.get('sign', '')
+                    save_data(url, db_name, item, sign)
+                else:
+                    _logger.info('福彩3D试机号结果未获取，5分钟后重试一次')
+                    time.sleep(300)
+                    item['test_code'] = get_3d_test_code(item['expect'])
+                    if item['test_code']:
+                        save_data(url, db_name, item, 1)
+                    else:
+                        sys.exit()
+            except Exception as e:
+                _logger.exception('mysql异常： %s' % util.traceback_info(e))
     return data
 
 

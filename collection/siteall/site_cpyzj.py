@@ -5,13 +5,15 @@
 # @File    : site_cpyzj.py
 # @Software: PyCharm
 # @Remarks : 热度数据抓取
+import os
 import sys
 import json
 import time
 import execjs
 import logging
 import requests
-
+cur_dir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.dirname(cur_dir))
 from packages import yzwl
 
 db = yzwl.DbSession()
@@ -92,7 +94,7 @@ def get_data(lot_code):
                     })
                 else:
                     # 暂无数据，稍后再次请求
-                    time.sleep(5)
+                    time.sleep(10)
     result = {
         'lottery_name': lottery_name,
         'hot': hot_list,
@@ -118,7 +120,7 @@ def get_hot_data(lottery_id, lot_code):
             _logger.warning('彩种id: %s，no data, request time: %d' % (lottery_id, retry_time))
 
 
-def main(lottery_type):
+def main(lottery_type, dpc_type=None):
     type_dict = {
         # 低频彩
         'dpc': {
@@ -170,15 +172,40 @@ def main(lottery_type):
             '84': 'BJ_K3'
         }
     }
-    for key, value in type_dict.get(lottery_type).items():
-        get_hot_data(key, value)
+    if dpc_type:
+        get_hot_data(dpc_type, type_dict.get('dpc').get(dpc_type))
+    else:
+        for key, value in type_dict.get(lottery_type).items():
+            get_hot_data(key, value)
 
 
-if __name__ == '__main__':
+def cmd():
     lo_type = sys.argv[1]
     if lo_type not in ['dpc', 'x5', 'ssc', 'h10', 'k3']:
-        print('请输入正确的参数，如 python site_cpyzj.py dpc'
+        print('请输入正确的参数，如 python site_cpyzj.py x5'
               '对应关系: dpc:低频彩, x5: 11选5, ssc:时时彩, h10:快乐十分, k3:快三')
         sys.exit()
     else:
-        main(lo_type)
+        if lo_type == 'dpc':
+            d_type = sys.argv[2]
+            if d_type not in ['dlt', 'ssq', 'fc3d', 'pl3', 'pl5', 'qlc', 'qxc']:
+                print('请输入低频彩具体种类，如 python site_cpyzj.py dpc dlt'
+                      '对应关系: dlt:大乐透, ssq: 双色球, fc3d:福彩3d, pl3:排列3, pl5:排列5, qlc:七乐彩, qxc:七星彩')
+                sys.exit()
+            else:
+                dpc_dict = {
+                    'dlt': '1',
+                    'pl3': '4',
+                    'pl5': '13',
+                    'ssq': '8',
+                    'fc3d': '11',
+                    'qlc': '12',
+                    'qxc': '14'
+                }
+                main(lo_type, dpc_dict.get(d_type))
+        else:
+            main(lo_type)
+
+
+if __name__ == '__main__':
+    cmd()
