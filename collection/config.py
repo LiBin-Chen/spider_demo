@@ -131,6 +131,7 @@ URL_KEY = {
     15: 'five',
     16: 'pks',
     17: 'gov',  # 体彩
+    18: 'cpyzj',  # 彩票易中奖
 }
 
 SPORTS_SITE = {

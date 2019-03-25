@@ -5,6 +5,7 @@
 # @File    : site_cpyzj.py
 # @Software: PyCharm
 # @Remarks : 热度数据抓取
+import datetime
 import os
 import sys
 import json
@@ -37,15 +38,32 @@ def save_to_db(item, db_name):
         _logger.info('INFO:  DB:%s 数据已存在 更新成功, 期号: %s ,彩种id：%s; ' % (db_name, item['expect'], item['lottery_id']))
 
 
-def get_data(lot_code):
+def save_to_db2(item, db_name):
+    info = mysql.select(db_name, condition=[('expect', '=', item['expect'])], limit=1)
+    if not info:
+        # 插入数据
+        mysql.insert(db_name, data=item)
+        _logger.info('INFO:  DB:%s 数据保存成功, 期号%s' % (db_name, item['expect']))
+    else:
+        # 更新热度信息
+        # mysql.update(db_name, condition=[('expect', '=', item['expect']), ('lottery_id', '=', item['lottery_id'])], data={'hot_data': item['hot_data']})
+        _logger.info('INFO:  DB:%s 数据已存在 不做录入, 期号: %s' % (db_name, item['expect']))
+
+
+def get_sign(key):
     with open('../scripts/md5.js') as f:
         js_data = f.read()
     ctx = execjs.compile(js_data)
+    sign = ctx.call('md5', key)
+    return sign
+
+
+def get_data(lot_code):
     plan_url = 'https://www.cpyzj.com/req/cpyzj/funnyWin/getHotPlanByLotCode'
     hot_url = 'https://www.cpyzj.com/req/cpyzj/funnyWin/getHotNumbers'
     time_stamp = int(time.time()*1000)
     plan_key = 'lotCode={}&timestamp={}&token=noget&key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(lot_code, time_stamp)
-    plan_sign = ctx.call('md5', plan_key)
+    plan_sign = get_sign(plan_key)
     plan_post_data = {
         'token': 'noget',
         'timestamp': time_stamp,
@@ -63,7 +81,7 @@ def get_data(lot_code):
             plan_name = plan_code_dict.get('planName')
             hot_key = 'lotCode={}&planCode={}&timestamp={}&token=noget&key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(
                 lot_code, plan_code_dict.get('planCode'), time_stamp)
-            hot_sign = ctx.call('md5', hot_key)
+            hot_sign = get_sign(hot_key)
             post_data = {
                 'token': 'noget',
                 'timestamp': time_stamp,
@@ -177,6 +195,85 @@ def main(lottery_type, dpc_type=None):
     else:
         for key, value in type_dict.get(lottery_type).items():
             get_hot_data(key, value)
+
+
+def get_open_data(url, post_data):
+    r = session.post(url, post_data)
+    if r.status_code == 200:
+        data = r.json()
+        return data
+
+
+def get_newest_data():
+    url = 'https://www.cpyzj.com/req/cpyzj/lotHistory/queryNewestLotByCode'
+    time_stamp = int(time.time()*1000)
+    key = 'lotCode={}&lotGroupCode={}&timestamp={}&token=noget&key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(10014, 0,
+                                                                                                            time_stamp)
+    sign = get_sign(key)
+    post_data = {
+        'token': 'noget',
+        'timestamp': time_stamp,
+        'lotGroupCode': 0,
+        'lotCode': 10014,
+        'sign': sign.upper()
+    }
+    data = get_open_data(url, post_data)
+
+
+def get_history_data():
+    begin_date = datetime.date(2018, 8, 1)
+    end_date = datetime.date(2019, 3, 25)
+    for i in range((end_date - begin_date).days + 1):
+        day = begin_date + datetime.timedelta(days=i)
+        date = day.strftime('%Y-%m-%d')
+        url = 'https://www.cpyzj.com/req/cpyzj/lotHistory/getLotHistorys'
+        time_stamp = int(time.time()*1000)
+        key = 'lotCode={}&lotGroupCode={}&pageNo=1&pageSize=100&queryPreDrawTime={}&timestamp={}&token=noget&' \
+              'key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(10014, 0, date, time_stamp)
+        sign = get_sign(key)
+        post_data = {
+            'token': 'noget',
+            'timestamp': time_stamp,
+            'lotCode': 10014,
+            'lotGroupCode': 0,
+            'queryPreDrawTime': date,
+            'pageNo': 1,
+            'planSize': 100,
+            'sign': sign.upper()
+        }
+        data = get_open_data(url, post_data)
+        results = data['data']
+        page_count = data['totalPages']
+        for page in range(2, page_count+1):
+            key = 'lotCode={}&lotGroupCode={}&pageNo={}&pageSize=100&queryPreDrawTime={}&timestamp={}&token=noget&' \
+                  'key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(10014, 0, page, date, time_stamp)
+            sign = get_sign(key)
+            post_data = {
+                'token': 'noget',
+                'timestamp': time_stamp,
+                'lotCode': 10014,
+                'lotGroupCode': 0,
+                'queryPreDrawTime': date,
+                'pageNo': page,
+                'planSize': 100,
+                'sign': sign.upper()
+            }
+            data = get_open_data(url, post_data)
+            results += data['data']
+        for result in results:
+            issue = result['preDrawIssue']
+            open_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(result['preDrawTime']/1000))
+            open_code = result['preDrawCode']
+            cp_id = open_code.replace(',', '')
+            open_url = 'https://www.cpyzj.com/open-awards-detail.html?lotCode=10014&lotGroupCode=1'
+            item = {
+                'cp_id': cp_id,
+                'expect': issue,
+                'open_time': open_time,
+                'open_code': open_code,
+                'open_url': open_url,
+            }
+            save_to_db2(item, 'game_bjklb_result')
 
 
 def cmd():
