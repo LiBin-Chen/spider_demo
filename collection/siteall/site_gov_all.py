@@ -399,11 +399,11 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             data_dict = fetch_update_data(expect)
             try:
                 for i in range(len(matchResults)):
-                    matchResults[i]['homeTeamView'] = data_dict[i][0]
-                    matchResults[i]['awayTeamView'] = data_dict[i][1]
-                    matchResults[i]['score'] = data_dict[i][2]
+                    match_results[i]['homeTeamView'] = data_dict[expect][i][0]
+                    match_results[i]['awayTeamView'] = data_dict[expect][i][1]
+                    match_results[i]['score'] = data_dict[expect][i][2]
             except:
-                matchResults[i]['score'] = '0:0'
+                match_results[i]['score'] = '0:0'
     item = {
         'cp_id': cp_id,
         'cp_sn': cp_sn,
