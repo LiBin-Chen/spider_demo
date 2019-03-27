@@ -218,11 +218,25 @@ def get_newest_data():
         'sign': sign.upper()
     }
     data = get_open_data(url, post_data)
+    issue = data['data']['preDrawIssue']
+    open_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(data['data']['preDrawTime'] / 1000))
+    open_code = data['data']['preDrawCode']
+    cp_id = open_code.replace(',', '')
+    open_url = 'https://www.cpyzj.com/open-awards-detail.html?lotCode=10014&lotGroupCode=1'
+    item = {
+        'cp_id': cp_id,
+        'cp_sn': '18' + issue,
+        'expect': issue,
+        'open_time': open_time,
+        'open_code': open_code,
+        'open_url': open_url,
+    }
+    save_to_db2(item, 'game_bjklb_result')
 
 
 def get_history_data():
-    begin_date = datetime.date(2018, 8, 1)
-    end_date = datetime.date(2019, 3, 25)
+    begin_date = datetime.date(2018, 4, 10)
+    end_date = datetime.date(2018, 8, 1)
     for i in range((end_date - begin_date).days + 1):
         day = begin_date + datetime.timedelta(days=i)
         date = day.strftime('%Y-%m-%d')
@@ -268,6 +282,7 @@ def get_history_data():
             open_url = 'https://www.cpyzj.com/open-awards-detail.html?lotCode=10014&lotGroupCode=1'
             item = {
                 'cp_id': cp_id,
+                'cp_sn': '18' + issue,
                 'expect': issue,
                 'open_time': open_time,
                 'open_code': open_code,
@@ -278,7 +293,7 @@ def get_history_data():
 
 def cmd():
     lo_type = sys.argv[1]
-    if lo_type not in ['dpc', 'x5', 'ssc', 'h10', 'k3']:
+    if lo_type not in ['dpc', 'x5', 'ssc', 'h10', 'k3', 'bjkl8']:
         print('请输入正确的参数，如 python site_cpyzj.py x5'
               '对应关系: dpc:低频彩, x5: 11选5, ssc:时时彩, h10:快乐十分, k3:快三')
         sys.exit()
@@ -293,13 +308,15 @@ def cmd():
                 dpc_dict = {
                     'dlt': '1',
                     'pl3': '4',
-                    'pl5': '13',
                     'ssq': '8',
                     'fc3d': '11',
                     'qlc': '12',
+                    'pl5': '13',
                     'qxc': '14'
                 }
                 main(lo_type, dpc_dict.get(d_type))
+        elif lo_type == 'bjkl8':
+            get_newest_data()
         else:
             main(lo_type)
 

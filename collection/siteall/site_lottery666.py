@@ -5,11 +5,24 @@
 # @File    : site_lottery666.py
 # @Software: PyCharm
 # @Remarks : 彩票资讯
+import time
+
 from lxml import etree
 
-from packages import Util
+from packages import Util, yzwl
 
 session = Util.get_session()
+
+db = yzwl.DbClass()
+mysql = db.local_yzwl
+
+
+def save_to_db(item, db_name):
+    info = mysql.select(db_name, condition=[('title', '=', item['title']), ('date', '=', item['date'])], limit=1)
+    if not info:
+        mysql.insert(db_name, data=item)
+    else:
+        print('数据已存在')
 
 
 def get_article(art_id):
@@ -18,11 +31,19 @@ def get_article(art_id):
     if r.status_code == 200:
         content = r.content.decode('utf8')
         selector = etree.HTML(content)
-        title = selector.xpath("//div[@class='title']/text()")
-        date = selector.xpath("//div[@class='date']/span[2]/text()")
-        article = selector.xpath("//div[@class='content']")
-        article_str = etree.tostring(article[0], encoding='utf8')
-        pass
+        title = selector.xpath("//div[@class='title']/text()")[0]
+        date = selector.xpath("//div[@class='date']/span[2]/text()")[0]
+        articles = selector.xpath("//div[@class='content']/p")
+        article_str = ''
+        for article in articles[:-1]:
+            article_str += etree.tostring(article, encoding='utf8').decode('utf8')
+        item = {
+            'title': title,
+            'date': str(time.localtime().tm_year) + '-' + date,
+            'content': article_str,
+            'source_url': url
+        }
+        save_to_db(item, 't_lottery_news')
 
 
 def get_article_url(pages):
