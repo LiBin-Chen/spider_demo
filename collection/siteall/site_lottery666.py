@@ -49,7 +49,8 @@ def get_article(art_id):
 def get_article_url(pages):
     id_list = []
     for page in range(1, pages+1):
-        url = 'https://api.lottery666.com/iation/haocai/load?page={}&identity=com.houcai.letoula&platform=3'.format(page)
+        url = 'https://api.lottery666.com/iation/haocai/load?page={}&' \
+              'identity=com.houcai.letoula&platform=3'.format(page)
         r = session.get(url)
         if r.status_code == 200:
             data = r.json()

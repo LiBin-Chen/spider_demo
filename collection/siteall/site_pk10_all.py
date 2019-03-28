@@ -326,7 +326,7 @@ def cmd():
     parser.add_argument('-ed', '--ed', help=u'从指定日期结束下载数据',
                         dest='ed', action='store', default=None)
     parser.add_argument('-i', '--interval', dest='interval',
-                        help='指定暂停时间(默认0)，小于或等于0时则只会执行一次', default=60, type=int)
+                        help='指定暂停时间(默认0)，小于或等于0时则只会执行一次', default=1, type=int)
 
     args = parser.parse_args()
     if args.help:

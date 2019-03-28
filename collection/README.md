@@ -14,7 +14,7 @@
 
 **每天20:29启动排列5开奖更新定时任务** `python3 collection/siteall/site_gov_all.py -C 6 -i 2 -s 1`
 
-**每天20:29启动七星彩开奖更新定时任务** `python3 collection/siteall/site_gov_all.py -C 8 -i 2 -s 1`
+**每周二、五、日20:29启动七星彩开奖更新定时任务** `python3 collection/siteall/site_gov_all.py -C 8 -i 2 -s 1`
 
 **每天09:59启动胜负彩开奖更新定时任务** `python3 collection/siteall/site_gov_all.py -C 9 -i 2 -s 1`
 
