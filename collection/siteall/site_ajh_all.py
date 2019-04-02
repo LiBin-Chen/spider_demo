@@ -5,6 +5,7 @@
 # @File    : site_ajh_all.py
 # @Software: PyCharm
 # @Remarks : A计划网站数据爬虫
+import logging
 import os
 import sys
 import time
@@ -19,10 +20,37 @@ except ImportError:
 session = Util.get_session('http://www.556955.com/')
 db = yzwl.DbClass()
 mysql = db.local_yzwl
+_logger = logging.getLogger('yzwl_spider')
 
 
-def get_result(data, lo_type):
+def save_to_db(item, db_name):
+    mysql.insert(db_name, data=item)
+    _logger.info('INFO:数据保存成功, 结果:%s' % item['desc'])
+
+
+def get_result(data, lo_type, **kwargs):
     try:
+        lottery_dict = {
+            'jsk3': '江苏快3',
+            'ahk3': '安徽快3',
+            'gxk3': '广西快3',
+            'hbk3': '湖北快3',
+            'bjk3': '北京快3',
+            'hebk3': '河北快3',
+            'gsk3': '甘肃快3',
+            'shk3': '上海快3',
+            'gzk3': '贵州快3',
+            'jlk3': '吉林快3',
+            'cqssc': '重庆时时彩',
+            'tjssc': '天津时时彩',
+            'xjssc': '新疆时时彩',
+            'pk10': '北京pk10',
+            'xyft': '幸运飞艇',
+            'gd11x5': '广东11选5',
+            'sd11x5': '山东11选5',
+            'sh11x5': '上海11选5',
+            'jx11x5': '江西11选5',
+        }
         plan = data['data']['plan']
         for p in plan:
             win = p.get('win', 0)
@@ -38,14 +66,16 @@ def get_result(data, lo_type):
             result = '{}-{}期 {} 【{}】 {}'.format(start_issue[-3:], end_issue[-3:],
                                                 plan_name, plans, status)
             item = {
-                'lottery_type': lo_type,
+                'lottery_type': lottery_dict.get(kwargs['code']),
                 'plan_name': plan_name,
                 'start_expect': start_issue,
                 'end_expect': end_issue,
                 'win_expect': win_issue,
-                'result': result
+                'result': plans,
+                'desc': result
             }
-            print(result)
+            # print(result)
+            save_to_db(item, 't_lottery_ajh')
     except Exception as e:
         print(e)
 
@@ -64,7 +94,7 @@ def api_fetch_data(**kwargs):
         r = session.get(url)
         if r.status_code == 200:
             data = r.json()
-            get_result(data, t)
+            get_result(data, t, **kwargs)
             time.sleep(1)
 
 

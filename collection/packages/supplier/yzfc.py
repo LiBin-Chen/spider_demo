@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2019/3/28 15:13
+# @Time    : 2019/3/28 17:04
 # @Author  : TianZe
 # @Email   : tianze@86cp.com
-# @File    : xjfc.py
+# @File    : yzfc.py
 # @Software: PyCharm
-# @Remarks : 新疆福彩网
+# @Remarks : 燕赵福彩网
 
 from lxml import etree
 from packages import Util
@@ -70,15 +70,16 @@ def _parse_detail_data(url, num_data, prize_data, **kwargs):
 
 
 def api_fetch_data(url, proxy=None, **kwargs):
-    number_api_url = 'http://www.xjflcp.com/getLotteryNumber'
-    detail_api_url = 'http://www.xjflcp.com/getLotteryDetailInfo'
+    number_api_url = 'http://www.yzfcw.com/getLotteryNumber'
+    detail_api_url = 'http://www.yzfcw.com/getLotteryDetailInfo'
     game_id = {
         'ssq': 1,
         'fc3d': 2,
         'qlc': 3,
-        'threeX7': 4,
-        'twoX7': 5,
-        'ex7': 6
+        '20x5': 4,
+        'hyc': 5,
+        'pl5': 7,
+        'pl7': 8
     }
     lo_type = kwargs.get('lo_type')
     r = session.get(url)
@@ -98,7 +99,7 @@ def api_fetch_data(url, proxy=None, **kwargs):
 
 
 def main():
-    lottery_list = ['ssq', 'fc3d', 'threeX7', 'qlc', 'twoX7', 'ex7']
+    lottery_list = ['ssq', 'fc3d', 'hyc', 'qlc', 'pl5', 'pl7']
     for lottery in lottery_list:
-        index_url = 'http://www.xjflcp.com/game/{}Index'.format(lottery)
+        index_url = 'http://www.yzfcw.com/game/{}Index'.format(lottery)
         api_fetch_data(index_url)
