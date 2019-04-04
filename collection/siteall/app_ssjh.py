@@ -6,11 +6,11 @@
 # @Software: PyCharm
 # @Remarks : 神圣计划app
 import hashlib
-import json
 import logging
 import re
 import time
 
+# from datetime import date, timedelta
 from packages import Util, yzwl
 
 session = Util.get_session()
@@ -35,7 +35,9 @@ lottery_id = {
     '广东十一选五': 7,
     # '山东十一选五': '',
     '广西十一选五': 112,
-    '辽宁十一选五': 53
+    '辽宁十一选五': 53,
+    '福彩3D': 11,
+    '排列3': 4
 }
 rules = {
     1: ["一星", 1],
@@ -70,18 +72,21 @@ def get_sign(key_list):
 
 
 def save_to_data(item, db_name):
-    info = mysql.select(db_name, condition=[('plan_id', item['plan_id']), ('keyword', item['keyword']), ('date', item['date'])], limit=1)
+    # yesterday = (date.today() + timedelta(days=-1)).strftime("%Y-%m-%d")
+    info = mysql.select(db_name, condition=[('plan_id', item['plan_id']), ('keyword', item['keyword']), ('date', item['date']), ('expect', item['expect'])], limit=1)
+    # filter_info = mysql.select(db_name, condition=[('plan_id', item['plan_id']), ('content', item['content']), ('date', '>', yesterday)], limit=1)
     if not info:
         # 新增
         mysql.insert(db_name, data=item)
-        _logger.info('INFO:  DB:%s 数据保存成功, 计划名:%s;' % (db_name, item['plan_name']))
+        _logger.info('INFO:  DB:%s 数据保存成功, 计划名:%s, %s' % (db_name, item['plan_name'], item['content']))
     else:
         content = info['content']
-        if content != item['content']:
-            mysql.update(db_name, data=item, condition=[('plan_id', item['plan_id']), ('keyword', item['keyword']), ('date', item['date'])])
-            _logger.info('INFO:  DB:%s 数据更新')
+        status = info['status']
+        if content != item['content'] and status == 2:
+            mysql.update(db_name, data=item, condition=[('plan_id', item['plan_id']), ('keyword', item['keyword']), ('date', item['date']), ('expect', item['expect'])])
+            _logger.info('INFO:  DB:%s 数据更新, 计划名:%s, 原: %s, 新: %s' % (db_name, item['plan_name'], content, item['content']))
         else:
-            _logger.info('INFO:  DB:%s 已存在的数据')
+            _logger.info('INFO:  DB:%s 已存在的数据, 计划名:%s' % (db_name, item['plan_name']))
 
 
 def get_data(u_id, u_key, jh_id, cz, jh_flag):
@@ -94,6 +99,15 @@ def get_data(u_id, u_key, jh_id, cz, jh_flag):
         data = r.json()
         time.sleep(2)
         return data
+
+
+def get_statistics(u_id, u_key, jh_id):
+    sign = get_sign([u_id, u_key, jh_id])
+    url = 'http://www.shenshengjihua.com:8080/shensheng/GetStatistics' \
+          '?userid={}&t={}&jhid={}&sign={}'.format(u_id, u_key, jh_id, sign)
+    r = session.get(url)
+    if r.status_code == 200:
+        data = r.json()
 
 
 def get_jhid_list(u_id, u_key):
@@ -123,60 +137,77 @@ def main():
     password = 'wu6619'
     u_id, u_key = login(username, password)
     jh_list = get_jhid_list(u_id, u_key)
-    filter_dict = {
-        '重庆时时彩': [],
-        '天津时时彩': [],
-        '北京PK10': [],
-    }
     lo_list = ['重庆时时彩', '天津时时彩', '北京PK10', '其它彩种']
-    other_list = ['江苏快3', '吉林快三', '安徽快三', '广西快三', '北京快三', '湖北快三', '广东十一选五', '广西十一选五', '辽宁十一选五']
-    for jh in jh_list:
-        try:
-            jh_flag = ''
-            jh_id = jh['id']
-            jh_name = jh['name']
-            jh_rule = jh['rules']
-            lo_type = jh['tpname']
-            if lo_type in lo_list:
-                if lo_type == '其它彩种' and jh_name not in other_list:
-                    continue
-                elif lo_type != '其它彩种' and jh_rule in filter_dict[lo_type]:
-                    continue
-                if jh_name == '后二复试A':
-                    continue
-                if lo_type != '其它彩种':
-                    filter_dict[lo_type].append(jh_rule)
-                # plan_dict = {
-                #     'plan_id': jh_id,
-                #     'lottery_id': lottery_id[lo_type] if lo_type != '其它彩种' else lottery_id[jh_name],
-                #     'plan_name': jh_name,
-                #     'tricks': rules[jh_rule][1],
-                # }
-                # save_to_data(item=plan_dict, db_name='t_lottery_planid')
-                cz_type = jh['type']
-                data = get_data(u_id, u_key, str(jh_id), str(cz_type), jh_flag)
-                while not data['msgErr']:
-                    _logger.error('账号状态出错，重新登录')
-                    time.sleep(10)
-                    u_id, u_key = login(username, password)
+    other_list = ['江苏快3', '吉林快三', '安徽快三', '广西快三', '北京快三', '湖北快三',
+                  '广东十一选五', '广西十一选五', '辽宁十一选五', '福彩3D', '排列3']
+    while 1:
+        filter_dict = {
+            '重庆时时彩': [],
+            '天津时时彩': [],
+            '北京PK10': [],
+        }
+        for jh in jh_list:
+            try:
+                jh_flag = ''
+                jh_id = jh['id']
+                jh_name = jh['name']
+                jh_rule = jh['rules']
+                lo_type = jh['tpname']
+                if lo_type in lo_list:
+                    if lo_type == '其它彩种' and jh_name not in other_list:
+                        continue
+                    elif lo_type != '其它彩种' and jh_rule in filter_dict[lo_type]:
+                        continue
+                    if jh_name == '后二复试A':
+                        continue
+                    if lo_type != '其它彩种':
+                        filter_dict[lo_type].append(jh_rule)
+                    # plan_dict = {
+                    #     'plan_id': jh_id,
+                    #     'lottery_id': lottery_id[lo_type] if lo_type != '其它彩种' else lottery_id[jh_name],
+                    #     'plan_name': jh_name,
+                    #     'tricks': rules[jh_rule][1],
+                    # }
+                    # save_to_data(item=plan_dict, db_name='t_lottery_planid')
+                    cz_type = jh['type']
                     data = get_data(u_id, u_key, str(jh_id), str(cz_type), jh_flag)
-                content = data['content']
-                # jh_flag = data['flag']
-                detail_list = content.split('\r\n')
-                for d in detail_list:
-                    flag = re.findall(r'\d+-\d+ ', d)
-                    if flag and '【' in d:
-                        key_list = d.split(' ')
-                        item = {
-                            'plan_id': jh_id,
-                            'keyword': key_list[0] + key_list[1].replace('神圣', '云彩').replace('少女', '云彩'),
-                            'plan_name': jh_name,
-                            'date': time.strftime('%Y-%m-%d', time.localtime()),
-                            'content': d.replace('神圣', '云彩').replace('少女', '云彩')
-                        }
-                        save_to_data(item, 't_lottery_plan')
-        except Exception as e:
-            _logger.error('error:{}'.format(e))
+                    while data['msgErr']:
+                        _logger.error('账号状态出错，重新登录')
+                        time.sleep(10)
+                        u_id, u_key = login(username, password)
+                        data = get_data(u_id, u_key, str(jh_id), str(cz_type), jh_flag)
+                    content = data['content']
+                    # jh_flag = data['flag']
+                    detail_list = content.split('\r\n')
+                    for d in detail_list:
+                        flag = re.findall(r'\d+-(\d+) ', d)
+                        if jh_name in ['福彩3D', '排列3']:
+                            flag = d.split(' ')[0]
+                        if flag and '【' in d:
+                            key_list = d.split(' ')
+                            if key_list[-1] == '中':
+                                status = 0
+                            elif key_list[-1] == '挂' or d[-1] == '-':
+                                d = d.replace(' 挂', ' 错').replace(' -', ' 错')
+                                status = 1
+                            else:
+                                d += ' 进行中'
+                                status = 2
+                            keyword = key_list[1].replace('神圣', '云彩').replace('少女', '云彩')
+                            keyword = re.findall(r'(^.*?)【', keyword)[0] if '【' in keyword else keyword
+                            item = {
+                                'plan_id': jh_id,
+                                'keyword': keyword,
+                                'plan_name': jh_name,
+                                'date': time.strftime('%Y-%m-%d', time.localtime()),
+                                'content': d.replace('神圣', '云彩').replace('少女', '云彩'),
+                                'expect': flag[0] if jh_name not in ['福彩3D', '排列3'] else flag,
+                                'status': status
+                            }
+                            save_to_data(item, 't_lottery_plan')
+            except Exception as e:
+                _logger.error('error:{}'.format(e))
+        time.sleep(120)
 
 
 if __name__ == '__main__':

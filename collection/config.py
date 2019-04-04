@@ -132,6 +132,9 @@ URL_KEY = {
     16: 'pks',
     17: 'gov',  # 体彩
     18: 'cpyzj',  # 彩票易中奖
+    19: 'xjfc',  # 新疆福彩
+    20: 'gxfc',  # 广西福彩
+    21: 'zjfc',  # 浙江福彩
 }
 
 SPORTS_SITE = {
@@ -258,7 +261,7 @@ LOGDIR = os.path.join(APP_ROOT, "logs")
 if APP_LOG:
     # 每小时一个日志
     _handler = RotatingFileHandler(
-        filename=os.path.join(LOGDIR, 'spider_' + datetime.datetime.now().strftime("%Y-%m-%d_%H") + ".log"), mode='a+')
+        filename=os.path.join(LOGDIR, 'spider_' + datetime.datetime.now().strftime("%Y-%m-%d_%H") + ".log"), mode='a+', maxBytes=1024*1024*5, backupCount=20)
     _handler.setFormatter(
         logging.Formatter(fmt='>>> %(asctime)-10s %(name)-12s %(levelname)-8s %(message)s', datefmt='%H:%M:%S'))
     LOG = logging.getLogger('yzwl_spider')
