@@ -135,6 +135,9 @@ URL_KEY = {
     19: 'xjfc',  # 新疆福彩
     20: 'gxfc',  # 广西福彩
     21: 'zjfc',  # 浙江福彩
+    22: 'gdfc',  # 广东福彩
+    23: 'bjfc',  # 北京福彩
+    24: 'tjfc',  # 天津福彩
 }
 
 SPORTS_SITE = {

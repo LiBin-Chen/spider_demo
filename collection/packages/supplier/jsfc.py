@@ -83,9 +83,9 @@ def _parse_detail_data(data, url, **kwargs):
             "currentAward": "0"
         }
         i = 0
-        for bonus in data.xpath('./table[2]/tbody/tr')[1:]:
-            prize_num = data.xpath('./td[2]/span/span/strong/text()')[0]
-            prize_bonus = data.xpath('./td[3]/span/span/strong/text()')[0]
+        for b in data.xpath('./table[2]/tbody/tr')[1:]:
+            prize_num = b.xpath('./td[2]/span/span/strong/text()')[0]
+            prize_bonus = b.xpath('./td[3]/span/span/strong/text()')[0]
             bonus['bonusSituationDtoList'][i]['numberOfWinners'] = prize_num
             bonus['bonusSituationDtoList'][i]['singleNoteBonus'] = prize_bonus
             i += 1
