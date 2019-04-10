@@ -48,6 +48,7 @@ default_headers = {
 
 db = yzwl.DbClass()
 mysql = db.yzwl
+test_mysql = db.test_yzwl
 lock = threading.Lock()
 
 
@@ -238,6 +239,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         info = mysql.select(db_name, condition=[('cp_id', '=', cp_id), ('cp_sn', '=', cp_sn)], limit=1)
         if not info:
             mysql.insert(db_name, data=item)
+            test_mysql.insert(db_name, data=item)
             _logger.info('INFO: 数据库： %s 数据保存成功, 期号 %s ; URL:%s' % (db_name, expect, url))
         else:
             mysql.update(db_name, condition={'id': info['id']}, data=item)
