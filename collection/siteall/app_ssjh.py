@@ -21,8 +21,9 @@ session = Util.get_session()
 session.headers.update({
     'User-Agent': 'Mozilla/5.0 (Linux; Android 5.1.1; SM-G955N Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/39.0.0.0 Mobile Safari/537.36 Html5Plus/1.0 (Immersed/25.333334)'
 })
-db = yzwl.DbSession()
+db = yzwl.DbClass()
 mysql = db.yzwl
+test_mysql = db.test_yzwl
 _logger = logging.getLogger('yzwl_spider')
 
 
@@ -76,9 +77,8 @@ def get_sign(key_list):
 
 
 def save_to_data(item, db_name):
-    # yesterday = (date.today() + timedelta(days=-1)).strftime("%Y-%m-%d")
     info = mysql.select(db_name, condition=[('plan_id', item['plan_id']), ('keyword', item['keyword']), ('date', item['date']), ('expect', item['expect'])], limit=1)
-    # filter_info = mysql.select(db_name, condition=[('plan_id', item['plan_id']), ('content', item['content']), ('date', '>', yesterday)], limit=1)
+    test_info = test_mysql.select(db_name, condition=[('plan_id', item['plan_id']), ('keyword', item['keyword']), ('date', item['date']), ('expect', item['expect'])], limit=1)
     if not info:
         # 新增
         mysql.insert(db_name, data=item)
@@ -88,6 +88,18 @@ def save_to_data(item, db_name):
         status = info['status']
         if content != item['content'] and status == 2:
             mysql.update(db_name, data=item, condition=[('plan_id', item['plan_id']), ('keyword', item['keyword']), ('date', item['date']), ('expect', item['expect'])])
+            _logger.info('INFO:  DB:%s 数据更新, 计划名:%s, 原: %s, 新: %s' % (db_name, item['plan_name'], content, item['content']))
+        else:
+            _logger.info('INFO:  DB:%s 已存在的数据, 计划名:%s' % (db_name, item['plan_name']))
+    if not test_info:
+        # 新增
+        test_mysql.insert(db_name, data=item)
+        _logger.info('INFO:  DB:%s 数据保存成功, 计划名:%s, %s' % (db_name, item['plan_name'], item['content']))
+    else:
+        content = info['content']
+        status = info['status']
+        if content != item['content'] and status == 2:
+            test_mysql.update(db_name, data=item, condition=[('plan_id', item['plan_id']), ('keyword', item['keyword']), ('date', item['date']), ('expect', item['expect'])])
             _logger.info('INFO:  DB:%s 数据更新, 计划名:%s, 原: %s, 新: %s' % (db_name, item['plan_name'], content, item['content']))
         else:
             _logger.info('INFO:  DB:%s 已存在的数据, 计划名:%s' % (db_name, item['plan_name']))

@@ -84,7 +84,7 @@ class DbClass(object):
     @property
     def yzwl(self):
         if not self.__yzwl:
-            _db_config = self.config['mysql'][1].copy()
+            _db_config = self.config['mysql'][0].copy()
             _db_config['tablepre'] = ''
             # _db_config['tablepre'] = 'zl_'
             _db_config['db_fields_cache'] = 0

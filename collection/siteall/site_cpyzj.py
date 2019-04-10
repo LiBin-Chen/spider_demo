@@ -17,8 +17,9 @@ cur_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.dirname(cur_dir))
 from packages import yzwl
 
-db = yzwl.DbSession()
+db = yzwl.DbClass()
 mysql = db.yzwl
+test_mysql = db.test_yzwl
 _logger = logging.getLogger('yzwl_spider')
 session = requests.Session()
 session.headers.update({

@@ -17,6 +17,7 @@ from packages import Util, yzwl
 session = Util.get_session()
 db = yzwl.DbClass()
 mysql = db.yzwl
+test_mysql = db.test_yzwl
 _logger = logging.getLogger('yzwl_spider')
 
 
@@ -24,6 +25,7 @@ def save_data(url, db_name, item):
     info = mysql.select(db_name, condition=[('expect', '=', item['expect'])], limit=1)
     if not info:
         mysql.insert(db_name, data=item)
+        test_mysql.insert(db_name, data=item)
         _logger.info('INFO:  DB:%s 数据保存成功, 期号%s ; URL:%s' % (db_name, item['expect'], url))
     else:
         mysql.update(db_name, condition=[('expect', '=', item['expect'])], data=item)
