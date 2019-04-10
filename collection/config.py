@@ -23,7 +23,7 @@ APP_PATH and sys.path.insert(0, APP_PATH)
 # QUEUE_HOST =
 
 # 队列主机
-AMQP_URL = 'amqp://guest:guest@127.0.0.1:5672/'   #本地测试
+AMQP_URL = 'amqp://guest:guest@127.0.0.1:5672/'  # 本地测试
 # 更新xunsearch
 PUT_XS_HQCHIP = 'put_xunsearch'
 # 更新或建立迅搜索引
@@ -56,7 +56,6 @@ QUEUE_LIMIT = 100
 get_sports_info = lambda id: DB_KEY[int(str(id)[0:2])] if int(str(id)[0:2]) in DB_KEY else None
 get_web_url = lambda id: URL_KEY[int(str(id)[0:2])] if int(str(id)[0:2]) in URL_KEY else None
 
-
 '''
 数据采集相关
 '''
@@ -68,16 +67,6 @@ USE_PROXY = True  # 是否使用代理
 '''
 DATABASES = {
     'mysql': (
-        {  # 本地测试数据库
-            'user': 'root',
-            'passwd': 'root',
-            'host': '127.0.0.1',
-            'port': 3306,
-            'charset': 'utf8',
-            'db': 'lottery_info_spider',
-            'tablepre': '',
-            'db_fields_cache': False,
-        },
         {  # 开发数据库
             'host': '192.168.2.22',
             'user': 'root',
@@ -88,6 +77,27 @@ DATABASES = {
             'tablepre': '',
             'db_fields_cache': False,
         },
+        {  # 19测试数据库
+            'host': '192.168.2.19',
+            'user': 'root',
+            'passwd': 'root',
+            'port': 3306,
+            'charset': 'utf8',
+            'db': 'lottery_info',
+            'tablepre': '',
+            'db_fields_cache': False,
+        },
+        {  # 本地测试数据库
+            'user': 'root',
+            'passwd': 'root',
+            'host': '127.0.0.1',
+            'port': 3306,
+            'charset': 'utf8',
+            'db': 'lottery_info',
+            'tablepre': '',
+            'db_fields_cache': False,
+        },
+
     ),
     'localhost': {
         # ------------- localhost 本地跑数据使用
@@ -259,12 +269,12 @@ APP_LOG = getattr(sys, '__APP_LOG__', True)
 level = logging.DEBUG if DEBUG else logging.ERROR
 LOGDIR = os.path.join(APP_ROOT, "logs")
 
-
 # 仅应用日志
 if APP_LOG:
     # 每小时一个日志
     _handler = RotatingFileHandler(
-        filename=os.path.join(LOGDIR, 'spider_' + datetime.datetime.now().strftime("%Y-%m-%d_%H") + ".log"), mode='a+', maxBytes=1024*1024*5, backupCount=20)
+        filename=os.path.join(LOGDIR, 'spider_' + datetime.datetime.now().strftime("%Y-%m-%d_%H") + ".log"), mode='a+',
+        maxBytes=1024 * 1024 * 5, backupCount=20)
     _handler.setFormatter(
         logging.Formatter(fmt='>>> %(asctime)-10s %(name)-12s %(levelname)-8s %(message)s', datefmt='%H:%M:%S'))
     LOG = logging.getLogger('yzwl_spider')
