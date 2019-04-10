@@ -5,9 +5,13 @@
 # @File    : site_cpyzj_gp.py
 # @Software: PyCharm
 # @Remarks : 彩票易中奖高频彩采集
+import os
+import sys
 import time
 import execjs
 import logging
+cur_dir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.dirname(cur_dir))
 from packages import Util, yzwl
 
 session = Util.get_session()

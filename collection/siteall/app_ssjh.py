@@ -5,11 +5,15 @@
 # @File    : app_ssjh.py
 # @Software: PyCharm
 # @Remarks : 神圣计划app
+import os
+import re
+import sys
+import time
 import hashlib
 import logging
-import re
-import time
 
+cur_dir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.dirname(cur_dir))
 # from datetime import date, timedelta
 from packages import Util, yzwl
 
