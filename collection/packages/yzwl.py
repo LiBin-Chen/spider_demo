@@ -70,7 +70,7 @@ class MySQL(object):
 
 class DbClass(object):
 
-    def __init__(self, config=None, collection=None):
+    def __init__(self, config=None, collection=None, db_name=None):
         self.__yzwl = None
         self.__local_yzwl = None
         self.__mongo = None
@@ -78,6 +78,7 @@ class DbClass(object):
         self.config = config if config else setting.DATABASES
         self.__del = []  # 原来用set,报错
         self.collection = collection
+        self.db_name = db_name  # 默认是 lottery_info 库
 
     @property
     def yzwl(self):
@@ -87,6 +88,8 @@ class DbClass(object):
             # _db_config['tablepre'] = 'zl_'
             _db_config['db_fields_cache'] = 0
             _db_config['data_type'] = 'dict'
+            if self.db_name:
+                _db_config['db'] = self.db_name
             self.__yzwl = db_mysql(**_db_config)
             if self.__yzwl not in self.__del:
                 self.__del.append(self.__yzwl)
@@ -100,6 +103,8 @@ class DbClass(object):
             # _db_config['tablepre'] = 'zl_'
             _db_config['db_fields_cache'] = 0
             _db_config['data_type'] = 'dict'
+            if self.db_name:
+                _db_config['db'] = self.db_name
             self.__local_yzwl = db_mysql(**_db_config)
             if self.__local_yzwl not in self.__del:
                 self.__del.append(self.__local_yzwl)
