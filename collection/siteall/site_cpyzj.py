@@ -235,8 +235,8 @@ def get_newest_data():
 
 
 def get_history_data():
-    begin_date = datetime.date(2018, 4, 10)
-    end_date = datetime.date(2018, 8, 1)
+    begin_date = datetime.date(2019, 3, 27)
+    end_date = datetime.date(2019, 4, 10)
     for i in range((end_date - begin_date).days + 1):
         day = begin_date + datetime.timedelta(days=i)
         date = day.strftime('%Y-%m-%d')
