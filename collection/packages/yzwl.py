@@ -73,6 +73,7 @@ class DbClass(object):
     def __init__(self, config=None, collection=None):
         self.__yzwl = None
         self.__local_yzwl = None
+        self.__test_yzwl = None
         self.__mongo = None
         self.__supplier = None
         self.config = config if config else setting.DATABASES
@@ -93,9 +94,22 @@ class DbClass(object):
         return self.__yzwl
 
     @property
+    def test_yzwl(self):
+        if not self.__test_yzwl:
+            _db_config = self.config['mysql'][1].copy()
+            _db_config['tablepre'] = ''
+            # _db_config['tablepre'] = 'zl_'
+            _db_config['db_fields_cache'] = 0
+            _db_config['data_type'] = 'dict'
+            self.__test_yzwl = db_mysql(**_db_config)
+            if self.__test_yzwl not in self.__del:
+                self.__del.append(self.__test_yzwl)
+        return self.__test_yzwl
+
+    @property
     def local_yzwl(self):
         if not self.__local_yzwl:
-            _db_config = self.config['mysql'][0].copy()
+            _db_config = self.config['mysql'][2].copy()
             _db_config['tablepre'] = ''
             # _db_config['tablepre'] = 'zl_'
             _db_config['db_fields_cache'] = 0
