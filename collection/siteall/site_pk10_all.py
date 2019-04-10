@@ -32,6 +32,8 @@ default_headers = {
 
 db = yzwl.DbClass()
 mysql = db.yzwl
+test_mysql = db.test_yzwl
+
 lock = threading.Lock()
 
 
@@ -168,6 +170,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
             info = mysql.select(db_name, condition=[('expect', '=', expect)], limit=1)
             if not info:
                 mysql.insert(db_name, data=item)
+                test_mysql.insert(db_name, data=item)
                 _logger.info('INFO:数据保存成功, 期号%s ; URL:%s' % (expect, url))
             else:
                 _logger.info('INFO:数据已存在不做重复存入, 期号: %s ; URL:%s' % (expect, url))
