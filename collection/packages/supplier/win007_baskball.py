@@ -5,10 +5,13 @@
 # @File    : win007_baskball.py
 # @Software: PyCharm
 # @Remarks :
-import random
+import os
 import re
+import sys
 import time
 import logging
+cur_dir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.dirname(cur_dir))
 from packages import Util, yzwl
 
 db = yzwl.DbClass(db_name='sports_data_center_bak')
