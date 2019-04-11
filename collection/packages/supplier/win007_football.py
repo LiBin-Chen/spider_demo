@@ -5,9 +5,13 @@
 # @File    : win007_football.py
 # @Software: PyCharm
 # @Remarks : 球探网足球信息
+import os
 import re
+import sys
 import time
 import logging
+cur_dir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.dirname(cur_dir))
 from packages import Util, yzwl
 
 session = Util.get_session('http://zq.win007.com/info/index_cn.htm')
