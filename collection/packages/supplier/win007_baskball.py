@@ -5,6 +5,7 @@
 # @File    : win007_baskball.py
 # @Software: PyCharm
 # @Remarks :
+import random
 import re
 import time
 import logging
@@ -54,7 +55,7 @@ def get_basketball_match():
                     match_type = 'CupMatch'
                 if match_type:
                     # 最新取data[3:4], 历史取data[3:]
-                    for year in data[3:]:
+                    for year in data[3:4]:
                         info_url = 'http://nba.win007.com/cn/{}.aspx?SclassID={}&matchSeason={}'.format(
                             match_type, match_id, year)
                         url_list.append(info_url)
@@ -160,6 +161,13 @@ def get_info(url, mark=0):
 
 
 def main():
+    # 使用代理。（目前代理不可用）
+    # proxy_num, proxy_list = Util.get_prolist()
+    # i = random.randint(0, proxy_num - 1)
+    # session.proxies.update({
+    #     'http': 'http://' + proxy_list[i],
+    #     'https': 'https://' + proxy_list[i]
+    # })
     url_list = get_basketball_match()
     for league_url in url_list:
         for url in league_url:

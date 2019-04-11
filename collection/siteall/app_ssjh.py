@@ -96,8 +96,8 @@ def save_to_data(item, db_name):
         test_mysql.insert(db_name, data=item)
         _logger.info('INFO:  DB:%s 数据保存成功, 计划名:%s, %s' % (db_name, item['plan_name'], item['content']))
     else:
-        content = info['content']
-        status = info['status']
+        content = test_info['content']
+        status = test_info['status']
         if content != item['content'] and status == 2:
             test_mysql.update(db_name, data=item, condition=[('plan_id', item['plan_id']), ('keyword', item['keyword']), ('date', item['date']), ('expect', item['expect'])])
             _logger.info('INFO:  DB:%s 数据更新, 计划名:%s, 原: %s, 新: %s' % (db_name, item['plan_name'], content, item['content']))
@@ -174,8 +174,6 @@ def main():
                         continue
                     elif lo_type != '其它彩种' and jh_rule in filter_dict[lo_type]:
                         continue
-                    if jh_name == '后二复试A':
-                        continue
                     if lo_type != '其它彩种':
                         filter_dict[lo_type].append(jh_rule)
                     # plan_dict = {
@@ -196,9 +194,10 @@ def main():
                     # jh_flag = data['flag']
                     detail_list = content.split('\r\n')
                     for d in detail_list:
-                        flag = re.findall(r'\d+-(\d+) ', d)
-                        if jh_name in ['福彩3D', '排列3']:
-                            flag = d.split(' ')[0]
+                        d = d.replace('  ', ' ')
+                        flag = re.findall(r'^(\d+-)?(\d+)期? ', d)
+                        # if jh_name in ['福彩3D', '排列3', '当期900注']:
+                        #     flag = d.split(' ')[0]
                         if flag and '【' in d:
                             key_list = d.split(' ')
                             if key_list[-1] == '中':
@@ -209,7 +208,7 @@ def main():
                             else:
                                 d += ' 进行中'
                                 status = 2
-                            keyword = key_list[1].replace('神圣', '云彩').replace('少女', '云彩')
+                            keyword = key_list[1].replace('神圣', '云彩').replace('少女', '云彩') if jh_name != '后二复试A' else key_list[1] + key_list[2]
                             keyword = re.findall(r'(^.*?)【', keyword)[0] if '【' in keyword else keyword
                             item = {
                                 'plan_id': jh_id,
@@ -217,7 +216,7 @@ def main():
                                 'plan_name': jh_name,
                                 'date': time.strftime('%Y-%m-%d', time.localtime()),
                                 'content': d.replace('神圣', '云彩').replace('少女', '云彩'),
-                                'expect': flag[0] if jh_name not in ['福彩3D', '排列3'] else flag,
+                                'expect': flag[0][1],  # if jh_name not in ['福彩3D', '排列3', '当期900注'] else flag,
                                 'status': status
                             }
                             save_to_data(item, 't_lottery_plan')

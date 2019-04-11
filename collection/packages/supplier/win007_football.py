@@ -17,13 +17,13 @@ _logger = logging.getLogger('yzwl_spider')
 
 
 def save_to_db(item, db_name):
-    info = mysql.select(db_name, condition=[('match_id', '=', item['match_id'])])
+    info = mysql.select(db_name, condition=[('id', '=', item['id'])])
     if not info:
         mysql.insert(db_name, data=item)
-        _logger.info('INFO:  DB:%s 数据保存成功, 比赛id %s ;' % (db_name, item['match_id']))
+        _logger.info('INFO:  DB:%s 数据保存成功, 比赛id %s ;' % (db_name, item['id']))
     else:
-        mysql.update(db_name, data=item, condition=[('match_id', '=', item['match_id'])])
-        _logger.info('INFO:  DB:%s 数据已存在, 更新成功, 比赛id %s ;' % (db_name, item['match_id']))
+        mysql.update(db_name, data=item, condition=[('id', '=', item['id'])])
+        _logger.info('INFO:  DB:%s 数据已存在, 更新成功, 比赛id %s ;' % (db_name, item['id']))
 
 
 def get_football_match():
@@ -57,7 +57,7 @@ def get_football_match():
                     match_type = 'CupMatch'
                 if match_type:
                     # 如要最新的，取data[4:5],如要历史的 取data[4:]
-                    for year in data[4:]:
+                    for year in data[4:5]:
                         info_url = 'http://zq.win007.com/cn/{}/{}/{}.html'.format(match_type, year, match_id)
                         url_list.append(info_url)
                 football_url.append(url_list)
@@ -99,13 +99,17 @@ def parse_data(data, team_dict, round_num):
             'guest_id': guest_team_id,
             'guest_ranking': guest_rank,
             'guest_logo': guest_logo,
-            'host_score': score[0],
-            'guest_score': score[1],
-            'host_half_score': half_score[0] if half_score[0] else 'NULL',
-            'guest_half_score': half_score[1] if half_score[1] else 'NULL',
             'host_red': host_red,
             'guest_red': guest_red
         }
+        if score[0] and score[0] != 'NULL':
+            item['host_score'] = score[0]
+        if score[1] and score[1] != 'NULL':
+            item['guest_score'] = score[1]
+        if half_score[0] and half_score[0] != 'NULL':
+            item['host_half_score'] = half_score[0]
+        if half_score[1] and half_score[1] != 'NULL':
+            item['guest_half_score'] = half_score[1]
         save_to_db(item, 't_football_match')
     except Exception as e:
         print("error:" + str(e))
