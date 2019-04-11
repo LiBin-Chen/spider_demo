@@ -42,7 +42,9 @@ lottery_id = {
     '广西十一选五': 112,
     '辽宁十一选五': 53,
     '福彩3D': 11,
-    '排列3': 4
+    '排列3': 4,
+    '新疆时时彩': 66,
+    '上海快三': 80
 }
 rules = {
     1: ["一星", 1],
@@ -153,13 +155,13 @@ def main():
     password = 'wu6619'
     u_id, u_key = login(username, password)
     jh_list = get_jhid_list(u_id, u_key)
-    lo_list = ['重庆时时彩', '天津时时彩', '北京PK10', '其它彩种']
+    lo_list = ['重庆时时彩', '新疆时时彩', '北京PK10', '其它彩种']
     other_list = ['江苏快3', '吉林快三', '安徽快三', '广西快三', '北京快三', '湖北快三',
-                  '广东十一选五', '广西十一选五', '辽宁十一选五', '福彩3D', '排列3']
+                  '广东十一选五', '广西十一选五', '辽宁十一选五', '福彩3D', '排列3', '上海快三']
     while 1:
         filter_dict = {
             '重庆时时彩': [],
-            '天津时时彩': [],
+            '新疆时时彩': [],
             '北京PK10': [],
         }
         for jh in jh_list:
@@ -195,7 +197,7 @@ def main():
                     detail_list = content.split('\r\n')
                     for d in detail_list:
                         d = d.replace('  ', ' ')
-                        flag = re.findall(r'^(\d+-)?(\d+)期? ', d)
+                        flag = re.findall(r'^(\d+-)?(\d+)[期|:]? ', d)
                         # if jh_name in ['福彩3D', '排列3', '当期900注']:
                         #     flag = d.split(' ')[0]
                         if flag and '【' in d:

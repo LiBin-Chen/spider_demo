@@ -2,7 +2,7 @@
 # @Time    : 2019/4/10 16:12
 # @Author  : TianZe
 # @Email   : tianze@86cp.com
-# @File    : win007_baskball.py
+# @File    : win007_basketball.py
 # @Software: PyCharm
 # @Remarks :
 import os
