@@ -121,6 +121,7 @@ def get_lottery_list():
         # '山西泳坛夺金': 0,
         '北京快乐8': 'game_bjklb_result',
         '北京Pk10': 'game_pk10_result',
+        '北京快中彩': 'game_bjkzc_result',
         # '河南泳坛夺金': 'game_hnsby_result',
         # '河南幸运彩': 0,
         '上海时时乐': 'game_shssl_result',
