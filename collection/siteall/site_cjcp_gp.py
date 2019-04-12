@@ -157,7 +157,9 @@ def get_lottery_list():
 
 
 def main():
-    get_lottery_list()
+    while 1:
+        get_lottery_list()
+        time.sleep(120)
 
 
 if __name__ == '__main__':
