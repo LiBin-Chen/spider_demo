@@ -5,10 +5,14 @@
 # @File    : site_cjcp_gp.py
 # @Software: PyCharm
 # @Remarks :
+import os
 import re
+import sys
 import time
 import logging
 from lxml import etree
+cur_dir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.dirname(cur_dir))
 from packages import Util, yzwl
 
 session = Util.get_session()
