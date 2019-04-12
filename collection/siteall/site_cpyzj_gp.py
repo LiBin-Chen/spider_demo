@@ -28,7 +28,7 @@ def save_data(url, db_name, item):
         test_mysql.insert(db_name, data=item)
         _logger.info('INFO:  DB:%s 数据保存成功, 期号%s ; URL:%s' % (db_name, item['expect'], url))
     else:
-        mysql.update(db_name, condition=[('expect', '=', item['expect'])], data=item)
+        # mysql.update(db_name, condition=[('expect', '=', item['expect'])], data=item)
         _logger.info('INFO:  DB:%s 数据已存在, 期号: %s' % (db_name, item['expect']))
 
 

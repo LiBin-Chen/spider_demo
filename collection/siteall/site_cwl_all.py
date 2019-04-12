@@ -300,6 +300,8 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             open_blue_code = info['blue']
             open_date = info['date']
             content = info['content']
+            if not content:
+                return
             cp_id = open_red_code.replace(',', '') + open_blue_code
             cp_sn = '14' + str(expect)
 
