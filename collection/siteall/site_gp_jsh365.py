@@ -101,7 +101,7 @@ def fetch_data(url, proxy=None, headers=None, **kwargs):
 
         # sess = requests.Session()
         # _logger.info('INFO:使用代理, %s ;' % (proxies))
-        rs = requests.get(url, headers=default_headers, cookies=_cookies, timeout=30, proxies=proxies)
+        rs = requests.get(url, headers=default_headers, cookies=_cookies, timeout=30)
         # print('rs', rs.text)
     except Exception as e:
         # 将进行重试，可忽略
@@ -216,6 +216,9 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         # expect = str(expect).split('.')[0]
         expect = util.cleartext(use_date, '-') + expect_xpath[1] if lottery_type == 'HIGH_RATE' else util.cleartext(
             expect_xpath[0], '期')
+        if 'k3' in db_name or 'tjklsf' in db_name:
+            expect = util.cleartext(use_date, '-') + '0' + expect_xpath[1] if lottery_type == 'HIGH_RATE' else util.cleartext(
+                expect_xpath[0], '期')
         open_code = ','.join(code_list)
         cp_code = ''.join(code_list)
         if lottery_type == 'HIGH_RATE':
@@ -236,7 +239,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         }
         # print('item', item)
         # print('*' * 100)
-        info = mysql.select(db_name, condition=[('cp_id', '=', cp_id), ('cp_sn', '=', cp_sn)], limit=1)
+        info = mysql.select(db_name, condition=[('expect', '=', expect)], limit=1)
         if not info:
             mysql.insert(db_name, data=item)
             test_mysql.insert(db_name, data=item)
@@ -422,8 +425,8 @@ def main(**kwargs):
             open_time = open_time.strftime('%Y-%m-%d') if open_time else None
             for str_time in dlist:
                 new_url = abbreviation + '/{0}'.format(str_time)
-                url = url.replace(abbreviation, new_url)
-                result = fetch_data(url=jsh_open_url, proxy=proxy, headers=default_headers, **kwargs)
+                url = jsh_open_url.replace(abbreviation, new_url)
+                result = fetch_data(url=url, proxy=proxy, headers=default_headers, **kwargs)
 
 
 def cmd():
@@ -435,7 +438,7 @@ def cmd():
     parser.add_argument('-p', '--past', help=u'默认最新一期数据',
                         dest='past', action='store', default=0)
     parser.add_argument('-sd', '--sd', help=u'从指定日期开始下载数据',
-                        dest='sd', action='store', default='03/17/2019')
+                        dest='sd', action='store', default='04/12/2019')
     parser.add_argument('-ed', '--ed', help=u'从指定日期结束下载数据',
                         dest='ed', action='store', default=None)
 

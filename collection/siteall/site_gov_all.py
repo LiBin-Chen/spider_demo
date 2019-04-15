@@ -236,6 +236,9 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             url = url[0]
         res = requests.get(url=url, headers=default_headers, params=parm_data, proxies=proxies)
         res.encoding = res.apparent_encoding
+        if res.status_code != 200:
+            time.sleep(5)
+            return
     except requests.RequestException as e:
         print('从接口获取数据失败')
         return -1

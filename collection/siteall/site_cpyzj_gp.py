@@ -74,10 +74,6 @@ def get_newest_data(url, **kwargs):
     if data:
         try:
             issue = data['data']['preDrawIssue']
-            if lo_id in [79, 73, 81, 83, 82, 78, 77, 74, 84, 65]:
-                issue_list = list(issue)
-                del(issue_list[-3])
-                issue = ''.join(issue_list)
             open_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(data['data']['preDrawTime'] / 1000))
             open_code = data['data']['preDrawCode']
             cp_id = open_code.replace(',', '')

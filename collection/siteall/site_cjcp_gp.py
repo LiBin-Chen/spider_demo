@@ -38,13 +38,9 @@ def fetch_data(url, db_name):
     if r.status_code == 200:
         content = r.content.decode('utf8')
         selector = etree.HTML(content)
-        title = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/h1/em[1]/@title')[0]
+        # title = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/h1/em[1]/@title')[0]
         expect = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/h1/em[2]/text()')[0]
         expect = re.findall(r'第(\d+)期', expect)[0]
-        if '快3' in title or title in ['天津快乐十分']:
-            expect_list = list(expect)
-            del (expect_list[-3])
-            expect = ''.join(expect_list)
         date = selector.xpath('/html/body/div[1]/article/div/ul/li[2]/text()')[0]
         open_date = re.findall(r'开奖时间：(.*)$', date)[0]
         codes = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/p/span/text()')
