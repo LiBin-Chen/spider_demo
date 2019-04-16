@@ -55,6 +55,49 @@ def get_open_data(url, post_data):
         _logger.error('request error: %s' % Util.traceback_info(e))
 
 
+def get_history_data(**kwargs):
+    url = 'https://www.cpyzj.com/req/cpyzj/lotHistory/getLotHistorys'
+    lot_code = kwargs.get('lot_code')
+    db_name = kwargs.get('db_name')
+    start_date = kwargs.get('sd')
+    dlist = Util.specified_date(start_date=start_date)
+    for date in dlist:
+        time_stamp = int(time.time() * 1000)
+        key = 'lotCode={}&lotGroupCode={}&timestamp={}&pageNo=1&pageSize=100&queryPreDrawTime={}&token=noget&' \
+              'key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(lot_code, 0, time_stamp, date)
+        sign = get_sign(key)
+        post_data = {
+            'token': 'noget',
+            'timestamp': time_stamp,
+            'lotGroupCode': 0,
+            'lotCode': lot_code,
+            'queryPreDrawTime': date,
+            'pageNo': 1,
+            'pageSize': 100,
+            'sign': sign.upper()
+        }
+        r = session.post(url, post_data)
+        if r.status_code == 200:
+            data = r.json()
+            for d in data['data']:
+                expect = d['preDrawIssue']
+                open_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(d['preDrawTime'] / 1000))
+                open_code = d['preDrawCode']
+                cp_id = open_code.replace(',', '')
+                open_url = 'https://www.cpyzj.com/open-awards-detail.html?lotCode={}&lotGroupCode=1'.format(lot_code)
+                item = {
+                    'cp_id': cp_id,
+                    'cp_sn': '18' + expect,
+                    'expect': expect,
+                    'open_time': open_time,
+                    'open_code': open_code,
+                    'open_url': open_url,
+                    'create_time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                }
+                save_data(url, db_name, item)
+            time.sleep(1)
+
+
 def get_newest_data(url, **kwargs):
     lot_code = kwargs.get('lot_code')
     db_name = kwargs.get('db_name')

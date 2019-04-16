@@ -390,7 +390,7 @@ def main(**kwargs):
         abbreviation = _data['key_python']
         lottery_name = _data['lottery_name']
         if lottery_result in ['game_pk10_result', 'game_cqssc_result', 'game_tjssc_result', 'game_jsks_result',
-                              'game_xjssc_result', 'game_gdklsf_result']:
+                              'game_xjssc_result', 'game_gdklsf_result', 'game_gxklsf_result']:
             continue
         kwargs = {
             'db_name': lottery_result,
