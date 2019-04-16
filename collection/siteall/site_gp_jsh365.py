@@ -216,7 +216,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         # expect = str(expect).split('.')[0]
         expect = util.cleartext(use_date, '-') + expect_xpath[1] if lottery_type == 'HIGH_RATE' else util.cleartext(
             expect_xpath[0], '期')
-        if 'k3' in db_name or 'tjklsf' in db_name:
+        if 'ks_result' in db_name or 'tjklsf' in db_name:
             expect = util.cleartext(use_date, '-') + '0' + expect_xpath[1] if lottery_type == 'HIGH_RATE' else util.cleartext(
                 expect_xpath[0], '期')
         open_code = ','.join(code_list)
@@ -245,8 +245,8 @@ def _parse_detail_data(data=None, url=None, **kwargs):
             test_mysql.insert(db_name, data=item)
             _logger.info('INFO: 数据库： %s 数据保存成功, 期号 %s ; URL:%s' % (db_name, expect, url))
         else:
-            mysql.update(db_name, condition={'id': info['id']}, data=item)
-            _logger.info('INFO: 数据库： %s 数据更新成功, 期号 %s ; URL:%s' % (db_name, expect, url))
+            # mysql.update(db_name, condition={'id': info['id']}, data=item)
+            _logger.info('INFO: 数据库： %s 数据已存在, 期号 %s ; URL:%s' % (db_name, expect, url))
 
 
 def fetch_search_data(keyword=None, id=None, data_dict=None, headers=None, proxy=None, **kwargs):
