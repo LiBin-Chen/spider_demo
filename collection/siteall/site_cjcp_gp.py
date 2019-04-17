@@ -33,30 +33,63 @@ def save_to_db(item, db_name):
         _logger.info('INFO:  DB:%s 数据已存在, 期号: %s' % (db_name, item['expect']))
 
 
+def fetch_history_data():
+    for i in range(1, 5):
+        url = 'https://m.cjcp.com.cn/kaijiang/qhk3_{}/'.format(i)
+        r = session.get(url)
+        if r.status_code == 200:
+            content = r.content.decode('utf8')
+            selector = etree.HTML(content)
+            data = selector.xpath('//*[@id="content"]/li')
+            for d in data:
+                expect = d.xpath('./div/h1/em[1]/text()')[0]
+                expect = re.findall(r'第(\d+)期', expect)[0]
+                date = d.xpath('./div/h1/em[2]/text()')[0]
+                open_date = re.findall(r'^(.*:00)', date)[0]
+                codes = d.xpath('./div/p/span/text()')
+                open_code = ','.join(codes)
+                cp_id = ''.join(codes)
+                open_url = url
+                item = {
+                    'cp_id': cp_id,
+                    'cp_sn': '25' + expect,
+                    'expect': expect,
+                    'open_time': open_date,
+                    'open_code': open_code,
+                    'open_url': open_url,
+                    'create_time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                }
+                save_to_db(item, 'game_qhks_result')
+
+
 def fetch_data(url, db_name):
-    r = session.get(url)
-    if r.status_code == 200:
-        content = r.content.decode('utf8')
-        selector = etree.HTML(content)
-        # title = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/h1/em[1]/@title')[0]
-        expect = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/h1/em[2]/text()')[0]
-        expect = re.findall(r'第(\d+)期', expect)[0]
-        date = selector.xpath('/html/body/div[1]/article/div/ul/li[2]/text()')[0]
-        open_date = re.findall(r'开奖时间：(.*)$', date)[0]
-        codes = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/p/span/text()')
-        open_code = ','.join(codes)
-        cp_id = ''.join(codes)
-        open_url = url
-        item = {
-            'cp_id': cp_id,
-            'cp_sn': '25' + expect,
-            'expect': expect,
-            'open_time': open_date,
-            'open_code': open_code,
-            'open_url': open_url,
-            'create_time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        }
-        save_to_db(item, db_name)
+    try:
+        r = session.get(url)
+        if r.status_code == 200:
+            content = r.content.decode('utf8')
+            selector = etree.HTML(content)
+            # title = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/h1/em[1]/@title')[0]
+            expect = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/h1/em[2]/text()')[0]
+            expect = re.findall(r'第(\d+)期', expect)[0]
+            date = selector.xpath('/html/body/div[1]/article/div/ul/li[2]/text()')[0]
+            open_date = re.findall(r'开奖时间：(.*)$', date)[0]
+            codes = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/p/span/text()')
+            open_code = ','.join(codes)
+            cp_id = ''.join(codes)
+            open_url = url
+            item = {
+                'cp_id': cp_id,
+                'cp_sn': '25' + expect,
+                'expect': expect,
+                'open_time': open_date,
+                'open_code': open_code,
+                'open_url': open_url,
+                'create_time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            }
+            save_to_db(item, db_name)
+    except Exception as e:
+        logging.error('{} fetch data error: {}'.format(__name__, e))
+        time.sleep(3)
 
 
 def get_lottery_list():
@@ -125,32 +158,36 @@ def get_lottery_list():
         # '湖南幸运赛车': 'game_hnxysc_result',
         # '新疆喜乐彩': 'game_xjxlc_result'
     }
-    r = session.get('https://m.cjcp.com.cn/kaijiang/gaopin/')
-    if r.status_code == 200:
-        content = r.content.decode('utf8')
-        selector = etree.HTML(content)
-        # 11x5
-        x5_list = selector.xpath('//*[@id="syx5start"]/ul/li/a/@href')
-        x5_name_list = selector.xpath('//*[@id="syx5start"]/ul/li/a/@title')
-        # k3
-        k3_list = selector.xpath('//*[@id="ksstart"]/ul/li/a/@href')
-        k3_name_list = selector.xpath('//*[@id="ksstart"]/ul/li/a/@title')
-        # klsf
-        klsf_list = selector.xpath('//*[@id="klsfstart"]/ul/li/a/@href')
-        klsf_name_list = selector.xpath('//*[@id="klsfstart"]/ul/li/a/@title')
-        # others
-        other_list = selector.xpath('//*[@id="gpstart"]/div/div/a/@href')
-        other_name_list = selector.xpath('//*[@id="gpstart"]/div/div/a/h1/span[1]/@title')
+    try:
+        r = session.get('https://m.cjcp.com.cn/kaijiang/gaopin/')
+        if r.status_code == 200:
+            content = r.content.decode('utf8')
+            selector = etree.HTML(content)
+            # 11x5
+            x5_list = selector.xpath('//*[@id="syx5start"]/ul/li/a/@href')
+            x5_name_list = selector.xpath('//*[@id="syx5start"]/ul/li/a/@title')
+            # k3
+            k3_list = selector.xpath('//*[@id="ksstart"]/ul/li/a/@href')
+            k3_name_list = selector.xpath('//*[@id="ksstart"]/ul/li/a/@title')
+            # klsf
+            klsf_list = selector.xpath('//*[@id="klsfstart"]/ul/li/a/@href')
+            klsf_name_list = selector.xpath('//*[@id="klsfstart"]/ul/li/a/@title')
+            # others
+            other_list = selector.xpath('//*[@id="gpstart"]/div/div/a/@href')
+            other_name_list = selector.xpath('//*[@id="gpstart"]/div/div/a/h1/span[1]/@title')
 
-        all_url_list = x5_list + k3_list + klsf_list + other_list
-        all_name_list = x5_name_list + k3_name_list + klsf_name_list + other_name_list
-        for url in all_url_list:
-            f_url = 'https://m.cjcp.com.cn' + url
-            name = all_name_list[all_url_list.index(url)]
-            db_name = lo_dict.get(name)
-            if db_name:
-                fetch_data(f_url, db_name)
-                time.sleep(0.5)
+            all_url_list = x5_list + k3_list + klsf_list + other_list
+            all_name_list = x5_name_list + k3_name_list + klsf_name_list + other_name_list
+            for url in all_url_list:
+                f_url = 'https://m.cjcp.com.cn' + url
+                name = all_name_list[all_url_list.index(url)]
+                db_name = lo_dict.get(name)
+                if db_name:
+                    fetch_data(f_url, db_name)
+                    time.sleep(0.5)
+    except Exception as e:
+        logging.error('{} error: {}'.format(__name__, e))
+        time.sleep(3)
 
 
 def main():
