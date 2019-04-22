@@ -410,10 +410,8 @@ def main():
                            default=config.QUEUE_LIMIT, type=int)
     act_group.add_argument('-o', '--optype', help='指定队列进行更新，不选默认为所有预更新队列', dest='optype',
                            action='store_const', const='cp', default=2)
-
     search_group = parser.add_argument_group(title='更新选择项')
     search_group.add_argument('-M', '--max-depth', help='指定搜索最大深度，默认为 10', default=10, type=int)
-
     notice_group = parser.add_argument_group(title='提醒选择项')
     notice_group.add_argument('--notice', dest='notice', help='更新异常提醒进程(守护进程)，\
         用于监控更新异常情况，默认为False，选择则为True', default=False)
