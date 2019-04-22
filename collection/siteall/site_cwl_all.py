@@ -195,6 +195,30 @@ def fetch_search_data(keyword=None, id=None, data_dict=None, headers=None, proxy
     return 200
 
 
+def get_3d_test_code(expect):
+    """
+        从360彩票获取福彩3D试机号
+    :param expect: 期号
+    :return: 试机号
+    """
+    url = 'https://chart.cp.360.cn/kaijiang/sd?lotId=210053&chartType=undefined&spanType=3&span={}_{}'.format(expect,
+                                                                                                              expect)
+    session = requests.Session()
+    session.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
+    })
+    r = session.get(url)
+    if r.status_code == 200:
+        content = r.content.decode('gbk')
+        selector = etree.HTML(content)
+        data = selector.xpath('//*[@id="data-tab"]/tr[1]')
+        for d in data:
+            shijihao = d.xpath('./td[4]/text()')
+            test_code = ','.join(list(shijihao[0][:3])) if shijihao else ''
+            return test_code
+    return ''
+
+
 def fetch_search_list(url, id=None, headers=None, proxy=None, **kwargs):
     '''
     抓取搜索列表数据
@@ -212,140 +236,178 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
     '''
     从接口获取数据
     '''
-    db_name = kwargs.get('db_name', '')
-    if not db_name:
-        return
-    proxies = kwargs.get('proxies')
-    if proxies is None and proxy:
-        i = random.randint(0, proxy[0] - 1)
-        proxies = {
-            'http': 'http://' + proxy[1][i],
-            'https': 'https://' + proxy[1][i]
-        }
-
-    if not url:
-        return None
-    parm_data = {
-    }
     try:
-        proxies = None
-        if isinstance(url, tuple):
-            url = url[0]
-        res = requests.get(url=url, headers=default_headers, params=parm_data, proxies=proxies)
-        res.encoding = res.apparent_encoding
-    except requests.RequestException as e:
-        print('从接口获取数据失败')
-        return -1
-    data = res.json()
-    result = data['result']
-    item_dict = {
+        db_name = kwargs.get('db_name', '')
+        if not db_name:
+            return
+        proxies = kwargs.get('proxies')
+        if proxies is None and proxy:
+            i = random.randint(0, proxy[0] - 1)
+            proxies = {
+                'http': 'http://' + proxy[1][i],
+                'https': 'https://' + proxy[1][i]
+            }
 
-    }
-
-    cp_genre = kwargs.get('genre')
-    if cp_genre is '1':
-        data_item = {"rolling": "0", "bonusSituationDtoList": [
-            {"winningConditions": "6+1", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "一等奖"},
-            {"winningConditions": "6+0", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "二等奖"},
-            {"winningConditions": "5+1", "numberOfWinners": "0", "singleNoteBonus": "3000", "prize": "三等奖"},
-            {"winningConditions": "5+0,4+1", "numberOfWinners": "0", "singleNoteBonus": "200", "prize": "四等奖"},
-            {"winningConditions": "4+0,3+1", "numberOfWinners": "0", "singleNoteBonus": "10", "prize": "五等奖"},
-            {"winningConditions": "2+1,1+1,0+1", "numberOfWinners": "0", "singleNoteBonus": "5", "prize": "六等奖"}
-        ], "nationalSales": "0", "currentAward": "0"}
-    elif cp_genre is '2':
-        data_item = {"rolling": "0", "bonusSituationDtoList": [
-            {"winningConditions": "与开奖号相同且顺序一致", "numberOfWinners": "0", "singleNoteBonus": "1040", "prize": "直选"},
-            {"winningConditions": "与开奖号相同，顺序不限", "numberOfWinners": "0", "singleNoteBonus": "346", "prize": "组三"},
-            {"winningConditions": "与开奖号相同，顺序不限", "numberOfWinners": "0", "singleNoteBonus": "173", "prize": "组六"},
-        ], "nationalSales": "0", "currentAward": "0"}
-    else:
-        data_item = {"rolling": "0", "bonusSituationDtoList": [
-            {"winningConditions": "7+0", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "一等奖"},
-            {"winningConditions": "6+1", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "二等奖"},
-            {"winningConditions": "6+0", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "三等奖"},
-            {"winningConditions": "5+1", "numberOfWinners": "0", "singleNoteBonus": "200", "prize": "四等奖"},
-            {"winningConditions": "5+0", "numberOfWinners": "0", "singleNoteBonus": "50", "prize": "五等奖"},
-            {"winningConditions": "4+1", "numberOfWinners": "0", "singleNoteBonus": "10", "prize": "六等奖"},
-            {"winningConditions": "4+0", "numberOfWinners": "0", "singleNoteBonus": "5", "prize": "七等奖"},
-        ], "nationalSales": "0", "currentAward": "0"}
-    index_url = 'http://www.cwl.gov.cn'
-    for info in result:
-        expect = info['code']
-        open_red_code = info['red']
-        open_blue_code = info['blue']
-        open_date = info['date']
-        content = info['content']
-        cp_id = open_red_code.replace(',', '') + open_blue_code
-        cp_sn = '14' + str(expect)
-
-        details_link = index_url + info['detailsLink']  # http://www.cwl.gov.cn/c/2019-03-14/450353.shtml
-        video_link = index_url + info['videoLink']
-        prizegrades = info['prizegrades']
-        bonusSituationDtoList = data_item['bonusSituationDtoList']
-        data_item['rolling'] = util.modify_unit(info['poolmoney'])
-        data_item['nationalSales'] = util.modify_unit(info['sales'])
-
-        bonusSituationDtoList[0]['numberOfWinners'] = prizegrades[0]['typenum']
-        bonusSituationDtoList[0]['singleNoteBonus'] = prizegrades[0]['typemoney']
-
-        bonusSituationDtoList[1]['numberOfWinners'] = prizegrades[1]['typenum']
-        bonusSituationDtoList[1]['singleNoteBonus'] = prizegrades[1]['typemoney']
-
-        bonusSituationDtoList[2]['numberOfWinners'] = prizegrades[2]['typenum']
-        bonusSituationDtoList[2]['singleNoteBonus'] = prizegrades[2]['typemoney']
-
-        open_time = open_date.split('(')[0] + ' 21:15:00'
-        open_code = open_red_code + open_blue_code  # 3d
-
-        if cp_genre in ['1', '3']:
-            open_code = open_red_code + '+' + open_blue_code  # ssq
-            bonusSituationDtoList[3]['numberOfWinners'] = prizegrades[3]['typenum']
-            bonusSituationDtoList[3]['singleNoteBonus'] = prizegrades[3]['typemoney']
-
-            bonusSituationDtoList[4]['numberOfWinners'] = prizegrades[4]['typenum']
-            bonusSituationDtoList[4]['singleNoteBonus'] = prizegrades[4]['typemoney']
-
-            bonusSituationDtoList[5]['numberOfWinners'] = prizegrades[5]['typenum']
-            bonusSituationDtoList[5]['singleNoteBonus'] = prizegrades[5]['typemoney']
-
-            if cp_genre in ['3']:
-                open_code = open_red_code + '+' + open_blue_code  # qlc
-                bonusSituationDtoList[5]['numberOfWinners'] = prizegrades[6]['typenum']
-                bonusSituationDtoList[5]['singleNoteBonus'] = prizegrades[6]['typemoney']
-        count = 0
-        for prize in bonusSituationDtoList:
-            if cp_genre != '2':
-
-                count += util.number_format(prize['numberOfWinners'], places=0) * util.number_format(
-                    prize['singleNoteBonus'], places=0)
-            else:
-                count += util.number_format(
-                    prize['singleNoteBonus'], places=0)
-
-        data_item['currentAward'] = util.modify_unit(count)
-
-        item = {
-            'cp_id': cp_id,
-            'cp_sn': cp_sn,
-            'expect': expect,
-            'open_time': open_time,
-            'open_code': open_code,
-            'open_date': open_date,
-            'open_url': '',
-            'open_details_url': details_link,
-            'details_link': details_link,
-            'open_video_url': video_link,
-            'open_content': content,
-            'open_result': json.dumps(data_item, ensure_ascii=True),
-            'create_time': util.date()
+        if not url:
+            return None
+        parm_data = {
         }
-        # print('item', item)
         try:
-            sign = kwargs.get('sign', '')
-            save_data(url, db_name, item, sign)
-        except Exception as e:
-            _logger.exception('mysql异常： %s' % util.traceback_info(e))
-    return data
+            proxies = None
+            if isinstance(url, tuple):
+                url = url[0]
+            res = requests.get(url=url, headers=default_headers, params=parm_data, proxies=proxies)
+            res.encoding = res.apparent_encoding
+        except requests.RequestException as e:
+            print('从接口获取数据失败')
+            return -1
+        data = res.json()
+        result = data['result']
+        item_dict = {
+
+        }
+
+        cp_genre = kwargs.get('genre')
+        if cp_genre is '1':
+            data_item = {"rolling": "0", "bonusSituationDtoList": [
+                {"winningConditions": "6+1", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "一等奖"},
+                {"winningConditions": "6+0", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "二等奖"},
+                {"winningConditions": "5+1", "numberOfWinners": "0", "singleNoteBonus": "3000", "prize": "三等奖"},
+                {"winningConditions": "5+0,4+1", "numberOfWinners": "0", "singleNoteBonus": "200", "prize": "四等奖"},
+                {"winningConditions": "4+0,3+1", "numberOfWinners": "0", "singleNoteBonus": "10", "prize": "五等奖"},
+                {"winningConditions": "2+1,1+1,0+1", "numberOfWinners": "0", "singleNoteBonus": "5", "prize": "六等奖"}
+            ], "nationalSales": "0", "currentAward": "0"}
+        elif cp_genre is '2':
+            data_item = {"rolling": "0", "bonusSituationDtoList": [
+                {"winningConditions": "与开奖号相同且顺序一致", "numberOfWinners": "0", "singleNoteBonus": "1040", "prize": "直选"},
+                {"winningConditions": "与开奖号相同，顺序不限", "numberOfWinners": "0", "singleNoteBonus": "346", "prize": "组三"},
+                {"winningConditions": "与开奖号相同，顺序不限", "numberOfWinners": "0", "singleNoteBonus": "173", "prize": "组六"},
+            ], "nationalSales": "0", "currentAward": "0"}
+        else:
+            data_item = {"rolling": "0", "bonusSituationDtoList": [
+                {"winningConditions": "7+0", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "一等奖"},
+                {"winningConditions": "6+1", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "二等奖"},
+                {"winningConditions": "6+0", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "三等奖"},
+                {"winningConditions": "5+1", "numberOfWinners": "0", "singleNoteBonus": "200", "prize": "四等奖"},
+                {"winningConditions": "5+0", "numberOfWinners": "0", "singleNoteBonus": "50", "prize": "五等奖"},
+                {"winningConditions": "4+1", "numberOfWinners": "0", "singleNoteBonus": "10", "prize": "六等奖"},
+                {"winningConditions": "4+0", "numberOfWinners": "0", "singleNoteBonus": "5", "prize": "七等奖"},
+            ], "nationalSales": "0", "currentAward": "0"}
+        index_url = 'http://www.cwl.gov.cn'
+        for info in result:
+            expect = info['code']
+            open_red_code = info['red']
+            open_blue_code = info['blue']
+            open_date = info['date']
+            content = info['content']
+            if not content and cp_genre != '2':
+                return
+            cp_id = open_red_code.replace(',', '') + open_blue_code
+            cp_sn = '14' + str(expect)
+
+            details_link = index_url + info['detailsLink']  # http://www.cwl.gov.cn/c/2019-03-14/450353.shtml
+            video_link = index_url + info['videoLink']
+            prizegrades = info['prizegrades']
+            bonusSituationDtoList = data_item['bonusSituationDtoList']
+            data_item['rolling'] = util.modify_unit(info['poolmoney'])
+            data_item['nationalSales'] = util.modify_unit(info['sales'])
+
+            bonusSituationDtoList[0]['numberOfWinners'] = prizegrades[0]['typenum']
+            bonusSituationDtoList[0]['singleNoteBonus'] = prizegrades[0]['typemoney']
+
+            bonusSituationDtoList[1]['numberOfWinners'] = prizegrades[1]['typenum']
+            bonusSituationDtoList[1]['singleNoteBonus'] = prizegrades[1]['typemoney']
+
+            bonusSituationDtoList[2]['numberOfWinners'] = prizegrades[2]['typenum']
+            bonusSituationDtoList[2]['singleNoteBonus'] = prizegrades[2]['typemoney']
+
+            open_time = open_date.split('(')[0] + ' 21:15:00'
+            open_code = open_red_code + open_blue_code  # 3d
+
+            if cp_genre in ['1', '3']:
+                open_code = open_red_code + '+' + open_blue_code  # ssq
+                bonusSituationDtoList[3]['numberOfWinners'] = prizegrades[3]['typenum']
+                bonusSituationDtoList[3]['singleNoteBonus'] = prizegrades[3]['typemoney']
+
+                bonusSituationDtoList[4]['numberOfWinners'] = prizegrades[4]['typenum']
+                bonusSituationDtoList[4]['singleNoteBonus'] = prizegrades[4]['typemoney']
+
+                bonusSituationDtoList[5]['numberOfWinners'] = prizegrades[5]['typenum']
+                bonusSituationDtoList[5]['singleNoteBonus'] = prizegrades[5]['typemoney']
+
+                if cp_genre in ['3']:
+                    open_code = open_red_code + '+' + open_blue_code  # qlc
+                    bonusSituationDtoList[5]['numberOfWinners'] = prizegrades[6]['typenum']
+                    bonusSituationDtoList[5]['singleNoteBonus'] = prizegrades[6]['typemoney']
+            count = 0
+            for prize in bonusSituationDtoList:
+                if cp_genre != '2':
+
+                    count += util.number_format(prize['numberOfWinners'], places=0) * util.number_format(
+                        prize['singleNoteBonus'], places=0)
+                else:
+                    count += util.number_format(
+                        prize['singleNoteBonus'], places=0)
+
+            data_item['currentAward'] = util.modify_unit(count)
+            if cp_genre in ['1', '3']:
+                item = {
+                    'cp_id': cp_id,
+                    'cp_sn': cp_sn,
+                    'expect': expect,
+                    'open_time': open_time,
+                    'open_code': open_code,
+                    'open_date': open_date,
+                    'open_url': '',
+                    'open_details_url': details_link,
+                    'details_link': details_link,
+                    'open_video_url': video_link,
+                    'open_content': content,
+                    'open_result': json.dumps(data_item, ensure_ascii=True),
+                    'create_time': util.date()
+                }
+                try:
+                    sign = kwargs.get('sign', '')
+                    save_data(url, db_name, item, sign)
+                except Exception as e:
+                    _logger.exception('mysql异常： %s' % util.traceback_info(e))
+            else:
+                # 福彩3d，试机号从360彩票网站获取
+                test_code = get_3d_test_code(expect)
+                item = {
+                    'cp_id': cp_id,
+                    'cp_sn': cp_sn,
+                    'expect': expect,
+                    'open_time': open_time,
+                    'open_code': open_code,
+                    'test_code': test_code,
+                    'open_date': open_date,
+                    'open_url': '',
+                    'open_details_url': details_link,
+                    'details_link': details_link,
+                    'open_video_url': video_link,
+                    'open_content': content,
+                    'open_result': json.dumps(data_item, ensure_ascii=True),
+                    'create_time': util.date()
+                }
+            # print('item', item)
+                try:
+                    if item['test_code']:
+                        sign = kwargs.get('sign', '')
+                        save_data(url, db_name, item, sign)
+                    else:
+                        _logger.info('福彩3D试机号结果未获取，5分钟后重试一次')
+                        time.sleep(300)
+                        item['test_code'] = get_3d_test_code(item['expect'])
+                        if item['test_code']:
+                            save_data(url, db_name, item, 1)
+                        else:
+                            sys.exit()
+                except Exception as e:
+                    _logger.exception('mysql异常： %s' % util.traceback_info(e))
+        return data
+    except Exception as e:
+        _logger.error('error: %s' % util.traceback_info(e))
 
 
 def fetch_update_data(url=None, id=None, **kwargs):

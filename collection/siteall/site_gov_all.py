@@ -238,6 +238,9 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             url = url[0]
         res = requests.get(url=url, headers=default_headers, params=parm_data, proxies=proxies)
         res.encoding = res.apparent_encoding
+        if res.status_code != 200:
+            time.sleep(5)
+            return
     except requests.RequestException as e:
         print('从接口获取数据失败')
         return -1
@@ -359,6 +362,8 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
         details = result[0]['details']
 
     open_code = lottery['number'].replace(' ', ',').replace('-', '+')
+    if cp_genre == '9' and '+' in open_code:
+        sys.exit()
     expect = lottery['term']
     open_time = lottery['fTime'].split(' ')[0] + ' 20:30:00'
     open_date = lottery['openTime_fmt']
@@ -399,11 +404,11 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             data_dict = fetch_update_data(expect)
             try:
                 for i in range(len(matchResults)):
-                    matchResults[i]['homeTeamView'] = data_dict[i][0]
-                    matchResults[i]['awayTeamView'] = data_dict[i][1]
-                    matchResults[i]['score'] = data_dict[i][2]
+                    match_results[i]['homeTeamView'] = data_dict[expect][i][0]
+                    match_results[i]['awayTeamView'] = data_dict[expect][i][1]
+                    match_results[i]['score'] = data_dict[expect][i][2]
             except:
-                matchResults[i]['score'] = '0:0'
+                match_results[i]['score'] = '0:0'
     item = {
         'cp_id': cp_id,
         'cp_sn': cp_sn,

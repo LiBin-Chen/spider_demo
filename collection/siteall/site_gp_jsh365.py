@@ -48,6 +48,7 @@ default_headers = {
 
 db = yzwl.DbClass()
 mysql = db.yzwl
+test_mysql = db.test_yzwl
 lock = threading.Lock()
 
 
@@ -100,7 +101,7 @@ def fetch_data(url, proxy=None, headers=None, **kwargs):
 
         # sess = requests.Session()
         # _logger.info('INFO:使用代理, %s ;' % (proxies))
-        rs = requests.get(url, headers=default_headers, cookies=_cookies, timeout=30, proxies=proxies)
+        rs = requests.get(url, headers=default_headers, cookies=_cookies, timeout=30)
         # print('rs', rs.text)
     except Exception as e:
         # 将进行重试，可忽略
@@ -138,7 +139,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
     db_name = kwargs.get('db_name', '')
     lottery_type = kwargs.get('lottery_type', '')
     if not db_name:
-        _logger.info('INFO: 请检查是否传入正确的数据库; URL:%s' % (url))
+        _logger.info('INFO: 请检查是否传入正确的数据库; URL:%s' % url)
         return
     if not data:
         _logger.debug('STATUS:-404 ; INFO:数据异常 ; URL:%s' % url)
@@ -215,9 +216,15 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         # expect = str(expect).split('.')[0]
         expect = util.cleartext(use_date, '-') + expect_xpath[1] if lottery_type == 'HIGH_RATE' else util.cleartext(
             expect_xpath[0], '期')
+        if 'ks_result' in db_name or 'tjklsf' in db_name:
+            expect = util.cleartext(use_date, '-') + '0' + expect_xpath[1] if lottery_type == 'HIGH_RATE' else util.cleartext(
+                expect_xpath[0], '期')
         open_code = ','.join(code_list)
         cp_code = ''.join(code_list)
-        open_time = use_date + time_xpath[0] if ':' in time_xpath[0] else use_date
+        if lottery_type == 'HIGH_RATE':
+            open_time = use_date + time_xpath[0] if ':' in time_xpath[0] else use_date
+        else:
+            open_time = expect[:4] + '-' + time_xpath[0]
         create_time = util.date()
         cp_id = cp_code  # 以中奖号+作为唯一id 并且开奖时间间隔大于15分钟  高频彩最低为20分钟，连着开同号概率极小
         cp_sn = int(str(11) + str(expect))
@@ -232,13 +239,14 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         }
         # print('item', item)
         # print('*' * 100)
-        info = mysql.select(db_name, condition=[('cp_id', '=', cp_id), ('cp_sn', '=', cp_sn)], limit=1)
+        info = mysql.select(db_name, condition=[('expect', '=', expect)], limit=1)
         if not info:
             mysql.insert(db_name, data=item)
+            test_mysql.insert(db_name, data=item)
             _logger.info('INFO: 数据库： %s 数据保存成功, 期号 %s ; URL:%s' % (db_name, expect, url))
         else:
-            mysql.update(db_name, condition={'id': info['id']}, data=item)
-            _logger.info('INFO: 数据库： %s 数据更新成功, 期号 %s ; URL:%s' % (db_name, expect, url))
+            # mysql.update(db_name, condition={'id': info['id']}, data=item)
+            _logger.info('INFO: 数据库： %s 数据已存在, 期号 %s ; URL:%s' % (db_name, expect, url))
 
 
 def fetch_search_data(keyword=None, id=None, data_dict=None, headers=None, proxy=None, **kwargs):
@@ -382,7 +390,7 @@ def main(**kwargs):
         abbreviation = _data['key_python']
         lottery_name = _data['lottery_name']
         if lottery_result in ['game_pk10_result', 'game_cqssc_result', 'game_tjssc_result', 'game_jsks_result',
-                              'game_xjssc_result', 'game_gdklsf_result']:
+                              'game_xjssc_result', 'game_gdklsf_result', 'game_gxklsf_result']:
             continue
         kwargs = {
             'db_name': lottery_result,
@@ -417,8 +425,8 @@ def main(**kwargs):
             open_time = open_time.strftime('%Y-%m-%d') if open_time else None
             for str_time in dlist:
                 new_url = abbreviation + '/{0}'.format(str_time)
-                url = url.replace(abbreviation, new_url)
-                result = fetch_data(url=jsh_open_url, proxy=proxy, headers=default_headers, **kwargs)
+                url = jsh_open_url.replace(abbreviation, new_url)
+                result = fetch_data(url=url, proxy=proxy, headers=default_headers, **kwargs)
 
 
 def cmd():
@@ -430,7 +438,7 @@ def cmd():
     parser.add_argument('-p', '--past', help=u'默认最新一期数据',
                         dest='past', action='store', default=0)
     parser.add_argument('-sd', '--sd', help=u'从指定日期开始下载数据',
-                        dest='sd', action='store', default='03/17/2019')
+                        dest='sd', action='store', default='04/12/2019')
     parser.add_argument('-ed', '--ed', help=u'从指定日期结束下载数据',
                         dest='ed', action='store', default=None)
 

@@ -11,6 +11,7 @@
 
 import logging
 import math
+import random
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import re, sys, time, datetime, locale, traceback, subprocess, os, signal, smtplib, urllib
@@ -19,6 +20,7 @@ import requests
 from numpy import unicode
 
 # from packages import db
+from packages import yzwl
 
 try:
     import zlkg.config as config
@@ -679,19 +681,32 @@ def get_prolist(limit=10):
     获取代理列表
     从url获取改为从数据库获取
     """
-    res = requests.get('http://proxy.elecfans.net/proxys.php?key=nTAZhs5QxjCNwiZ6&num=10&type=pay'.format(limit))
-    data = res.json()
-    # data = collection.find({}).limit(limit)
-    prolist = []
     try:
-        for vo in data['data']:
-            prolist.append(vo['ip'])
-        _num = len(prolist)
-        if _num <= 1:
-            return None
-        # print(_num, prolist)
-        return [_num, prolist]
+        db = yzwl.DbClass()
+        mysql = db.yzwl
+        count = mysql.count('proxies') - limit
+        end_number = random.randint(1, count)
+        condition = [('pid', '>=', end_number), ('is_pay', '=', 1), ('is_use', '=', 1)]
+        data = mysql.select('proxies', condition=condition, limit=limit)
+        if isinstance(data, dict):
+            return [1, {'ip': data['ip']}]
+        dlist = []
+        for _data in data:
+            # item = {
+            #     'ip': _data['ip'],
+            # }
+            dlist.append(_data['ip'])
+        _num = len(dlist)
+        return [_num, dlist]
     except Exception as e:
         return None
 
 
+def get_session(url=None):
+    session = requests.Session()
+    session.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
+    })
+    if url:
+        session.get(url)
+    return session

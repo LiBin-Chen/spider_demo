@@ -124,7 +124,7 @@ def save_data(expect, db_name, item):
         open_result = json.loads(info.get('open_result'), encoding='utf-8')
         matchResults = open_result['matchResults']
         for i in range(len(matchResults)):
-            matchResults[i] = item['open_result']['matchResults'][i]
+            matchResults[i] = json.loads(item['open_result'])['matchResults'][i]
         info['open_result'] = json.dumps(open_result, ensure_ascii=True)
         mysql.update(db_name, condition=[('expect', '=', expect)], data=info)
         _logger.info('INFO:  DB:%s 数据已存在 更新成功, 期号: %s ; ' % (db_name, expect))

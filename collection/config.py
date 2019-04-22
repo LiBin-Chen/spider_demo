@@ -67,16 +67,6 @@ USE_PROXY = True  # 是否使用代理
 '''
 DATABASES = {
     'mysql': (
-        {  # 本地测试数据库
-            'user': 'root',
-            'passwd': 'root',
-            'host': '127.0.0.1',
-            'port': 3306,
-            'charset': 'utf8',
-            'db': 'lottery_info_spider',
-            'tablepre': '',
-            'db_fields_cache': False,
-        },
         {  # 开发数据库
             'host': '192.168.2.22',
             'user': 'root',
@@ -87,6 +77,27 @@ DATABASES = {
             'tablepre': '',
             'db_fields_cache': False,
         },
+        {  # 19测试数据库
+            'host': '192.168.2.19',
+            'user': 'root',
+            'passwd': 'root',
+            'port': 3306,
+            'charset': 'utf8',
+            'db': 'lottery_info',
+            'tablepre': '',
+            'db_fields_cache': False,
+        },
+        {  # 本地测试数据库
+            'user': 'root',
+            'passwd': 'root',
+            'host': '127.0.0.1',
+            'port': 3306,
+            'charset': 'utf8',
+            'db': 'lottery_info',
+            'tablepre': '',
+            'db_fields_cache': False,
+        },
+
     ),
     'localhost': {
         # ------------- localhost 本地跑数据使用
@@ -130,6 +141,14 @@ URL_KEY = {
     15: 'five',
     16: 'pks',
     17: 'gov',  # 体彩
+    18: 'cpyzj',  # 彩票易中奖
+    19: 'xjfc',  # 新疆福彩
+    20: 'gxfc',  # 广西福彩
+    21: 'zjfc',  # 浙江福彩
+    22: 'gdfc',  # 广东福彩
+    23: 'bjfc',  # 北京福彩
+    24: 'tjfc',  # 天津福彩
+    25: 'cjcp',  # 彩票财经
 }
 
 SPORTS_SITE = {
@@ -255,7 +274,8 @@ LOGDIR = os.path.join(APP_ROOT, "logs")
 if APP_LOG:
     # 每小时一个日志
     _handler = RotatingFileHandler(
-        filename=os.path.join(LOGDIR, 'spider_' + datetime.datetime.now().strftime("%Y-%m-%d_%H") + ".log"), mode='a+')
+        filename=os.path.join(LOGDIR, 'spider_' + datetime.datetime.now().strftime("%Y-%m-%d_%H") + ".log"), mode='a+',
+        maxBytes=1024 * 1024 * 5, backupCount=10)
     _handler.setFormatter(
         logging.Formatter(fmt='>>> %(asctime)-10s %(name)-12s %(levelname)-8s %(message)s', datefmt='%H:%M:%S'))
     LOG = logging.getLogger('yzwl_spider')
