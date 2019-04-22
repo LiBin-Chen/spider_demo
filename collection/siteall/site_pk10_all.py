@@ -174,11 +174,16 @@ def _parse_detail_data(data=None, url=None, **kwargs):
             info = mysql.select(db_name, condition=[('expect', '=', expect)], limit=1)
             if not info:
                 mysql.insert(db_name, data=item)
+<<<<<<< HEAD
                 if not isinstance(item, list):
                     item = [item]
                 mq.put_queue_list('lottery_open_result', item)
                 print('item', item)
                 _logger.info('INFO:数据保存 sql/队列 成功, 期号%s ; URL:%s' % (expect, url))
+=======
+                test_mysql.insert(db_name, data=item)
+                _logger.info('INFO:数据保存成功, 期号%s ; URL:%s' % (expect, url))
+>>>>>>> 5eb4b02cd59b97c52c5a59b4d3d8dd67cd335938
             else:
                 _logger.info('INFO:数据已存在不做重复存入, 期号: %s ; URL:%s' % (expect, url))
         except Exception as e:

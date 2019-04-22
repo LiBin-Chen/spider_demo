@@ -19,33 +19,18 @@ APP_PATH and sys.path.insert(0, APP_PATH)
 '''
 消息队列相关
 '''
-# 队列主机地址
-# QUEUE_HOST =
 
 # 队列主机
-# AMQP_URL = 'amqp://guest:guest@127.0.0.1:5672/'  # 本地测试
 AMQP_URL = 'amqp://guest:guest@192.168.2.209:5672'  # 本地测试
-# 更新xunsearch
-PUT_XS_HQCHIP = 'put_xunsearch'
-# 更新或建立迅搜索引
-PUT_XS_QUEUE = 'update_xunsearch'
+
+
 # 抓取代理待处理队列
 PROXY_QUEUE = 'search_proxy'
-# 待抓取热门数据
-HOT_QUEUE = 'hot_goods'
-# 待更新
-UPDATE_QUEUE = 'default_goods'
+# 默认队列
+UPDATE_QUEUE = 'default_lotto_goods'
 # 已更新待同步
 WAIT_UPDATE_QUEUE = 'wait_post_goods'
 # 等待在各个网站搜索的关键词队列
-SEARCH_QUEUE = 'search_queue'
-# 搜索需要更新的数据队列
-SEARCH_UPDATE_QUEUE = 'search_update_queue'
-# 搜索后不是列表而是分类的地址，放入队列重新在抓取
-SEARCH_LIST_QUEUE = 'search_list'
-# 在各个网站搜索的彩种开奖地址,抓取后放到postNewQueue队列中提交到网站
-SEARCH_GOODS_QUEUE = 'search_goods'
-# 等待向线上提交的新增的数据
 WAIT_ADD_QUEUE = 'wait_post_new_goods'
 # 错误数据
 DELETE_QUEUE = 'delete_goods'
@@ -97,10 +82,9 @@ DATABASES = {
             'tablepre': '',
             'db_fields_cache': False,
         },
-
     ),
     'localhost': {
-        # ------------- localhost 本地跑数据使用
+        # localhost 本地跑数据使用
         'host': 'localhost',
         'user': 'root',
         'passwd': 'root',

@@ -148,34 +148,23 @@ def run(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="提交过期产品至更新队列", add_help=False)
-
+    parser = argparse.ArgumentParser(description="提交更新彩种至更新队列", add_help=False)
     parser.add_argument('-h', '--help', dest='help', help='获取帮助信息',
                         action='store_true', default=False)
-
     parser.add_argument('-a', '--all', dest='all', help='提交全部彩种至更新队列,默认为否', action='store_true', default=False)
-
     parser.add_argument('-lt', '--lotto-type', dest='lotto_type', help='从数据库提交指定彩种到对应产品队列', type=int,
                         default=2)  # 2,3,4,5,6
-
     parser.add_argument('-s', '--supplier', dest='supplier', help='指定彩种ID进行更新', type=int)
     parser.add_argument('-t', '--sleep-time', dest='sleep_time',
-                        help='指定暂停时间(默认10h)，小于或等于0时则只会执行一次',
+                        help='指定暂停时间(默认5s)，小于或等于0时则只会执行一次',
                         default=5, type=int)
-
     parser.add_argument('-p', '--supplier-list', help='打印彩种列表/彩种类型',
                         action='store_true', default=False)
-
     parser.add_argument('--start-id', dest='start_id', help='指定提交的起始',
                         default=0, type=int)
-
     parser.add_argument('-q', '--queue-max-num', dest='threshold',
                         help='指定队列数量最大提交阀值，即更新队列数量小于该数目时提交更新队列\
                         （默认10，小于或等于0时为不限制）', default=0, type=int)
-
-    # parser.add_argument('--server', dest='server', help='以守护进程服务模式运行，\
-    #                     start启动服务，stop停止服务，restart重启服务',
-    #                     choices=['start', 'stop', 'restart'])
 
     parser.add_argument('-e', '--expire-time', help='指定数据有效期(单位秒)，默认为 %s' %
                                                     config.DATA_CACHE_TIME, default=config.DATA_CACHE_TIME, type=int)
@@ -185,7 +174,7 @@ def main():
     supplier_list = [_data['id'] for _data in data]
     if args.supplier:
         if args.supplier not in supplier_list:
-            print('请至少选择一个有效的供应商ID')
+            print('请至少选择一个有效的彩种ID')
             sys.exit(-1)
     if args.help:
         parser.print_help()
@@ -194,23 +183,12 @@ def main():
         print(' 指定起始ID（仅第一次）   %s -s 20 --start-id 1' % sys.argv[0])
         print(' 设置队列最大提交阀值     %s -s 20 -q 1000000' % sys.argv[0])
         print(' 设置过期时间如2天        %s -s 20 -e 172800' % sys.argv[0])
-        # print(' 以守护进程模式运行       %s -s 20 --server start' % sys.argv[0])
-        print('')
     elif args.supplier_list:
         type_dict = dict(zip(config.QNAME_KEY.keys(), config.QNAME_DICT.keys()))
         print('彩种类型:')
         print('彩种类型:', type_dict)
         print('彩种列表:')
         print('彩种列表:', data)
-
-
-    # 守护进程模式
-    # elif args.server:
-    #     if not args.supplier:
-    #         print('服务模式必须指定供应商ID')
-    #         sys.exit(-1)
-    #     pidfile = '/var/run/hqchip-put-%s.pid' % args.supplier
-    #     PutQueueServer(pidfile, args=args)
     else:
         print('args', args)
         run(args)

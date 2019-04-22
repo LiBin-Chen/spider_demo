@@ -12,6 +12,7 @@ import time
 import execjs
 import logging
 import requests
+
 try:
     from packages import yzwl
 except ImportError:
@@ -19,9 +20,8 @@ except ImportError:
     sys.path.insert(0, _path)
     import packages.yzwl as yzwl
 
-db = yzwl.DbClass()
+db = yzwl.DbSession()
 mysql = db.yzwl
-test_mysql = db.test_yzwl
 _logger = logging.getLogger('yzwl_spider')
 session = requests.Session()
 session.headers.update({
@@ -29,29 +29,7 @@ session.headers.update({
 })
 
 
-def fetch_search_data():
-    """
-        根据关键词抓取搜索数据
-    """
-    pass
-
-
-def fetch_search_list():
-    """
-        抓取搜索列表数据
-    """
-    pass
-
-
-def fetch_update_data():
-    """
-        更新彩票的开奖结果
-    """
-    pass
-
-
-
-def save_data(item, db_name):
+def save_to_db(item, db_name):
     info = mysql.select(db_name, condition=[('expect', '=', item['expect']), ('lottery_id', '=', item['lottery_id'])], limit=1)
     if not info:
         # 插入数据
@@ -63,31 +41,15 @@ def save_data(item, db_name):
         _logger.info('INFO:  DB:%s 数据已存在 更新成功, 期号: %s ,彩种id：%s; ' % (db_name, item['expect'], item['lottery_id']))
 
 
-def _get_sign(key):
+def get_data(lot_code):
     with open('../scripts/md5.js') as f:
         js_data = f.read()
     ctx = execjs.compile(js_data)
-    sign = ctx.call('md5', key)
-    return sign
-
-
-def _parse_detail_data(data, url=None, **kwargs):
-    lottery_id = kwargs.get('lottery_id')
-    item = {
-        'lottery_id': lottery_id,
-        'expect': data[1],
-        'hot_data': json.dumps(data[0], ensure_ascii=True)
-    }
-    save_data(item, 't_lottery_hot')
-
-
-def api_fetch_data(url=None, proxy=None, **kwargs):
-    lot_code = kwargs.get('lot_code')
     plan_url = 'https://www.cpyzj.com/req/cpyzj/funnyWin/getHotPlanByLotCode'
     hot_url = 'https://www.cpyzj.com/req/cpyzj/funnyWin/getHotNumbers'
     time_stamp = int(time.time()*1000)
     plan_key = 'lotCode={}&timestamp={}&token=noget&key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(lot_code, time_stamp)
-    plan_sign = _get_sign(plan_key)
+    plan_sign = ctx.call('md5', plan_key)
     plan_post_data = {
         'token': 'noget',
         'timestamp': time_stamp,
@@ -99,12 +61,13 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
     lottery_name = ''
     hot_list = []
     if plan_r.status_code == 200:
-        plan_dict = plan_r.json()
+        content = plan_r.content.decode('utf8')
+        plan_dict = json.loads(content)
         for plan_code_dict in plan_dict['data']:
             plan_name = plan_code_dict.get('planName')
             hot_key = 'lotCode={}&planCode={}&timestamp={}&token=noget&key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(
                 lot_code, plan_code_dict.get('planCode'), time_stamp)
-            hot_sign = _get_sign(hot_key)
+            hot_sign = ctx.call('md5', hot_key)
             post_data = {
                 'token': 'noget',
                 'timestamp': time_stamp,
@@ -115,7 +78,8 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             hot_r = session.post(hot_url, post_data)
             if hot_r.status_code == 200:
                 time.sleep(1)
-                hot_dict = hot_r.json()
+                content = hot_r.content.decode('utf8')
+                hot_dict = json.loads(content)
                 request_result = hot_dict.get('msg')
                 if request_result == '请求成功':
                     issue = hot_dict['data']['issueNo']
@@ -134,7 +98,7 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
                     })
                 else:
                     # 暂无数据，稍后再次请求
-                    time.sleep(10)
+                    time.sleep(5)
     result = {
         'lottery_name': lottery_name,
         'hot': hot_list,
@@ -145,18 +109,22 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
         return
 
 
-def get_hot_data(**kwargs):
-    lottery_id = kwargs.get('lottery_id')
+def get_hot_data(lottery_id, lot_code):
     for retry_time in range(1, 4):
-        hot_data = api_fetch_data(**kwargs)
+        hot_data = get_data(lot_code)
         if hot_data:
-            _parse_detail_data(hot_data, **kwargs)
+            item = {
+                'lottery_id': lottery_id,
+                'expect': hot_data[1],
+                'hot_data': json.dumps(hot_data[0], ensure_ascii=True)
+            }
+            save_to_db(item, 't_lottery_hot')
             return
         else:
             _logger.warning('彩种id: %s，no data, request time: %d' % (lottery_id, retry_time))
 
 
-def main(lottery_type, dpc_type=None):
+def main(lottery_type):
     type_dict = {
         # 低频彩
         'dpc': {
@@ -208,48 +176,15 @@ def main(lottery_type, dpc_type=None):
             '84': 'BJ_K3'
         }
     }
-    if dpc_type:
-        kwargs = {
-            'lottery_id': dpc_type,
-            'lot_code': type_dict.get('dpc').get(dpc_type)
-        }
-        get_hot_data(**kwargs)
-    else:
-        for key, value in type_dict.get(lottery_type).items():
-            kwargs = {
-                'lottery_id': key,
-                'lot_code': value
-            }
-            get_hot_data(**kwargs)
-
-
-def cmd():
-    lo_type = sys.argv[1]
-    if lo_type not in ['dpc', 'x5', 'ssc', 'h10', 'k3', 'bjkl8']:
-        print('请输入正确的参数，如 python site_cpyzj.py x5'
-              '对应关系: dpc:低频彩, x5: 11选5, ssc:时时彩, h10:快乐十分, k3:快三')
-        sys.exit()
-    else:
-        if lo_type == 'dpc':
-            d_type = sys.argv[2]
-            if d_type not in ['dlt', 'ssq', 'fc3d', 'pl3', 'pl5', 'qlc', 'qxc']:
-                print('请输入低频彩具体种类，如 python site_cpyzj.py dpc dlt'
-                      '对应关系: dlt:大乐透, ssq: 双色球, fc3d:福彩3d, pl3:排列3, pl5:排列5, qlc:七乐彩, qxc:七星彩')
-                sys.exit()
-            else:
-                dpc_dict = {
-                    'dlt': '1',
-                    'pl3': '4',
-                    'ssq': '8',
-                    'fc3d': '11',
-                    'qlc': '12',
-                    'pl5': '13',
-                    'qxc': '14'
-                }
-                main(lo_type, dpc_dict.get(d_type))
-        else:
-            main(lo_type)
+    for key, value in type_dict.get(lottery_type).items():
+        get_hot_data(key, value)
 
 
 if __name__ == '__main__':
-    cmd()
+    lo_type = sys.argv[1]
+    if lo_type not in ['dpc', 'x5', 'ssc', 'h10', 'k3']:
+        print('请输入正确的参数，如 python site_cpyzj.py dpc'
+              '对应关系: dpc:低频彩, x5: 11选5, ssc:时时彩, h10:快乐十分, k3:快三')
+        sys.exit()
+    else:
+        main(lo_type)
