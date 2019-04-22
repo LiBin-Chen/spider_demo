@@ -14,7 +14,6 @@ from packages import Util as util, yzwl
 __author__ = 'snow'
 __time__ = '2019/3/7'
 
-
 '''
 
 @description
@@ -168,7 +167,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
             if not isinstance(expect, float):
                 print('expect', expect)
                 continue
-            expect = int(expect)
+            expect = expect.split('.')[0]
             open_time = open_time[0].split('(')[0]
             open_code_list = []
             for _code in open_code:

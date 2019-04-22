@@ -23,7 +23,7 @@ APP_PATH and sys.path.insert(0, APP_PATH)
 # QUEUE_HOST =
 
 # 队列主机
-AMQP_URL = 'amqp://guest:guest@127.0.0.1:5672/'   #本地测试
+AMQP_URL = 'amqp://guest:guest@127.0.0.1:5672/'  # 本地测试
 # 更新xunsearch
 PUT_XS_HQCHIP = 'put_xunsearch'
 # 更新或建立迅搜索引
@@ -55,7 +55,6 @@ QUEUE_LIMIT = 100
 
 get_sports_info = lambda id: DB_KEY[int(str(id)[0:2])] if int(str(id)[0:2]) in DB_KEY else None
 get_web_url = lambda id: URL_KEY[int(str(id)[0:2])] if int(str(id)[0:2]) in URL_KEY else None
-
 
 '''
 数据采集相关
@@ -252,7 +251,6 @@ APP_LOG = getattr(sys, '__APP_LOG__', True)
 level = logging.DEBUG if DEBUG else logging.ERROR
 LOGDIR = os.path.join(APP_ROOT, "logs")
 
-
 # 仅应用日志
 if APP_LOG:
     # 每小时一个日志
@@ -301,3 +299,20 @@ WEIXIN_NOTICE = {
 
 SMT_DOMAIN = ''
 SMT_API_KEY = ''
+
+
+LOTTOERY_KEY = {'1': 'lotto', '3': 'pk10', '4': 'pl3', '5': 'jczq', '6': 'jclq', '7': 'gd11x5', '8': 'ssq',
+                '9': 'aheswxw', '10': 'zjesxw', '11': 'sd', '12': 'qlc', '13': 'plw', '14': 'qxc', '15': 'fjsslxq',
+                '16': 'gdfcsslxq', '17': 'gxklsc', '18': 'hnsjy', '19': 'hebfcesxw', '20': 'hnfcesxw', '21': 'hljeexw',
+                '22': 'hbfcesxw', '23': 'hdswxw', '24': 'jsqws', '25': 'lnsswxq', '26': 'shttcx4', '27': 'czfc',
+                '29': 'xjfceswxq', '33': 'gssyxw', '34': 'bjkzc', '35': 'gdklsf', '36': 'gxklsf', '38': 'hnbxs',
+                '39': 'hebsyxw', '41': 'hljklsfmj', '42': 'hbsyxw', '46': 'jxsyxw', '47': 'lnklse', '48': 'nmgssc',
+                '49': 'qhsyxw', '50': 'sfc', '51': 'rx9', '52': 'nmgsyxw', '53': 'lnsyxw', '54': 'jlsyxw',
+                '55': 'xjsyxw', '56': 'ynsyxw', '57': 'shxsyxw', '58': 'sxsyxw', '59': 'gzsyxw', '60': 'shxklsf',
+                '61': 'sxklsf', '62': 'chqklsf', '63': 'hnklsf', '64': 'hljklsf', '65': 'tjklsf', '66': 'xjssc',
+                '67': 'ynssc', '68': 'cqssc', '69': 'tjssc', '70': 'qhk3', '71': 'gsk3', '72': 'gzk3', '73': 'gxk3',
+                '74': 'hbk3', '75': 'henk3', '76': 'jxk3', '77': 'fjk3', '78': 'ahk3', '79': 'jsk3', '80': 'shk3',
+                '81': 'jlk3', '82': 'nmgk3', '83': 'hebk3', '84': 'bjk3', '85': 'hljsyxw', '86': 'shsyxw',
+                '87': 'jssyxw', '88': 'zjsyxw', '89': 'ahsyxw', '90': 'fjsyxw', '100': 'bjkl8', '102': 'zjkl12',
+                '103': 'sckl12', '104': 'lnkl12', '105': 'shssl', '107': 'xjxlc', '108': 'hnxysc', '109': 'henky481',
+                '110': 'sdklpk3', '111': 'sdqyh', '112': 'gxsyxw'}

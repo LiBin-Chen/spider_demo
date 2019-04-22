@@ -95,21 +95,12 @@ class RabbitMQ(object):
             self.declare(queue_name, exchange=exchange)
             for message in message_list:
                 if print_info:
-                    if 'goods_sn' in message:
-                        print('GoodsSn : %s 数据已提交至队列 %s' %
+                    if 'abbreviation' in message:
+                        print('abbreviation : %s 数据已提交至队列 %s' %
                               (Util.binary_type(message['goods_sn']), queue_name))
-                    elif 'product_id' in message:
-                        print('ProductID : %s 数据已提交至队列 %s' %
-                              (Util.binary_type(message['product_id']), queue_name))
-                    elif 'goods_name' in message:
-                        print('GoodsName : %s 数据已提交至队列 %s' %
-                              (Util.binary_type(message['goods_name']), queue_name))
-                    elif 'goods_id' in message:
-                        print('GoodsID : %s 数据已提交至队列 %s' %
-                              (Util.binary_type(message['goods_id']), queue_name))
-                    elif 'id' in message:
+                    elif 'cp_id' in message:
                         print('ID : %s 数据已提交至队列 %s' %
-                              (Util.binary_type(message['id']), queue_name))
+                              (Util.binary_type(message['cp_id']), queue_name))
                 message = json.dumps(message)
                 self.channel.basic_publish(exchange=exchange,
                                            routing_key=queue_name,

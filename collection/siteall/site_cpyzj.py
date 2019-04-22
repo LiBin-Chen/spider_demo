@@ -5,14 +5,19 @@
 # @File    : site_cpyzj.py
 # @Software: PyCharm
 # @Remarks : 热度数据抓取
+import os
 import sys
 import json
 import time
 import execjs
 import logging
 import requests
-
-from packages import yzwl
+try:
+    from packages import yzwl
+except ImportError:
+    _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    sys.path.insert(0, _path)
+    import packages.yzwl as yzwl
 
 db = yzwl.DbSession()
 mysql = db.yzwl

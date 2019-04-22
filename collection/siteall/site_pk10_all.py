@@ -1,5 +1,6 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
+
 import os
 import sys
 import time
@@ -12,7 +13,7 @@ import threading
 from lxml import etree
 
 try:
-    from packages import yzwl
+    from packages import yzwl, rabbitmq
     from packages import Util as util
 except ImportError:
     _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -33,6 +34,7 @@ default_headers = {
 db = yzwl.DbClass()
 mysql = db.yzwl
 lock = threading.Lock()
+mq = rabbitmq.RabbitMQ()
 
 
 # def get_prolist(limit=0):
@@ -129,7 +131,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
     # print('tr_list', tr_list)
     # print('tr_list', len(tr_list))
     # tr_list = reversed(tr_list)
-    tr_list = tr_list[:3] if 'today' in url else tr_list  # 获取最新一天的数据，只拿更新的数据
+    tr_list = tr_list[:2] if 'today' in url else tr_list  # 获取最新一天的数据，只拿更新的数据
     for tr in tr_list:
         expect_xpath = tr.xpath('.//td[1]//text()')
         open_code = tr.xpath('.//td[2]/div[1]//span//text()')
@@ -155,6 +157,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         cp_id = open_code.replace(',', '')  # 以中奖号+作为唯一id 并且开奖时间间隔大于15分钟  高频彩最低为20分钟，连着开同号概率极小
         cp_sn = int(str(16) + expect)
         item = {
+            'abbreviation': kwargs.get('abbreviation'),
             'cp_id': cp_id,
             'cp_sn': cp_sn,
             'expect': expect,
@@ -164,11 +167,16 @@ def _parse_detail_data(data=None, url=None, **kwargs):
             'create_time': util.date(),
         }
 
+
         try:
             info = mysql.select(db_name, condition=[('expect', '=', expect)], limit=1)
             if not info:
                 mysql.insert(db_name, data=item)
-                _logger.info('INFO:数据保存成功, 期号%s ; URL:%s' % (expect, url))
+                if not isinstance(item, list):
+                    item = [item]
+                mq.put_queue_list('lottery_open_result', item)
+                print('item', item)
+                _logger.info('INFO:数据保存 sql/队列 成功, 期号%s ; URL:%s' % (expect, url))
             else:
                 _logger.info('INFO:数据已存在不做重复存入, 期号: %s ; URL:%s' % (expect, url))
         except Exception as e:
