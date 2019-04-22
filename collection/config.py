@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-
+import json
 import sys
 
-# if __name__ == '__main__':
-#     print 'Access Denied.'
-#     sys.exit()
+if __name__ == '__main__':
+    print('Access Denied.')
+    sys.exit()
 
 import os, datetime, logging
 from logging.handlers import RotatingFileHandler
@@ -23,7 +23,8 @@ APP_PATH and sys.path.insert(0, APP_PATH)
 # QUEUE_HOST =
 
 # 队列主机
-AMQP_URL = 'amqp://guest:guest@127.0.0.1:5672/'  # 本地测试
+# AMQP_URL = 'amqp://guest:guest@127.0.0.1:5672/'  # 本地测试
+AMQP_URL = 'amqp://guest:guest@192.168.2.209:5672'  # 本地测试
 # 更新xunsearch
 PUT_XS_HQCHIP = 'put_xunsearch'
 # 更新或建立迅搜索引
@@ -51,10 +52,9 @@ DELETE_QUEUE = 'delete_goods'
 # 等待发送的email
 SEND_EMAIL = 'send_email'
 # 队列每次推送数量
-QUEUE_LIMIT = 100
+QUEUE_LIMIT = 50
 
-get_sports_info = lambda id: DB_KEY[int(str(id)[0:2])] if int(str(id)[0:2]) in DB_KEY else None
-get_web_url = lambda id: URL_KEY[int(str(id)[0:2])] if int(str(id)[0:2]) in URL_KEY else None
+
 
 '''
 数据采集相关
@@ -90,7 +90,7 @@ DATABASES = {
         {  # 本地测试数据库
             'user': 'root',
             'passwd': 'root',
-            'host': '127.0.0.1',
+            'host': '192.168.2.209',
             'port': 3306,
             'charset': 'utf8',
             'db': 'lottery_info',
@@ -151,75 +151,25 @@ URL_KEY = {
     25: 'cjcp',  # 彩票财经
 }
 
-SPORTS_SITE = {
-    10: '',
-    11: '',
-    12: '',
-    13: '',
-    14: '',
-    15: '',
-    16: '',
-    17: '',
-    18: '',
-    19: '',
-    20: '',
-    21: '',
-    22: '',
-    23: '',
-    24: '',
-    26: '',
-    27: '',
-    28: '',
-    29: '',
-    30: '',
-    31: '',
-    32: '',
-    33: '',
-    34: '',
-    35: '',
-    36: '',
-    37: '',
-    38: '',
-    39: '',
-    40: '',
-    41: '',
-    42: '',
-    43: '',
+# 更新数据时使用
+QNAME_KEY = {
+    # 1: 'ALL',  # 对所有的队列进行更新
+    2: 'high_lotto_goods',  # 高频彩彩种
+    3: 'local_lotto_goods',  # 地方彩彩种
+    4: 'global_lotto_goods',  # 全国彩彩种
+    5: 'sports_lotto_goods',  # 体育
+    6: 'jc_lotto_goods',  # 竞彩
 
 }
-
-# 数据更新时间间隔
-DTI = {
-    10: '',
-    11: '',
-    12: '',
-    13: '',
-    14: '',
-    15: '',
-    16: '',
-    17: '',
-    18: '',
-    19: '',
-    20: '',
-    21: '',
-    22: '',
-    23: '',
-    24: '',
-    27: '',
-    29: '',
-    30: '',
-    32: '',
-    33: '',
-    34: '',
-    35: '',
-    36: '',
-    37: '',
-    38: '',
-    39: '',
-    40: '',
-    41: '',
-    42: '',
-    43: '',
+# 7: 'default_lotto_goods',  # 默认队列
+# 'DEFAULT': 'default_lotto_goods',  # 默认队列,可将所有开奖结果推送至该队列   default队列单独使用
+# 提交更新队列时使用
+QNAME_DICT = {
+    'HIGH_RATE': 'high_lotto_goods',
+    'LOCAL': 'local_lotto_goods',
+    'NATIONWIDE': 'global_lotto_goods',
+    'SPORTS': 'sports_lotto_goods',
+    'JC': 'jc_lotto_goods',
 }
 
 # API数据缓存时间
@@ -320,19 +270,133 @@ WEIXIN_NOTICE = {
 SMT_DOMAIN = ''
 SMT_API_KEY = ''
 
+'''
+全国性彩种 奖项内容
+'''
 
-LOTTOERY_KEY = {'1': 'lotto', '3': 'pk10', '4': 'pl3', '5': 'jczq', '6': 'jclq', '7': 'gd11x5', '8': 'ssq',
-                '9': 'aheswxw', '10': 'zjesxw', '11': 'sd', '12': 'qlc', '13': 'plw', '14': 'qxc', '15': 'fjsslxq',
-                '16': 'gdfcsslxq', '17': 'gxklsc', '18': 'hnsjy', '19': 'hebfcesxw', '20': 'hnfcesxw', '21': 'hljeexw',
-                '22': 'hbfcesxw', '23': 'hdswxw', '24': 'jsqws', '25': 'lnsswxq', '26': 'shttcx4', '27': 'czfc',
-                '29': 'xjfceswxq', '33': 'gssyxw', '34': 'bjkzc', '35': 'gdklsf', '36': 'gxklsf', '38': 'hnbxs',
-                '39': 'hebsyxw', '41': 'hljklsfmj', '42': 'hbsyxw', '46': 'jxsyxw', '47': 'lnklse', '48': 'nmgssc',
-                '49': 'qhsyxw', '50': 'sfc', '51': 'rx9', '52': 'nmgsyxw', '53': 'lnsyxw', '54': 'jlsyxw',
-                '55': 'xjsyxw', '56': 'ynsyxw', '57': 'shxsyxw', '58': 'sxsyxw', '59': 'gzsyxw', '60': 'shxklsf',
-                '61': 'sxklsf', '62': 'chqklsf', '63': 'hnklsf', '64': 'hljklsf', '65': 'tjklsf', '66': 'xjssc',
-                '67': 'ynssc', '68': 'cqssc', '69': 'tjssc', '70': 'qhk3', '71': 'gsk3', '72': 'gzk3', '73': 'gxk3',
-                '74': 'hbk3', '75': 'henk3', '76': 'jxk3', '77': 'fjk3', '78': 'ahk3', '79': 'jsk3', '80': 'shk3',
-                '81': 'jlk3', '82': 'nmgk3', '83': 'hebk3', '84': 'bjk3', '85': 'hljsyxw', '86': 'shsyxw',
-                '87': 'jssyxw', '88': 'zjsyxw', '89': 'ahsyxw', '90': 'fjsyxw', '100': 'bjkl8', '102': 'zjkl12',
-                '103': 'sckl12', '104': 'lnkl12', '105': 'shssl', '107': 'xjxlc', '108': 'hnxysc', '109': 'henky481',
-                '110': 'sdklpk3', '111': 'sdqyh', '112': 'gxsyxw'}
+LOTTO_RESULT = {
+    4: {"rolling": "0", "nationalSales": "0", "currentAward": "0", "bonusSituationDtoList": [
+        {"numberOfWinners": "0", "singleNoteBonus": "0", "additionNumber": "0", "additionBonus": "0",
+         "winningConditions": "5+2", "prize": "一等奖"},
+        {"numberOfWinners": "0", "singleNoteBonus": "0", "additionNumber": "0", "additionBonus": "0",
+         "winningConditions": "5+1", "prize": "二等奖"},
+        {"numberOfWinners": "0", "singleNoteBonus": "10000", "additionNumber": "0", "additionBonus": "0",
+         "winningConditions": "5+0", "prize": "三等奖"},
+        {"numberOfWinners": "0", "singleNoteBonus": "3000", "additionNumber": "0", "additionBonus": "0",
+         "winningConditions": "4+2", "prize": "四等奖"},
+        {"numberOfWinners": "0", "singleNoteBonus": "300", "additionNumber": "0", "additionBonus": "0",
+         "winningConditions": "4+1", "prize": "五等奖"},
+        {"numberOfWinners": "0", "singleNoteBonus": "200", "winningConditions": "3+2", "prize": "六等奖"},
+        {"numberOfWinners": "0", "singleNoteBonus": "100", "winningConditions": "4+0", "prize": "七等奖"},
+        {"numberOfWinners": "0", "singleNoteBonus": "15", "winningConditions": "3+1,2+2", "prize": "八等奖"},
+        {"numberOfWinners": "0", "singleNoteBonus": "5", "winningConditions": "3+0,1+2,2+1,0+2", "prize": "九等奖"}]},
+    5: {"rolling": "0", "bonusSituationDtoList": [
+        {"winningConditions": "号码按位相符", "numberOfWinners": "0", "singleNoteBonus": "1,040", "prize": "直选"},
+        {"winningConditions": "号码按位相符", "numberOfWinners": "0", "singleNoteBonus": "346", "prize": "组选3"},
+        {"winningConditions": "号码相符(无同号)", "numberOfWinners": "0", "singleNoteBonus": "173", "prize": "组选6"}],
+        "nationalSales": "0", "currentAward": "0"},
+    6: {"rolling": "0", "bonusSituationDtoList": [
+        {"winningConditions": "号码按位相符", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "直选"}],
+        "nationalSales": "0", "currentAward": "0"},
+    8: {"rolling": "0", "bonusSituationDtoList": [
+        {"winningConditions": "定位中7码", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "一等奖"},
+        {"winningConditions": "定位中连续6码", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "二等奖"},
+        {"winningConditions": "定位中连续5码", "numberOfWinners": "0", "singleNoteBonus": "1800", "prize": "三等奖"},
+        {"winningConditions": "定位中连续4码", "numberOfWinners": "0", "singleNoteBonus": "300", "prize": "四等奖"},
+        {"winningConditions": "定位中连续3码", "numberOfWinners": "0", "singleNoteBonus": "20", "prize": "五等奖"},
+        {"winningConditions": "定位中连续2码", "numberOfWinners": "0", "singleNoteBonus": "5", "prize": "六等奖"}],
+        "nationalSales": "13652.343万", "currentAward": "15620.114万"},
+    9: {"rolling": "0", "nationalSales": "0", "currentAward": "0", "bonusSituationDtoList": [
+        {"numberOfWinners": "0", "singleNoteBonus": "0", "additionNumber": "0",
+         "additionBonus": "0", "winningConditions": "14场比赛的胜平负结果全中", "prize": "一等奖"},
+        {"numberOfWinners": "0", "singleNoteBonus": "0", "additionNumber": "0",
+         "additionBonus": "0", "winningConditions": "13场比赛的胜平负结果全中", "prize": "二等奖"},
+        {"numberOfWinners": "0", "singleNoteBonus": "10000", "additionNumber": "0",
+         "additionBonus": "0", "winningConditions": "14场选9场比赛胜平负结果全中", "prize": "任9"},
+
+    ],
+        'matchResults': [
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+            {"awayTeamView": "0", "homeTeamView": "0", "results": "0", "score": "--"},
+        ],
+        },
+    'SSQ': {"rolling": "0", "bonusSituationDtoList": [
+        {"winningConditions": "6+1", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "一等奖"},
+        {"winningConditions": "6+0", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "二等奖"},
+        {"winningConditions": "5+1", "numberOfWinners": "0", "singleNoteBonus": "3000", "prize": "三等奖"},
+        {"winningConditions": "5+0,4+1", "numberOfWinners": "0", "singleNoteBonus": "200", "prize": "四等奖"},
+        {"winningConditions": "4+0,3+1", "numberOfWinners": "0", "singleNoteBonus": "10", "prize": "五等奖"},
+        {"winningConditions": "2+1,1+1,0+1", "numberOfWinners": "0", "singleNoteBonus": "5", "prize": "六等奖"}],
+            "nationalSales": "0", "currentAward": "0"},
+    'SD': {"rolling": "0", "bonusSituationDtoList": [
+        {"winningConditions": "与开奖号相同且顺序一致", "numberOfWinners": "0", "singleNoteBonus": "1040", "prize": "直选"},
+        {"winningConditions": "与开奖号相同，顺序不限", "numberOfWinners": "0", "singleNoteBonus": "346", "prize": "组三"},
+        {"winningConditions": "与开奖号相同，顺序不限", "numberOfWinners": "0", "singleNoteBonus": "173", "prize": "组六"}],
+           "nationalSales": "0", "currentAward": "0"},
+    'QLC': {"rolling": "0", "bonusSituationDtoList": [
+        {"winningConditions": "7+0", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "一等奖"},
+        {"winningConditions": "6+1", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "二等奖"},
+        {"winningConditions": "6+0", "numberOfWinners": "0", "singleNoteBonus": "0", "prize": "三等奖"},
+        {"winningConditions": "5+1", "numberOfWinners": "0", "singleNoteBonus": "200", "prize": "四等奖"},
+        {"winningConditions": "5+0", "numberOfWinners": "0", "singleNoteBonus": "50", "prize": "五等奖"},
+        {"winningConditions": "4+1", "numberOfWinners": "0", "singleNoteBonus": "10", "prize": "六等奖"},
+        {"winningConditions": "4+0", "numberOfWinners": "0", "singleNoteBonus": "5", "prize": "七等奖"}],
+            "nationalSales": "0", "currentAward": "0"},
+}
+
+# data = json.dumps(LOTTO_RESULT['QLC'], ensure_ascii=False)
+# print('data', data)
+
+
+LOTTO_DICT = {
+    'gd11x5': 10006,
+    'jsk3': 10007,
+    'bjkl8': 10014,
+    'jx11x5': 10015,
+    'js11x5': 10016,
+    'ah11x5': 10017,
+    'sh11x5': 10018,
+    'ln11x5': 10019,
+    'hb11x5': 10020,
+    'gx11x5': 10022,
+    'jl11x5': 10023,
+    'nmg11x5': 10024,
+    'zj11x5': 10025,
+    'gxk3': 10026,
+    'jlk3': 10027,
+    'hebk3': 10028,
+    'nmgk3': 10029,
+    'ahk3': 10030,
+    'fjk3': 10031,
+    'hbk3': 10032,
+    # 'bjk3': 10033,
+    'tjklsf': 10034,
+    # 'bjpks': 10001,
+    # 'cqssc': 10002,
+    # 'tjssc': 10003,
+    # 'xjssc': 10004,
+    'gdklsf': 10005,
+    # 'sd11x5': 10008,
+    'cqklsf': 10009,
+    'gxklsf': 10038
+}
+
+WEB_DICT = {
+    'jsh365': 'extreme_speed_tiger',  # 极速虎
+    'cpyzj': 'easy_lottery',  # 彩票易中奖
+    'cwl': 'welfare_net',  # 中国福彩网
+    'lottery': 'sports_net',  # 中国体彩网
+    'pk10': 'racing_car',  # 北京赛车pk10
+}
