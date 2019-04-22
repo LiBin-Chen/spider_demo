@@ -2,50 +2,52 @@
 # -*- coding: utf-8 -*-
 
 
-import re
-import argparse
-import threading
-from lxml import etree
+__author__ = 'snow'
+__time__ = '2019/4/16'
+
 import time
 import json
 import random
 import logging
 import requests
+import argparse
+import threading
+from lxml import etree
 from packages import Util as util, yzwl
 
-__author__ = 'snow'
-__time__ = '2019/3/11'
 '''
 
 @description
-    收集彩票数据
+    收集espn球队信息
 
 '''
 
 _logger = logging.getLogger('yzwl_spider')
-_cookies = {'MAINT_NOTIFY_201410': 'notified'}
+
+# _cookies = {'MAINT_NOTIFY_201410': 'notified'}
+
 db = yzwl.DbSession()
 collection = db.mongo['pay_proxies']
 default_headers = {
-    # 'Referer': '',
-    # 'Host': 'http://zq.win007.com',
+    'Upgrade-Insecure-Requests': '1',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36',
 }
 
 db = yzwl.DbClass()
-mysql = db.yzwl
+mysql = db.local_yzwl
 lock = threading.Lock()
 
 
-def get_prolist(limit=0):
+def get_prolist(limit=10):
     """
     获取代理列表
     从url获取改为从数据库获取
     """
-
+    res = requests.get('http://proxy.elecfans.net/proxys.php?key=nTAZhs5QxjCNwiZ6&num=10&type=pay'.format(limit))
+    data = res.json()
+    # data = collection.find({}).limit(limit)
     prolist = []
-    data = collection.find({}).limit(limit)
-    for vo in data:
+    for vo in data['data']:
         prolist.append(vo['ip'])
     _num = len(prolist)
     if _num <= 1:
@@ -70,8 +72,8 @@ def fetch_data(url, proxy=None, headers=None, **kwargs):
         获取数据异常时返回信息为负值，成功为字典类型数据
     '''
 
-    if isinstance(headers, dict):
-        default_headers = headers
+    # if isinstance(headers, dict):
+    #     default_headers = headers
     try:
         proxies = None
         if proxy:
@@ -79,9 +81,9 @@ def fetch_data(url, proxy=None, headers=None, **kwargs):
             proxies = {'http': 'http://' + proxy[1][i]}
 
         sess = requests.Session()
-        # _logger.info('INFO:使用代理, %s ;' % (proxies))
-        rs = sess.get(url, headers=default_headers, cookies=_cookies, timeout=30, proxies=proxies)
-        # print('rs', rs.text)
+        print('获取url： {0}'.format(url))
+        rs = sess.get(url, headers=default_headers, cookies=None, timeout=30, proxies=None)
+
     except Exception as e:
         # 将进行重试，可忽略
         _logger.info('STATUS:-400 ; INFO:数据请求异常, %s ; URL:%s' % (util.traceback_info(e), url))
@@ -101,10 +103,11 @@ def fetch_data(url, proxy=None, headers=None, **kwargs):
             rs.status_code, proxies['http'] if proxy else '', url))
         return -405
     # 强制utf-8
-    rs.encoding = 'utf-8'
-    # print('kwargs', kwargs)
-    with lock:
-        return _parse_detail_data(rs.text, url=url, **kwargs)
+    # rs.encoding = 'utf-8'
+    rs.encoding = rs.apparent_encoding
+    # util.save_html(rs.text,'nba.html')
+    # text = util.fetch_html('Z:\spider\yzwl\collection\html\nba.html')
+    return _parse_detail_data(rs.text, url=url, **kwargs)
 
 
 def _parse_detail_data(data=None, url=None, **kwargs):
@@ -115,56 +118,82 @@ def _parse_detail_data(data=None, url=None, **kwargs):
     @param  url     解析的页面url（方便记录异常）
     @param  kwargs  扩展参数
     '''
-    db_name = kwargs.get('db_name', '')
-    if not db_name:
-        _logger.info('INFO: 请检查是否传入正确的数据库; URL:%s' % (url))
-        return
+
     if not data:
         _logger.debug('STATUS:-404 ; INFO:数据异常 ; URL:%s' % url)
         return -404
+    # root=etree.htmlfile(data)
     root = etree.HTML(data)
-    open_date = root.xpath(
-        '//div[@class="firstItem"]//div[@class="_ctn"]//div[@class="_left"]//div[@class="_p2"]//text()')
-    open_date = open_date[0].split('：')[-1] if '：' in open_date[0] else None
+    # team_division = root.xpath('//div[@class="layout is-split"]//div[@class="mt7"]/div/text()')
+    # print('team_division', team_division)   #nba赛区
 
-    if not open_date:
-        pass
-    test_data = root.xpath('//table[@class="_tab"]//tbody//tr//td//text()')
-    if not test_data:
-        _logger.info('INFO: 该日期没有获取到数据; URL:%s' % (url))
-        return
-
-    tr_list = root.xpath('//table[@class="_tab"]//tbody//tr')
-    if not tr_list:
-        _logger.info('INFO: 该日期没有获取到数据; URL:%s' % (url))
-        return
-
-    tr_list = reversed(tr_list)
-
-    for tr in tr_list:
-        dlist = tr.xpath('.//td//text()')
-        dlist = [_data for _data in dlist if _data.lstrip('\r\n').strip(' ')] if dlist else None
-        # print('dlist', dlist)
-        if not dlist:
+    teams = root.xpath('//div[@class="layout is-split"]//div[@class="mt7"]//div[@class="mt3"]')
+    index_url = 'http://www.espn.com'
+    for team in teams:
+        try:
+            team_name_en = team.xpath('.//div[@class="pl3"]/a/h2/text()')[0]
+            team_link_span = team.xpath('.//div[@class="TeamLinks__Links"]//span')
+            team_stats_url = index_url + team_link_span[0].xpath('./a/@href')[0]
+            team_schedule_url = index_url + team_link_span[1].xpath('./a/@href')[0]
+            team_roster_url = index_url + team_link_span[2].xpath('./a/@href')[0]
+            team_depth_url = index_url + team_link_span[3].xpath('./a/@href')[0]
+        except Exception as e:
+            # team_name = ''
+            # team_stats_url = ''
+            # team_schedule_url = ''
+            # team_roster_url = ''
+            # team_depth_url = ''
+            _logger.debug('STATUS: 0001 ; INFO: 数据解析错误', util.traceback_info(e))
             continue
-        expect = ''.join(open_date.split('-')) + dlist[0]
-        open_time = open_date + ': ' + dlist[1]
-        open_code = ','.join(dlist[2:])
-        create_time = util.date()
+
+        # print('team_name_en', team_name_en)
+        # print('team_stats_url', team_stats_url)
+        # print('team_schedule_url', team_schedule_url)
+        # print('team_roster_url', team_roster_url)
+        # print('team_depth_url', team_depth_url)
+        #
+        # print('*' * 200)
+
         item = {
-            'expect': expect,
-            'open_time': open_time,
-            'open_code': open_code,
-            'open_url': url,
-            'create_time': create_time,
+            'team_name_en': team_name_en,
+            'team_stats_url': team_stats_url,
+            'team_schedule_url': team_schedule_url,
+            'team_roster_url': team_roster_url,
+            'team_depth_url': team_depth_url,
+            'update_time_stamp': int(time.time())
         }
+        save_data(url, db_name='t_basketball_team', item=item)
+        # exit()
 
-        info = mysql.select(db_name, condition={'expect': expect}, limit=1)
-        if info:
-            _logger.info('INFO:数据已存在不做重复存入, 期号: %s ; URL:%s' % (expect, url))
-            continue
-        mysql.insert(db_name, data=item)
-        _logger.info('INFO:数据保存成功, 期号%s ; URL:%s' % (expect, url))
+
+def parse_data(data, symol=1):
+    data_list = []
+
+    for _data in data:
+        if symol == 1:
+            _data = util.cleartext(_data)
+        else:
+            _data = int(util.number_format(util.cleartext(_data)))
+        data_list.append(_data)
+
+    return data_list
+
+
+def save_data(url, db_name, item):
+    team_name_en = item['team_name_en']
+    team_short_name_en = ' '.join(team_name_en.split(' ')[1:])
+    fields = ('team_id', 'team_name_zh', 'create_time', 'update_time')
+    info = mysql.select(db_name, fields=fields, condition=[('team_short_name_en', '=', team_short_name_en)], limit=1)
+    print('info', info)
+    if not info:
+        data = mysql.select(db_name, fields=('team_id'), order='team_id DESC', limit=1)
+        team_id = data['team_id'] + 1
+        item['team_id'] = team_id
+        # mysql.insert(db_name, data=item, return_insert_id=True)
+        _logger.info('INFO:数据新增 保存操作, 球队ID: {0} ; 球队名称: {1}'.format(team_id, team_name_en))
+    else:
+        mysql.update(db_name, condition=[('team_id', '=', info['team_id'])], data=item)
+        _logger.info('INFO:数据已存在 更新操作, 球队ID: {0} ; 球队名称: {1}'.format(info['team_id'], info['team_name_zh']))
 
 
 def fetch_search_data(keyword=None, id=None, data_dict=None, headers=None, proxy=None, **kwargs):
@@ -184,7 +213,7 @@ def fetch_search_data(keyword=None, id=None, data_dict=None, headers=None, proxy
         proxies = None
         if proxy:
             proxies = {'http': 'http://{0}'.format(random.choice(proxy[1]))}
-        rs = requests.get(url, headers=default_headers, cookies=_cookies, timeout=20, proxies=proxies)
+        rs = requests.get(url, headers=default_headers, cookies=None, timeout=20, proxies=proxies)
     except Exception as e:
         _logger.info('STATUS:-400 ; INFO:数据请求异常, %s ; URL:%s' % (util.traceback_info(e), url))
         if 'Invalid URL' not in str(e):
@@ -273,69 +302,21 @@ def fetch_update_data(url=None, id=None, **kwargs):
     return
 
 
-def run(interval, info, proxy, _data, dlist, **kwargs):
-    abbreviation = _data['abbreviation']
-    lottery_name = _data['lottery_name']
-    lottery_result = _data['lottery_result']
-    lottery_chart_url = _data['lottery_chart_url']
-    if not lottery_chart_url:
-        print('没有获取到有效链接')
-        return
-    open_time = info.get('open_time', '') if info else ''
-    open_time = open_time.strftime('%Y-%m-%d') if open_time else None
-
-    kwargs = {
-        'db_name': lottery_result,
-    }
-    for str_time in dlist:
-        if open_time and str_time < open_time:
-            '''
-            若数据中存在的日期 则不再采集在此之前的数据
-            '''
-            _logger.info('INFO:数据已存在, 跳过该期数据:  {0};'.format(open_time))
-            continue
-        new_url = abbreviation + '/{0}'.format(str_time)
-        url = lottery_chart_url.replace(abbreviation, new_url)
-        result = fetch_data(url=url, proxy=proxy, headers=default_headers, **kwargs)
-        if not result:
-            continue
-        time.sleep(interval)
-
-
 def main(**kwargs):
     max_thread = 10
     task_list = []
     sd = kwargs.get('sd', '')
-    ed = kwargs.get('sd', '')
+    ed = kwargs.get('ed', '')
     interval = kwargs.get('interval', 10)
     _header = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36',
     }
-    data = mysql.select('t_lottery',
-                        fields=('abbreviation', 'lottery_name', 'lottery_type', 'lottery_result', 'lottery_chart_url'))
-    if not data:
-        print('没有获取到数据')
-        return
-    proxy = get_prolist(20)
-    dlist = util.specified_date(sd, ed)
-    for _data in data:
-        lottery_type = _data.get('lottery_type')
-        if lottery_type == 'dp':
-            print('低频彩票数据网页结构不一样，跳过')
-            continue
-        lottery_result = _data.get('lottery_result')
-        if lottery_result == 'game_nmgssc_result':
-            continue
-        info = mysql.select(lottery_result,
-                            fields=('open_time',), order='open_time desc', limit=1)
-        t = threading.Thread(target=run, args=(interval, info, proxy, _data, dlist), kwargs=kwargs,
-                             name='thread-{0}'.format(len(task_list)))
-        task_list.append(t)
-        t.start()
-        if len(task_list) >= max_thread:
-            for t in task_list:
-                t.join()
-            task_list = []
+
+    # proxy = get_prolist(20)
+
+    url = 'http://www.espn.com/nba/teams'
+
+    fetch_data(url, proxy=None, headers=None, **kwargs)
 
 
 def cmd():
@@ -345,7 +326,7 @@ def cmd():
     # parser.add_argument('-u', '--url', help=u'从检索结果的 URL 开始遍历下载产品数据',
     #                     dest='url', action='store', default=None)
     parser.add_argument('-sd', '--sd', help=u'从指定日期开始下载数据',
-                        dest='sd', action='store', default=None)
+                        dest='sd', action='store', default='03/01/2019')
     parser.add_argument('-ed', '--ed', help=u'从指定日期结束下载数据',
                         dest='ed', action='store', default=None)
     parser.add_argument('-i', '--interval', dest='interval',
@@ -362,11 +343,14 @@ def cmd():
 
 
 if __name__ == '__main__':
-    cmd()
-
+    # cmd()
+    url = 'http://www.espn.com/nba/teams'
+    text = util.fetch_html(file_name='nba.html')
+    # print('text',text)
+    _parse_detail_data(text, url)
 '''
-
-输入/输出
-
-
+//div[@class="TeamLinks__Links"]//span[1]/a/@href   stats
+//div[@class="TeamLinks__Links"]//span[2]/a/@href   schedule
+//div[@class="TeamLinks__Links"]//span[3]/a/@href   roster
+//div[@class="TeamLinks__Links"]//span[4]/a/@href  depth
 '''

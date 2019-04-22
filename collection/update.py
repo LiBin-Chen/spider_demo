@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+# 
 
 
-__author__ = 'snow'
-__time__ = '2019/3/3'
-
-# bulit-in
 import sys
 import copy
 import time
@@ -17,20 +15,18 @@ try:
     import json
 except ImportError:
     import simplejson as json
-import config
 import requests
-from packages import rabbitmq, supplier
-from packages import yzwl
+import config
+from packages import rabbitmq
 from packages import Util as util
+from packages import supplier
 
-db = yzwl.DbClass()
+# global object
 mq = rabbitmq.RabbitMQ()
 
-mysql = db.local_yzwl
 
-
-class UpdateData(object):
-    """更新数据"""
+class UpdateChip(object):
+    """更新元器件"""
 
     def __init__(self, **kwargs):
         self._init_args(**kwargs)
@@ -38,17 +34,14 @@ class UpdateData(object):
 
     def _init_args(self, **kwargs):
         """初始化参数"""
-        # print('kwargs', kwargs)
-        self.action = kwargs.get('action', 'put')
-        self.no_proxy = kwargs.get('no_proxy')  # 是否使用代理
-        # if self.action == 'search' and not kwargs.get('optype'):
-        #     self.dblist = [config.SEARCH_UPDATE_QUEUE]
-        # else:
-        self.flist = kwargs.get('flist', [])
+        # self.action = kwargs.get('action', 'put')
+        self.no_proxy = kwargs.get('no_proxy')
+        self.queues = kwargs.get('queues')  # 获取队列
         self.exception_threshold = kwargs.get('exception_threshold', 5)
         self.notice_threshold = kwargs.get('notice_threshold', 30)
         self.notice = kwargs.get('notice')
         self.limit = kwargs.get('limit', config.QUEUE_LIMIT)
+        self.pay = kwargs.get('pay', False)
         self.use = kwargs.get('use', False)
         self.suppliers = kwargs.get('supplier', [])
         self.optype = kwargs.get('optype')
@@ -60,185 +53,102 @@ class UpdateData(object):
 
     def run(self):
         """运行"""
-        qnum = len(self.flist)
-        handler = getattr(self,
-                          'search_data' if self.action == 'search' and self.optype == 'hot' else 'update_data')  # 选择何种操作
-
+        qnum = len(self.queues)
+        handler = getattr(self, 'update_data')  # 更新数据
         if qnum > 1:
             plist = []
-            for db_field in self.flist:
-                wid = self.suppliers[self.flist.index(db_field)]
-                p = multiprocessing.Process(target=handler, args=(wid, db_field,))  # 每个网站(字段)开一个独立进程
+            for qname in self.queues:
+                p = multiprocessing.Process(target=handler, args=(qname,))
                 plist.append(p)
                 p.start()
             for p in plist:
                 p.join()
         else:
-            wid = self.suppliers[0]
-            handler(wid, self.flist[0])
+            handler(self.queues[0])
 
-    def get_prolist(self, limit):
-        count = mysql.count('proxies') - limit
-        end_number = random.randint(1, count)
-        condition = [('pid', '>=', end_number), ('is_pay', '=', 1), ('is_use', '=', 1)]
-        data = mysql.select('proxies', condition=condition, limit=limit)
-        if isinstance(data, dict):
-            return {'ip': data['ip']}
-        dlist = []
-        for _data in data:
-            item = {
-                'ip': _data['ip'],
-            }
-            dlist.append(item)
-        return dlist
-    def update_data(self, wid, db_field=None):
+    def update_data(self, queue_name=None):
         """更新指定队列数据"""
-        if not db_field or not wid:
-            return 0
-        # print('wid', wid)
-        # if not db_field:
-        #     print('等待中，队列 %s 为空' % db_field)
-        #     return 0
-        # print('wid', wid)
-        proxy = None
-        if not self.no_proxy:
-            proxy = self.get_prolist()
-        tlist = []
-        data_list = []
-        total_num = 0
-        data = None
-        fields = (db_field, 'lottery_result', 'lottery_type')
-
-        url_data = mysql.select('t_lottery', fields=fields)
-        for _data in url_data:
-            # _url 为空
-
-            url = _data.get(db_field)
-            db_name = _data.get('lottery_result')
-            if not url:
-                continue
-
-            total_num += 1
-            kwargs = {
-                'wid': wid,
-                'lottery_type': _data.get('lottery_type', ''),
-                'db_name': _data.get('lottery_result', '')
-            }
-            self.fetch_update_data(url, data_list, proxy, **kwargs)
-        #     t = threading.Thread(target=self.fetch_update_data,
-        #                          args=(url, data_list, proxy), kwargs=kwargs)
-        #     tlist.append(t)
-        #     t.start()
-        #     time.sleep(0.1)
-        #
-        # try:
-        #     for t in tlist:
-        #         t.join(45)
-        # except (KeyboardInterrupt, SystemExit):
-        #     print('pass')
-        #     mq.put_queue_list(queue_name, queue_list)
-        #     return 0
-        # del queue, queue_list
-
-        # valid_num = 0
-        # valid_dict = {}
-        # delete_list = []
-        # update_list = []
-        # for data in data_list:
-        #     key = int(str(data['id'])[0:2])
-        #     if data['status'] > 0:
-        #         cnt = 1
-        #         if key in valid_dict:
-        #             if 'list' in data:
-        #                 cnt = len(data['list'])
-        #                 valid_dict[key] += cnt
-        #             elif 'dlist' in data:
-        #                 cnt = sum([(len(row['list']) if 'list' in row else 1) for row in data['dlist']])
-        #                 valid_dict[key] += cnt
-        #             else:
-        #                 valid_dict[key] += 1
-        #         else:
-        #             valid_dict[key] = 1
-        #         valid_num += cnt
-        #         if data['status'] == 404 or data['status'] == 405:
-        #             delete_list.append(data)
-        #             continue
-        #
-        #         del data['status']
-        #         if key == 12 and 'list' in data:
-        #             dlist = data['list']
-        #         elif 'dlist' in data:
-        #             dlist = data['dlist']
-        #         else:
-        #             dlist = [data]
-        #         for row in dlist:
-        #             mq.put(config.WAIT_UPDATE_QUEUE, row)
-        #
-        #     elif data['status'] <= 0:
-        #         if data.get('count', 1) < self.exception_threshold:
-        #             config.LOG.info('ID：%s，更新状态：%s, 重新入队中!' % (data['id'], data['status']))
-        #             update_list.append(data)
-        #         else:
-        #             config.LOG.error('ID：%s，更新状态：%s, 重试次数超过阀值,保存日志中!' % (data['id'], data['status']))
-        #             if 'count' in data:
-        #                 del data['count']
-        #             data['key'] = key
-        #             if 'time' not in data:
-        #                 data['time'] = int(time.time())
-        #             # db.mongo['update_exception_logs'].insert(data)
-        #             mq.put('update_exception_logs', data)
-        # # 提交信息
-        # mq.put_queue_list(config.DELETE_QUEUE, delete_list)
-        # mq.put_queue_list(queue_name, update_list)
-        # # 记录更新信息
-        # self.write_update_info(valid_dict)
-        # print('队列 %s 本次共有 %s 条数据更新成功，成功率：%s %%' %
-        #       (queue_name, valid_num, valid_num * 1.0 / total_num * 100 if total_num > 0 else 0))
-        # print('完成 , 等待下一个队列!')
-        # print('*' * 50)
-
-    def search_data(self, queue_name=None):
-        """搜索指定队列数据"""
         if not queue_name:
             return 0
-        exchange = 'hqchip_search_queue'
-        queue_list = mq.get_queue_list(queue_name=queue_name, limit=self.limit, exchange=exchange)
+        # queue_name = 'default_goods_queue'
+        qsize = mq.qsize(queue_name)
+        self.limit = 10
+        self.limit = self.limit if qsize > self.limit else qsize  # 每次更新的数量
+        queue_list = []
+        for i in range(self.limit):
+            queue_data = mq.get(queue_name)
+            queue_list.append(queue_data)
+
         if not queue_list:
             print('等待中，队列 %s 为空' % queue_name)
             return 0
         proxy = None
-        if not self.no_proxy:
+        # if not self.no_proxy:
+        if 0:
             proxy = self.get_prolist()
-        supp_name = queue_name.split('_')[2]
-        supp = self._supp_dict[supp_name]
         tlist = []
         data_list = []
-        err_list = []
         total_num = 0
-        for queue in queue_list:
+
+        for data in queue_list:
             # 无效队列数据
-            if 'keyword' not in queue:
+            if 'id' not in data:
                 continue
+            if 'proxy' in data:
+                del data['proxy']
+            # 有效队列的总数（非型号总数）
             total_num += 1
-            t = threading.Thread(target=self.fetch_search_data, args=(data_list, err_list, proxy, supp),
-                                 kwargs=queue)
+            t = threading.Thread(target=self.fetch_update_data,
+                                 args=(data_list, proxy), kwargs=data)
             tlist.append(t)
             t.start()
             time.sleep(0.1)
 
         try:
             for t in tlist:
-                t.join(300)
+                t.join(45)
         except (KeyboardInterrupt, SystemExit):
-            mq.put_queue_list(queue_name, queue_list)
+            mq.put(queue_name, queue_data)
             return 0
-        del queue, queue_list
+        del data, queue_list
 
-        valid_num = len(data_list)
-        # 提交信息
-        mq.put_queue_list(config.WAIT_ADD_QUEUE, data_list)
-        mq.put_queue_list(queue_name, err_list)
-        print('队列 %s 本次共有 %s 条数据搜索成功，成功率：%s %%' %
+        valid_num = 0
+        delete_list = []
+
+        # 所有线程执行完毕后 再进行数据处理
+        # print('data_list', data_list)
+        for data in data_list:
+            if not data:
+                print('data----: ', data)
+                continue
+            if data['status'] == 200:
+                mq.put(config.WAIT_UPDATE_QUEUE, data['dlist'])  # 等待提交数据
+                valid_num += 1
+                id = data.get('dlist').get('id', )
+                lottery_name = data.get('dlist').get('lottery_name', )
+                status = data.get('status')
+                config.LOG.info('ID：{0} ;彩种: {1} ;数据获取成功：{2} ;提交到入库队列:  {3} !'.format(id, lottery_name, status,
+                                                                                      config.WAIT_UPDATE_QUEUE))
+                continue
+            else:
+                delete_list.append(data)
+
+            count = data.get('count', '')
+            if count and count < self.exception_threshold:  # 重复更新的次数
+                config.LOG.info('ID：%s，更新状态：%s, 重新入队中!' % (data.get('id', ), data['status']))
+                # update_list.append(data)
+                mq.put(queue_name, data)
+            else:
+                config.LOG.error('ID：%s，更新状态：%s, 重试次数超过阀值,保存日志中!' % (data.get('id', ), data['status']))
+                if 'count' in data:
+                    del data['count']
+                if 'time' not in data:
+                    data['time'] = util.date()
+                # db.mongo['update_exception_logs'].insert(data)
+                mq.put('update_exception_logs', data)
+
+        self.write_update_info(valid_num)
+        print('队列 %s 本次共有 %s 条数据更新成功，成功率：%s %%' %
               (queue_name, valid_num, valid_num * 1.0 / total_num * 100 if total_num > 0 else 0))
         print('完成 , 等待下一个队列!')
         print('*' * 50)
@@ -246,14 +156,15 @@ class UpdateData(object):
     def write_update_info(self, num_list):
         '''记录更新信息
 
-        @param num_list     为更新数目信息
+        @param num_list     记录每次更新数目信息
         @param name         记录类型值，默认count为成功值
         '''
         if not num_list:
             return None
-        mq.put('crawler_update_stats', {'data': num_list, 'time': util.unixtime()})
+        # mq.put('crawler_update_stats', {'data': num_list, 'time': util.unixtime()})
+        mq.put('crawler_update_stats', {'data': num_list, 'time': util.date()})
 
-    def fetch_update_data(self, url, data_list=[], proxy=None, **kwargs):
+    def fetch_update_data(self, data_list=[], proxy=None, **kwargs):
         '''获取更新数据
 
         @return
@@ -267,13 +178,19 @@ class UpdateData(object):
                 404     产品不存在已被删除
 
         '''
-        # print('id',kwargs.get('id'))
-        supplier_name = config.get_web_url(kwargs.get('wid'))  # 获取该程序
-        if supplier_name is None:
+        # 根据url进行网站判断, 进而调用网站爬虫的模块
+
+        update_url = kwargs.get('update_url', '')
+        if not update_url:
             return
+        supplier_name = update_url.split('.')[1]
+        if supplier_name is None:
+            return None
         headers = {
             'user-agent': random.choice(config.USER_AGENT_LIST),
         }
+        if 'cjcp' in update_url:
+            return None
         try:
             if not hasattr(supplier, supplier_name):
                 module_name = 'supplier.{0}'.format(supplier_name)
@@ -282,16 +199,21 @@ class UpdateData(object):
                 obj = sys.modules[module_name]
             else:
                 obj = getattr(supplier, supplier_name)
-            _fetch_update_data = getattr(obj, 'fetch_update_data')
+            if 'fetch_update_data' in dir(obj):
+                _fetch_update_data = getattr(obj, 'fetch_update_data')
+            else:
+                kwargs['status'] = -401
+                data_list.append(kwargs)
+                return None
         except Exception as e:
-            config.LOG.exception('STATUS: -401, URL: {0}'.format(url))
+            config.LOG.exception('STATUS: -401, ID: {0} 导入错误,将进行重试: {1}'.format(kwargs['id'], e))
             kwargs['status'] = -401
             data_list.append(kwargs)
             return None
         try:
             kwargs['headers'] = headers
             kwargs['proxy'] = proxy
-            data_list.append(_fetch_update_data(url, **kwargs))
+            data_list.append(_fetch_update_data(**kwargs))
         except Exception as e:
             kwargs['status'] = -402
             if 'headers' in kwargs:
@@ -299,8 +221,7 @@ class UpdateData(object):
             if 'proxy' in kwargs:
                 del kwargs['proxy']
             data_list.append(kwargs)
-            config.LOG.exception('STATUS: -402, URL: {0}'.format(url))
-        # print('data_list',data_list)
+            config.LOG.exception('STATUS: -402, ID: %(id)s', {'id': util.u2b(kwargs['id'])})
 
     def fetch_search_data(self, data_list=[], err_list=[], proxy=None, supp=None, **kwargs):
         """根据搜索关键词获取产品产品数据（可能为url也可能为详细信息）"""
@@ -452,6 +373,11 @@ class UpdateData(object):
         prolist = []
         limit = 10 if self.limit < 10 else self.limit
         url = 'http://proxy.elecfans.net/proxys.php?key=nTAZhs5QxjCNwiZ6&num={0}'.format(limit)
+        if self.optype == 'hot':
+            if self.pay:
+                url += '&type=pay'
+            else:
+                url = url
         try:
             resp = requests.get(url)
             data = json.loads(resp.content)
@@ -470,27 +396,22 @@ def main():
     parser.add_argument('-h', '--help', dest='help', help='获取帮助信息',
                         action='store_true', default=False)
     parser.add_argument('-i', '--interval-time', dest='interval', help='间隔时间，默认为1秒，\
-                         0则仅运行一次', default=60, type=int)
-
+                         0则仅运行一次', default=1, type=int)
     act_group = parser.add_argument_group(title='操作选择项')
-    act_group.add_argument('-p', '--put', dest='action', help='更新提交队列数据',
-                           action='store_const', const='put', default='put')
-    # act_group.add_argument('-s', '--search', dest='action', help='更新搜索时需要更新的产品数据',
-    #                        action='store_const', const='search')
     act_group.add_argument('-n', '--no-proxy', help='不使用代理，选择将不使用代理更新',
                            action='store_true', default=False)
-    act_group.add_argument('-S', '--supplier', help='指定更新彩种网站数据(可多选)，不选默认为所有网站',
-                           nargs='+')
+    act_group.add_argument('-t', '--pay', help='是否使用复位代理,默认不使用',
+                           action='store_true', default=False)
     act_group.add_argument('-E', '--exception-threshold', help='异常阈值，超过此数量将记录进mongodb中，默认为5',
                            default=5, type=int)
-    act_group.add_argument('-U', '--use', help='彩种数据更新是否使用接口,默认不使用',
-                           action='store_true', default=False)
-    act_group.add_argument('--limit', help='单次更新限制数量，默认为 %s' % config.QUEUE_LIMIT,
+    act_group.add_argument('-u', '--use', help='更新是否使用接口,默认不使用',
+                           action='store_true', default=True)
+    act_group.add_argument('-l', '--limit', help='单次更新限制数量，默认为 %s' % config.QUEUE_LIMIT,
                            default=config.QUEUE_LIMIT, type=int)
+    act_group.add_argument('-o', '--optype', help='指定队列进行更新，不选默认为所有预更新队列', dest='optype',
+                           action='store_const', const='cp', default=2)
 
     search_group = parser.add_argument_group(title='更新选择项')
-    # search_group.add_argument('-H', '--hot-keyword', help='指定更新彩种产品队列', dest='optype',
-    #                           action='store_const', const='hot')
     search_group.add_argument('-M', '--max-depth', help='指定搜索最大深度，默认为 10', default=10, type=int)
 
     notice_group = parser.add_argument_group(title='提醒选择项')
@@ -501,49 +422,22 @@ def main():
     args = parser.parse_args()
 
     if args.help:
-        print('args', args)
         parser.print_help()
         print("\n示例")
-        print(' 更新提交队列数据                %s -p' % sys.argv[0])
-        print(' 指定网站获取更新彩种数据      %s -p --supplier 11 12' % sys.argv[0])
-        print(' 更新启动异常提醒监控            %s -p --notice' % sys.argv[0])
-        print(' 更新搜索提交数据                %s -s' % sys.argv[0])
-        print(' 不使用代理获取数据              %s -pn' % sys.argv[0])
+        print(' 指定更新队列数据                %s -o 2' % sys.argv[0])
+        print(' 更新启动异常提醒监控            %s -o 2 --notice' % sys.argv[0])
+        print(' 不使用代理获取数据              %s -on 2' % sys.argv[0])
         print()
 
-    elif args.action:
-        for k in config.DB_KEY:
-            name = 'supplier.' + config.DB_KEY[k]
-            try:
-                __import__(name)
-            except ImportError:
-                pass
-        # if not args.optype:
-        #     args.optype = 'default'
-        args.action = 'open'  # open为开奖结果， put为获取某个时间段至今的所有数据
-        qtype = 'lottery' if args.action == 'put' else args.action
-        args.supplier = [11]  # 11ok
+    if args.optype:
+        # optype为1时,获取全部队列进行更新
+        if args.optype == 1:
+            args.queues = [config.QNAME_KEY[key] for key in config.QNAME_KEY]
+        else:
+            args.queues = [config.QNAME_KEY[args.optype]]
 
-        if not args.supplier:
-            slist = []
-            for k in config.DB_KEY:
-                op_field = '{0}_{1}_{2}'.format(config.URL_KEY[k], qtype, 'url')
-                print('op_field', op_field)
-                # if mq.existed(qname):
-                slist.append(k)
-            args.supplier = slist
-        flist = []
-        for k in args.supplier:
-            if int(k) not in config.URL_KEY:
-                continue
-            op_field = '{0}_{1}_{2}'.format(config.URL_KEY[k], qtype, 'url')
-            flist.append(op_field)
-        args.flist = flist
-        if not args.flist:
-            raise ValueError('没有选择有效的字段')
-            pass
         while 1:
-            UpdateData(**args.__dict__)
+            UpdateChip(**args.__dict__)
             if args.interval <= 0:
                 break
             print('-------------- sleep %s sec -------------' % args.interval)
