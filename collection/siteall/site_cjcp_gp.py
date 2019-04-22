@@ -22,7 +22,28 @@ test_mysql = db.test_yzwl
 _logger = logging.getLogger('yzwl_spider')
 
 
-def save_to_db(item, db_name):
+def fetch_search_data():
+    """
+        根据关键词抓取搜索数据
+    """
+    pass
+
+
+def fetch_search_list():
+    """
+        抓取搜索列表数据
+    """
+    pass
+
+
+def fetch_update_data():
+    """
+        更新彩票的开奖结果
+    """
+    pass
+
+
+def save_data(item, db_name):
     info = mysql.select(db_name, condition=[('expect', '=', item['expect'])], limit=1)
     if not info:
         mysql.insert(db_name, data=item)
@@ -31,6 +52,30 @@ def save_to_db(item, db_name):
     else:
         # mysql.update(db_name, condition=[('expect', '=', item['expect'])], data=item)
         _logger.info('INFO:  DB:%s 数据已存在, 期号: %s' % (db_name, item['expect']))
+
+
+def _parse_detail_data(data, url, **kwargs):
+    db_name = kwargs.get('db_name')
+    selector = etree.HTML(data)
+    # title = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/h1/em[1]/@title')[0]
+    expect = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/h1/em[2]/text()')[0]
+    expect = re.findall(r'第(\d+)期', expect)[0]
+    date = selector.xpath('/html/body/div[1]/article/div/ul/li[2]/text()')[0]
+    open_date = re.findall(r'开奖时间：(.*)$', date)[0]
+    codes = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/p/span/text()')
+    open_code = ','.join(codes)
+    cp_id = ''.join(codes)
+    open_url = url
+    item = {
+        'cp_id': cp_id,
+        'cp_sn': '25' + expect,
+        'expect': expect,
+        'open_time': open_date,
+        'open_code': open_code,
+        'open_url': open_url,
+        'create_time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    }
+    save_data(item, db_name)
 
 
 def fetch_history_data():
@@ -59,40 +104,25 @@ def fetch_history_data():
                     'open_url': open_url,
                     'create_time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                 }
-                save_to_db(item, 'game_qhks_result')
+                save_data(item, 'game_qhks_result')
 
 
-def fetch_data(url, db_name):
+def fetch_data(url, proxy=None, headers=None, **kwargs):
     try:
         r = session.get(url)
         if r.status_code == 200:
             content = r.content.decode('utf8')
-            selector = etree.HTML(content)
-            # title = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/h1/em[1]/@title')[0]
-            expect = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/h1/em[2]/text()')[0]
-            expect = re.findall(r'第(\d+)期', expect)[0]
-            date = selector.xpath('/html/body/div[1]/article/div/ul/li[2]/text()')[0]
-            open_date = re.findall(r'开奖时间：(.*)$', date)[0]
-            codes = selector.xpath('/html/body/div[1]/article/div/ul/li[1]/div/p/span/text()')
-            open_code = ','.join(codes)
-            cp_id = ''.join(codes)
-            open_url = url
-            item = {
-                'cp_id': cp_id,
-                'cp_sn': '25' + expect,
-                'expect': expect,
-                'open_time': open_date,
-                'open_code': open_code,
-                'open_url': open_url,
-                'create_time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            }
-            save_to_db(item, db_name)
+            _parse_detail_data(content, url, **kwargs)
     except Exception as e:
-        logging.error('{} fetch data error: {}'.format(__name__, e))
+        logging.error('fetch data error: {}'.format(e))
         time.sleep(3)
 
 
-def get_lottery_list():
+def api_fetch_data(url=None, proxy=None, **kwargs):
+    pass
+
+
+def main(**kwargs):
     lo_dict = {
         # '北京11选5': 0,
         # '天津11选5': 0,
@@ -125,7 +155,7 @@ def get_lottery_list():
         '吉林快3': 'game_jlks_result',
         '上海快3': 'game_shks_result',
         '江苏快3': 'game_jsks_result',
-        '安徽快3': 'game_ahks_result',
+        # '安徽快3': 'game_ahks_result',
         '福建快3': 'game_fjks_result',
         '江西快3': 'game_jxks_result',
         '湖北快3': 'game_hubks_result',
@@ -183,18 +213,15 @@ def get_lottery_list():
                 name = all_name_list[all_url_list.index(url)]
                 db_name = lo_dict.get(name)
                 if db_name:
-                    fetch_data(f_url, db_name)
+                    kwargs['db_name'] = db_name
+                    fetch_data(f_url, **kwargs)
                     time.sleep(0.5)
     except Exception as e:
         logging.error('{} error: {}'.format(__name__, e))
         time.sleep(3)
 
 
-def main():
-    while 1:
-        get_lottery_list()
-        time.sleep(120)
-
-
 if __name__ == '__main__':
-    main()
+    while 1:
+        main()
+        time.sleep(120)

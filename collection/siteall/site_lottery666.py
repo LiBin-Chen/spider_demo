@@ -4,7 +4,7 @@
 # @Email   : tianze@86cp.com
 # @File    : site_lottery666.py
 # @Software: PyCharm
-# @Remarks : 彩票资讯
+# @Remarks : 彩票资讯 等待需求，未完成
 import time
 
 from lxml import etree
@@ -14,10 +14,11 @@ from packages import Util, yzwl
 session = Util.get_session()
 
 db = yzwl.DbClass()
+# 本地库
 mysql = db.local_yzwl
 
 
-def save_to_db(item, db_name):
+def save_data(item, db_name):
     info = mysql.select(db_name, condition=[('title', '=', item['title']), ('date', '=', item['date'])], limit=1)
     if not info:
         mysql.insert(db_name, data=item)
@@ -43,7 +44,7 @@ def get_article(art_id):
             'content': article_str,
             'source_url': url
         }
-        save_to_db(item, 't_lottery_news')
+        save_data(item, 't_lottery_news')
 
 
 def get_article_url(pages):

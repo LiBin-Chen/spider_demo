@@ -21,6 +21,27 @@ test_mysql = db.test_yzwl
 _logger = logging.getLogger('yzwl_spider')
 
 
+def fetch_search_data():
+    """
+        根据关键词抓取搜索数据
+    """
+    pass
+
+
+def fetch_search_list():
+    """
+        抓取搜索列表数据
+    """
+    pass
+
+
+def fetch_update_data():
+    """
+        更新彩票的开奖结果
+    """
+    pass
+
+
 def save_data(url, db_name, item):
     info = mysql.select(db_name, condition=[('expect', '=', item['expect'])], limit=1)
     if not info:
@@ -45,17 +66,7 @@ def get_sign(key):
     return sign
 
 
-def get_open_data(url, post_data):
-    try:
-        r = session.post(url, post_data)
-        if r.status_code == 200:
-            data = r.json()
-            return data
-    except Exception as e:
-        _logger.error('request error: %s' % Util.traceback_info(e))
-
-
-def get_history_data(**kwargs):
+def api_fetch_history_data(**kwargs):
     url = 'https://www.cpyzj.com/req/cpyzj/lotHistory/getLotHistorys'
     lot_code = kwargs.get('lot_code')
     db_name = kwargs.get('db_name')
@@ -98,10 +109,9 @@ def get_history_data(**kwargs):
             time.sleep(1)
 
 
-def get_newest_data(url, **kwargs):
+def api_fetch_data(url, proxy=None, **kwargs):
     lot_code = kwargs.get('lot_code')
     db_name = kwargs.get('db_name')
-    lo_id = kwargs.get('id')
     time_stamp = int(time.time()*1000)
     key = 'lotCode={}&lotGroupCode={}&timestamp={}&token=noget&key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(lot_code, 0,
                                                                                                             time_stamp)
@@ -113,8 +123,9 @@ def get_newest_data(url, **kwargs):
         'lotCode': lot_code,
         'sign': sign.upper()
     }
-    data = get_open_data(url, post_data)
-    if data:
+    r = session.post(url, post_data)
+    if r.status_code == 200:
+        data = r.json()
         try:
             issue = data['data']['preDrawIssue']
             open_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(data['data']['preDrawTime'] / 1000))
@@ -210,7 +221,7 @@ def main():
                 'id': id_dict[key]
             }
             url = 'https://www.cpyzj.com/req/cpyzj/lotHistory/queryNewestLotByCode'
-            get_newest_data(url, **kwargs)
+            api_fetch_data(url, **kwargs)
 
 
 if __name__ == '__main__':

@@ -20,7 +20,7 @@ mysql = db.yzwl
 _logger = logging.getLogger('yzwl_spider')
 
 
-def save_to_db(item, db_name):
+def save_data(item, db_name):
     info = mysql.select(db_name, condition=[('id', '=', item['id'])])
     if not info:
         mysql.insert(db_name, data=item)
@@ -68,7 +68,7 @@ def get_football_match():
     return football_url
 
 
-def parse_data(data, team_dict, round_num):
+def _parse_detail_data(data, team_dict, round_num):
     try:
         match_id = data[0]
         event_id = data[1]
@@ -114,12 +114,18 @@ def parse_data(data, team_dict, round_num):
             item['host_half_score'] = half_score[0]
         if half_score[1] and half_score[1] != 'NULL':
             item['guest_half_score'] = half_score[1]
-        save_to_db(item, 't_football_match')
+        save_data(item, 't_football_match')
     except Exception as e:
         print("error:" + str(e))
 
 
-def get_info(url, mark=0):
+def fetch_data(url, mark=0):
+    """
+
+    :param url:
+    :param mark: 是否只获取一条数据的标记
+    :return:
+    """
     try:
         session.headers.update({
             "Accept": "*/*",
@@ -154,7 +160,7 @@ def get_info(url, mark=0):
                     if len(league_list) > 1:
                         for i in league_list:
                             new_url = re.sub(re.compile(r'_(\d+)\.js\?'), '_{}.js?'.format(str(i[0])), url)
-                            get_info(new_url, mark=1)
+                            fetch_data(new_url, mark=1)
                         return
                 round_info = re.findall(r'jh\["R_(\d+)"] = (\[.*?]);', js_data)
 
@@ -166,9 +172,9 @@ def get_info(url, mark=0):
                             try:
                                 if len(rd) < 20:
                                     for m in rd[4:]:
-                                        parse_data(m, team_dict, round_num)
+                                        _parse_detail_data(m, team_dict, round_num)
                                     continue
-                                parse_data(rd, team_dict, round_num)
+                                _parse_detail_data(rd, team_dict, round_num)
                             except Exception as e:
                                 print("error:" + str(e))
             elif cup_data:
@@ -182,9 +188,9 @@ def get_info(url, mark=0):
                             try:
                                 if len(md) < 20:
                                     for m in md[4:]:
-                                        parse_data(m, team_dict, 0)
+                                        _parse_detail_data(m, team_dict, 0)
                                     continue
-                                parse_data(md, team_dict, 0)
+                                _parse_detail_data(md, team_dict, 0)
                             except Exception as e:
                                 print("error:" + str(e))
 
@@ -202,7 +208,7 @@ def main():
                 js_src = re.findall(r'src="(/jsData/matchResult/.*?)">', html)
                 if js_src:
                     js_url = 'http://zq.win007.com' + js_src[0]
-                    get_info(js_url)
+                    fetch_data(js_url)
 
 
 if __name__ == '__main__':

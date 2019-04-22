@@ -27,7 +27,29 @@ session.headers.update({
 })
 
 
-def save_to_db(item, db_name):
+def fetch_search_data():
+    """
+        根据关键词抓取搜索数据
+    """
+    pass
+
+
+def fetch_search_list():
+    """
+        抓取搜索列表数据
+    """
+    pass
+
+
+def fetch_update_data():
+    """
+        更新彩票的开奖结果
+    """
+    pass
+
+
+
+def save_data(item, db_name):
     info = mysql.select(db_name, condition=[('expect', '=', item['expect']), ('lottery_id', '=', item['lottery_id'])], limit=1)
     if not info:
         # 插入数据
@@ -39,19 +61,7 @@ def save_to_db(item, db_name):
         _logger.info('INFO:  DB:%s 数据已存在 更新成功, 期号: %s ,彩种id：%s; ' % (db_name, item['expect'], item['lottery_id']))
 
 
-def save_to_db2(item, db_name):
-    info = mysql.select(db_name, condition=[('expect', '=', item['expect'])], limit=1)
-    if not info:
-        # 插入数据
-        mysql.insert(db_name, data=item)
-        _logger.info('INFO:  DB:%s 数据保存成功, 期号%s' % (db_name, item['expect']))
-    else:
-        # 更新热度信息
-        # mysql.update(db_name, condition=[('expect', '=', item['expect']), ('lottery_id', '=', item['lottery_id'])], data={'hot_data': item['hot_data']})
-        _logger.info('INFO:  DB:%s 数据已存在 不做录入, 期号: %s' % (db_name, item['expect']))
-
-
-def get_sign(key):
+def _get_sign(key):
     with open('../scripts/md5.js') as f:
         js_data = f.read()
     ctx = execjs.compile(js_data)
@@ -59,12 +69,23 @@ def get_sign(key):
     return sign
 
 
-def get_data(lot_code):
+def _parse_detail_data(data, url=None, **kwargs):
+    lottery_id = kwargs.get('lottery_id')
+    item = {
+        'lottery_id': lottery_id,
+        'expect': data[1],
+        'hot_data': json.dumps(data[0], ensure_ascii=True)
+    }
+    save_data(item, 't_lottery_hot')
+
+
+def api_fetch_data(url=None, proxy=None, **kwargs):
+    lot_code = kwargs.get('lot_code')
     plan_url = 'https://www.cpyzj.com/req/cpyzj/funnyWin/getHotPlanByLotCode'
     hot_url = 'https://www.cpyzj.com/req/cpyzj/funnyWin/getHotNumbers'
     time_stamp = int(time.time()*1000)
     plan_key = 'lotCode={}&timestamp={}&token=noget&key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(lot_code, time_stamp)
-    plan_sign = get_sign(plan_key)
+    plan_sign = _get_sign(plan_key)
     plan_post_data = {
         'token': 'noget',
         'timestamp': time_stamp,
@@ -76,13 +97,12 @@ def get_data(lot_code):
     lottery_name = ''
     hot_list = []
     if plan_r.status_code == 200:
-        content = plan_r.content.decode('utf8')
-        plan_dict = json.loads(content)
+        plan_dict = plan_r.json()
         for plan_code_dict in plan_dict['data']:
             plan_name = plan_code_dict.get('planName')
             hot_key = 'lotCode={}&planCode={}&timestamp={}&token=noget&key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(
                 lot_code, plan_code_dict.get('planCode'), time_stamp)
-            hot_sign = get_sign(hot_key)
+            hot_sign = _get_sign(hot_key)
             post_data = {
                 'token': 'noget',
                 'timestamp': time_stamp,
@@ -93,8 +113,7 @@ def get_data(lot_code):
             hot_r = session.post(hot_url, post_data)
             if hot_r.status_code == 200:
                 time.sleep(1)
-                content = hot_r.content.decode('utf8')
-                hot_dict = json.loads(content)
+                hot_dict = hot_r.json()
                 request_result = hot_dict.get('msg')
                 if request_result == '请求成功':
                     issue = hot_dict['data']['issueNo']
@@ -124,16 +143,12 @@ def get_data(lot_code):
         return
 
 
-def get_hot_data(lottery_id, lot_code):
+def get_hot_data(**kwargs):
+    lottery_id = kwargs.get('lottery_id')
     for retry_time in range(1, 4):
-        hot_data = get_data(lot_code)
+        hot_data = api_fetch_data(**kwargs)
         if hot_data:
-            item = {
-                'lottery_id': lottery_id,
-                'expect': hot_data[1],
-                'hot_data': json.dumps(hot_data[0], ensure_ascii=True)
-            }
-            save_to_db(item, 't_lottery_hot')
+            _parse_detail_data(hot_data, **kwargs)
             return
         else:
             _logger.warning('彩种id: %s，no data, request time: %d' % (lottery_id, retry_time))
@@ -192,104 +207,18 @@ def main(lottery_type, dpc_type=None):
         }
     }
     if dpc_type:
-        get_hot_data(dpc_type, type_dict.get('dpc').get(dpc_type))
+        kwargs = {
+            'lottery_id': dpc_type,
+            'lot_code': type_dict.get('dpc').get(dpc_type)
+        }
+        get_hot_data(**kwargs)
     else:
         for key, value in type_dict.get(lottery_type).items():
-            get_hot_data(key, value)
-
-
-def get_open_data(url, post_data):
-    r = session.post(url, post_data)
-    if r.status_code == 200:
-        data = r.json()
-        return data
-
-
-def get_newest_data():
-    url = 'https://www.cpyzj.com/req/cpyzj/lotHistory/queryNewestLotByCode'
-    time_stamp = int(time.time()*1000)
-    key = 'lotCode={}&lotGroupCode={}&timestamp={}&token=noget&key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(10014, 0,
-                                                                                                            time_stamp)
-    sign = get_sign(key)
-    post_data = {
-        'token': 'noget',
-        'timestamp': time_stamp,
-        'lotGroupCode': 0,
-        'lotCode': 10014,
-        'sign': sign.upper()
-    }
-    data = get_open_data(url, post_data)
-    issue = data['data']['preDrawIssue']
-    open_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(data['data']['preDrawTime'] / 1000))
-    open_code = data['data']['preDrawCode']
-    cp_id = open_code.replace(',', '')
-    open_url = 'https://www.cpyzj.com/open-awards-detail.html?lotCode=10014&lotGroupCode=1'
-    item = {
-        'cp_id': cp_id,
-        'cp_sn': '18' + issue,
-        'expect': issue,
-        'open_time': open_time,
-        'open_code': open_code,
-        'open_url': open_url,
-    }
-    save_to_db2(item, 'game_bjklb_result')
-
-
-def get_history_data():
-    begin_date = datetime.date(2019, 3, 27)
-    end_date = datetime.date(2019, 4, 10)
-    for i in range((end_date - begin_date).days + 1):
-        day = begin_date + datetime.timedelta(days=i)
-        date = day.strftime('%Y-%m-%d')
-        url = 'https://www.cpyzj.com/req/cpyzj/lotHistory/getLotHistorys'
-        time_stamp = int(time.time()*1000)
-        key = 'lotCode={}&lotGroupCode={}&pageNo=1&pageSize=100&queryPreDrawTime={}&timestamp={}&token=noget&' \
-              'key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(10014, 0, date, time_stamp)
-        sign = get_sign(key)
-        post_data = {
-            'token': 'noget',
-            'timestamp': time_stamp,
-            'lotCode': 10014,
-            'lotGroupCode': 0,
-            'queryPreDrawTime': date,
-            'pageNo': 1,
-            'planSize': 100,
-            'sign': sign.upper()
-        }
-        data = get_open_data(url, post_data)
-        results = data['data']
-        page_count = data['totalPages']
-        for page in range(2, page_count+1):
-            key = 'lotCode={}&lotGroupCode={}&pageNo={}&pageSize=100&queryPreDrawTime={}&timestamp={}&token=noget&' \
-                  'key=cC0mEYrCmWTNdr1BW1plT6GZoWdls9b&'.format(10014, 0, page, date, time_stamp)
-            sign = get_sign(key)
-            post_data = {
-                'token': 'noget',
-                'timestamp': time_stamp,
-                'lotCode': 10014,
-                'lotGroupCode': 0,
-                'queryPreDrawTime': date,
-                'pageNo': page,
-                'planSize': 100,
-                'sign': sign.upper()
+            kwargs = {
+                'lottery_id': key,
+                'lot_code': value
             }
-            data = get_open_data(url, post_data)
-            results += data['data']
-        for result in results:
-            issue = result['preDrawIssue']
-            open_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(result['preDrawTime']/1000))
-            open_code = result['preDrawCode']
-            cp_id = open_code.replace(',', '')
-            open_url = 'https://www.cpyzj.com/open-awards-detail.html?lotCode=10014&lotGroupCode=1'
-            item = {
-                'cp_id': cp_id,
-                'cp_sn': '18' + issue,
-                'expect': issue,
-                'open_time': open_time,
-                'open_code': open_code,
-                'open_url': open_url,
-            }
-            save_to_db2(item, 'game_bjklb_result')
+            get_hot_data(**kwargs)
 
 
 def cmd():
@@ -316,8 +245,6 @@ def cmd():
                     'qxc': '14'
                 }
                 main(lo_type, dpc_dict.get(d_type))
-        elif lo_type == 'bjkl8':
-            get_newest_data()
         else:
             main(lo_type)
 
