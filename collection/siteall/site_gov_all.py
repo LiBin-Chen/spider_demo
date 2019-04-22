@@ -28,6 +28,8 @@ __author__ = 'snow'
 __time__ = '2019/3/17'
 
 _logger = logging.getLogger('yzwl_spider')
+
+
 _cookies = {'MAINT_NOTIFY_201410': 'notified'}
 
 default_headers = {
@@ -560,7 +562,7 @@ def cmd():
     parser.add_argument('-p', '--past', help=u'下载历史数据',
                         dest='past', action='store', default=0)
     parser.add_argument('-s', '--sign', help=u'定时任务时使用获取到开奖结果即关闭程序的标记',
-                        dest='sign', action='store', default=1)
+                        dest='sign', action='store', default=0)
     parser.add_argument('-sd', '--sd', help=u'指定开始下载日期',
                         dest='sd', action='store', default='2010-10-23')
     parser.add_argument('-ed', '--ed', help=u'指定结束下载日期',

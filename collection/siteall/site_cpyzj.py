@@ -5,7 +5,6 @@
 # @File    : site_cpyzj.py
 # @Software: PyCharm
 # @Remarks : 热度数据抓取
-import datetime
 import os
 import sys
 import json
@@ -13,9 +12,12 @@ import time
 import execjs
 import logging
 import requests
-cur_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.dirname(cur_dir))
-from packages import yzwl
+try:
+    from packages import yzwl
+except ImportError:
+    _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    sys.path.insert(0, _path)
+    import packages.yzwl as yzwl
 
 db = yzwl.DbClass()
 mysql = db.yzwl

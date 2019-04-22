@@ -155,7 +155,7 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         if not expect_list:
             print('expect_list', expect_list)
             continue
-        expect = int(expect_list[0])
+        expect = expect_list[0]
         test_code = test_code[0].replace(' ', ',') if test_code else 0
         sales_count = int(util.number_format(sales_count[0])) if sales_count else 0
         open_time = open_time[0].split('(')[0] if open_time else 0
@@ -172,42 +172,45 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         cp_id = open_code.replace(',', '')
         cp_sn = '12' + str(expect)
         item = {
-            'cp_id': cp_id,
-            'cp_sn': cp_sn,
-            'expect': expect,
-            'open_time': open_time,
-            'open_code': open_code,
-            'open_url': url.split('?')[0],
-            'lottery_trend_result': lottery_trend_result,
-            'test_machine_number': test_code,
-            'open_machine_number': 0,
+            # 'cp_id': cp_id,
+            # 'cp_sn': cp_sn,
+            # 'expect': expect,
+            # 'open_time': open_time,
+            # 'open_code': open_code,
+            # 'open_url': url.split('?')[0],
+            # 'lottery_trend_result': lottery_trend_result,
+            'test_code': test_code,
+            # 'open_machine_number': 0,
             # 'sales_count': sales_count,
             # 'direct_election': {'num': first_prize_num, 'amount': first_prize},
             # 'group_three': {'num': second_prize_num, 'amount': second_prize},
             # 'group_six': {'num': third_prize_num, 'amount': third_prize},
-            'create_time': util.date(),
+            # 'create_time': util.date(),
         }
 
-        data_item = {"rolling": "0", "bonusSituationDtoList": [
-            {"winningConditions": "号码按位相符", "numberOfWinners": first_prize_num, "singleNoteBonus": first_prize,
-             "prize": "直选"},
-            {"winningConditions": "号码按位相符", "numberOfWinners": second_prize_num, "singleNoteBonus": second_prize,
-             "prize": "组三"},
-            {"winningConditions": "号码相符(无同号)", "numberOfWinners": third_prize_num, "singleNoteBonus": third_prize,
-             "prize": "组六"}],
-                     "nationalSales": str(sales_count) + '元', "currentAward": "0"}
-        data_item = json.dumps(data_item, ensure_ascii=True)
-        item['open_result'] = data_item
+        # data_item = {"rolling": "0", "bonusSituationDtoList": [
+        #     {"winningConditions": "号码按位相符", "numberOfWinners": first_prize_num, "singleNoteBonus": first_prize,
+        #      "prize": "直选"},
+        #     {"winningConditions": "号码按位相符", "numberOfWinners": second_prize_num, "singleNoteBonus": second_prize,
+        #      "prize": "组三"},
+        #     {"winningConditions": "号码相符(无同号)", "numberOfWinners": third_prize_num, "singleNoteBonus": third_prize,
+        #      "prize": "组六"}],
+        #              "nationalSales": str(sales_count) + '元', "currentAward": "0"}
+        # data_item = json.dumps(data_item, ensure_ascii=True)
+        # item['open_result'] = data_item
         print('item', item)
         # [('id','>','10'),|,('status',1)]
         # db_name = util.get_lottery_key()
         db_name = 'game_sd_result'
-        info = mysql.select(db_name, condition=[('expect', '=', expect)], limit=1)
+
+        info = mysql.select(db_name, condition={'expect':expect}, limit=1)
+        print('info', info)
         if not info:
-            mysql.insert(db_name, data=item)
+            # mysql.insert(db_name, data=item)
             _logger.info('INFO:数据保存成功, 期号%s ; URL:%s' % (expect, url))
         else:
-            _logger.info('INFO:数据已存在不做重复存入, 期号: %s ; URL:%s' % (expect, url))
+            mysql.update(db_name, condition={'expect':expect}, data=item)
+            _logger.info('INFO:数据更新成功, 期号: %s ; URL:%s' % (expect, url))
         # exit()
         continue
 

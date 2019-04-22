@@ -491,7 +491,7 @@ def cmd():
     parser.add_argument('-h', '--help', dest='help', help=u'获取帮助信息',
                         action='store_true', default=False)
     parser.add_argument('-p', '--past', help=u'默认最新一期数据',
-                        dest='past', action='store', default=0)
+                        dest='past', action='store', default=1)
     parser.add_argument('-s', '--sign', help=u'定时任务时使用获取到开奖结果即关闭程序的标记',
                         dest='sign', action='store', default=0)
     parser.add_argument('-sd', '--sd', help=u'指定开始下载日期',
