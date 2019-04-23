@@ -123,7 +123,7 @@ class PublishChip(object):
             # 有效队列的总数（）
             valid_num += 1
             print('获取到的数据: ', data)
-            self.save_data(data)
+            # self.save_data(data)
 
     def save_data(self, data):
         db_name = data.get('lottery_result', '')
