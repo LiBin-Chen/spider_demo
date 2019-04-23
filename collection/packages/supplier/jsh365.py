@@ -154,21 +154,17 @@ def _parse_detail_data(data=None, url=None, **kwargs):
             expect_xpath[0], '期')
 
         open_code = ','.join(code_list)
-        cp_code = ''.join(code_list)
         if lotto_type == 'gp':
             open_time = use_date + time_xpath[0] if ':' in time_xpath[0] else use_date
         else:
             open_time = expect[:4] + '-' + time_xpath[0]
         create_time = util.date()
-        cp_id = cp_code  # 以中奖号+作为唯一id 并且开奖时间间隔大于15分钟  高频彩最低为20分钟，连着开同号概率极小
-        cp_sn = int(str(11) + str(expect))
         item = {
-            # 'cp_id': cp_id,
-            # 'cp_sn': cp_sn,
             'expect': expect,
             'open_time': open_time,
             'open_code': open_code,
             'open_url': url,
+            'source_sn': 11,
             'create_time': create_time,
         }
         item_list.append(item)

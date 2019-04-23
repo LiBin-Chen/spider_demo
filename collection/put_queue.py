@@ -157,7 +157,7 @@ def main():
     parser.add_argument('-s', '--supplier', dest='supplier', help='指定彩种ID进行更新', type=int)
     parser.add_argument('-t', '--sleep-time', dest='sleep_time',
                         help='指定暂停时间(默认5s)，小于或等于0时则只会执行一次',
-                        default=5, type=int)
+                        default=120, type=int)
     parser.add_argument('-p', '--supplier-list', help='打印彩种列表/彩种类型',
                         action='store_true', default=False)
     parser.add_argument('--start-id', dest='start_id', help='指定提交的起始',

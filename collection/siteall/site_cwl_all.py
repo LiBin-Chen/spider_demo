@@ -263,9 +263,6 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             return -1
         data = res.json()
         result = data['result']
-        item_dict = {
-
-        }
 
         cp_genre = kwargs.get('genre')
         if cp_genre is '1':
@@ -302,8 +299,6 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             content = info['content']
             if not content and cp_genre != '2':
                 return
-            cp_id = open_red_code.replace(',', '') + open_blue_code
-            cp_sn = '14' + str(expect)
 
             details_link = index_url + info['detailsLink']  # http://www.cwl.gov.cn/c/2019-03-14/450353.shtml
             video_link = index_url + info['videoLink']
@@ -352,8 +347,6 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             data_item['currentAward'] = util.modify_unit(count)
             if cp_genre in ['1', '3']:
                 item = {
-                    'cp_id': cp_id,
-                    'cp_sn': cp_sn,
                     'expect': expect,
                     'open_time': open_time,
                     'open_code': open_code,
@@ -364,6 +357,7 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
                     'open_video_url': video_link,
                     'open_content': content,
                     'open_result': json.dumps(data_item, ensure_ascii=True),
+                    'source_sn': 14,
                     'create_time': util.date()
                 }
                 try:
@@ -375,8 +369,6 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
                 # 福彩3d，试机号从360彩票网站获取
                 test_code = get_3d_test_code(expect)
                 item = {
-                    'cp_id': cp_id,
-                    'cp_sn': cp_sn,
                     'expect': expect,
                     'open_time': open_time,
                     'open_code': open_code,
@@ -388,6 +380,7 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
                     'open_video_url': video_link,
                     'open_content': content,
                     'open_result': json.dumps(data_item, ensure_ascii=True),
+                    'source_sn': 14,
                     'create_time': util.date()
                 }
             # print('item', item)
@@ -491,7 +484,7 @@ def cmd():
     parser.add_argument('-h', '--help', dest='help', help=u'获取帮助信息',
                         action='store_true', default=False)
     parser.add_argument('-p', '--past', help=u'默认最新一期数据',
-                        dest='past', action='store', default=1)
+                        dest='past', action='store', default=0)
     parser.add_argument('-s', '--sign', help=u'定时任务时使用获取到开奖结果即关闭程序的标记',
                         dest='sign', action='store', default=0)
     parser.add_argument('-sd', '--sd', help=u'指定开始下载日期',

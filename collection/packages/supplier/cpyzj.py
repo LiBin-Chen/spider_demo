@@ -30,7 +30,7 @@ def get_sign(key):
     :return:
     '''
     # 可增加动态获取文件地址的工具方法
-    with open('E:\modifySpace\collection\static\js\md5.js') as f:
+    with open('D:\yzwl-master\collection\static\js\md5.js') as f:
         js_data = f.read()
     ctx = execjs.compile(js_data)
     sign = ctx.call('md5', key)
@@ -222,15 +222,13 @@ def api_fetch_data(lotto_code, **kwargs):
         issue = data['data']['preDrawIssue']
         open_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(data['data']['preDrawTime'] / 1000))
         open_code = data['data']['preDrawCode']
-        # cp_id = open_code.replace(',', '')
 
         item = {
-            # 'cp_id': cp_id,
-            # 'cp_sn': '18' + issue,
             'expect': issue,
             'open_time': open_time,
             'open_code': open_code,
             'open_url': open_url,
+            'source_sn': 18,
             'create_time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         }
         return item

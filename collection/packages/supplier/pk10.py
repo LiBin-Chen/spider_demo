@@ -129,15 +129,12 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         open_time = open_date[:4] + '-' + open_date[4:6] + '-' + open_date[6:] + ' ' + expect_list[1]
         if 'toda' in open_time:
             open_time = util.date(format='%Y-%m-%d') + ' ' + open_time.split(' ')[-1]
-        cp_id = open_code.replace(',', '')  # 以中奖号+作为唯一id 并且开奖时间间隔大于15分钟  高频彩最低为20分钟，连着开同号概率极小
-        cp_sn = int(str(16) + expect)
         item = {
-            # 'cp_id': cp_id,
-            # 'cp_sn': cp_sn,
             'expect': expect,
             'open_time': open_time,
             'open_code': open_code,
             'open_url': url,
+            'source_sn': 16,
             'create_time': util.date(),
         }
         item_list.append(item)

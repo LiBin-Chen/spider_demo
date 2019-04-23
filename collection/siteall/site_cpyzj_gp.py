@@ -94,15 +94,13 @@ def api_fetch_history_data(**kwargs):
                 expect = d['preDrawIssue']
                 open_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(d['preDrawTime'] / 1000))
                 open_code = d['preDrawCode']
-                cp_id = open_code.replace(',', '')
                 open_url = 'https://www.cpyzj.com/open-awards-detail.html?lotCode={}&lotGroupCode=1'.format(lot_code)
                 item = {
-                    'cp_id': cp_id,
-                    'cp_sn': '18' + expect,
                     'expect': expect,
                     'open_time': open_time,
                     'open_code': open_code,
                     'open_url': open_url,
+                    'source_sn': 18,
                     'create_time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                 }
                 save_data(url, db_name, item)
@@ -130,15 +128,13 @@ def api_fetch_data(url, proxy=None, **kwargs):
             issue = data['data']['preDrawIssue']
             open_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(data['data']['preDrawTime'] / 1000))
             open_code = data['data']['preDrawCode']
-            cp_id = open_code.replace(',', '')
             open_url = 'https://www.cpyzj.com/open-awards-detail.html?lotCode={}&lotGroupCode=1'.format(lot_code)
             item = {
-                'cp_id': cp_id,
-                'cp_sn': '18' + issue,
                 'expect': issue,
                 'open_time': open_time,
                 'open_code': open_code,
                 'open_url': open_url,
+                'source_sn': 18,
                 'create_time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
             }
             save_data(url, db_name, item)
@@ -147,84 +143,84 @@ def api_fetch_data(url, proxy=None, **kwargs):
 
 
 def main():
-    lo_dict = {
-        'gd11x5': 10006,
-        'jsk3': 10007,
-        'bjkl8': 10014,
-        'jx11x5': 10015,
-        'js11x5': 10016,
-        'ah11x5': 10017,
-        'sh11x5': 10018,
-        'ln11x5': 10019,
-        'hb11x5': 10020,
-        'gx11x5': 10022,
-        'jl11x5': 10023,
-        'nmg11x5': 10024,
-        'zj11x5': 10025,
-        'gxk3': 10026,
-        'jlk3': 10027,
-        'hebk3': 10028,
-        'nmgk3': 10029,
-        'ahk3': 10030,
-        'fjk3': 10031,
-        'hbk3': 10032,
-        # 'bjk3': 10033,
-        'tjklsf': 10034,
-        # 'bjpks': 10001,
-        # 'cqssc': 10002,
-        # 'tjssc': 10003,
-        # 'xjssc': 10004,
-        'gdklsf': 10005,
-        # 'sd11x5': 10008,
-        'cqklsf': 10009,
-        'gxklsf': 10038
-    }
-    id_dict = {
-        'gd11x5': 7,
-        'jsk3': 79,
-        'bjkl8': 100,
-        'jx11x5': 46,
-        'js11x5': 87,
-        'ah11x5': 89,
-        'sh11x5': 86,
-        'ln11x5': 53,
-        'hb11x5': 42,
-        'gx11x5': 112,
-        'jl11x5': 54,
-        'nmg11x5': 52,
-        'zj11x5': 88,
-        'gxk3': 73,
-        'jlk3': 81,
-        'hebk3': 83,
-        'nmgk3': 82,
-        'ahk3': 78,
-        'fjk3': 77,
-        'hbk3': 74,
-        'bjk3': 84,
-        'tjklsf': 65,
-        'bjpks': 3,
-        'cqssc': 68,
-        'tjssc': 69,
-        'xjssc': 66,
-        'gdklsf': 35,
-        # 'sd11x5': 10008,
-        'cqklsf': 62,
-        'gxklsf': 36
-    }
-    for key, value in lo_dict.items():
-        info = mysql.select('t_lottery', condition=[('id', id_dict[key])], fields=['lottery_result'], limit=1)
-        db_name = info.get('lottery_result')
-        if db_name:
-            kwargs = {
-                'lot_code': value,
-                'db_name': db_name,
-                'id': id_dict[key]
-            }
-            url = 'https://www.cpyzj.com/req/cpyzj/lotHistory/queryNewestLotByCode'
-            api_fetch_data(url, **kwargs)
+    while 1:
+        lo_dict = {
+            'gd11x5': 10006,
+            'jsk3': 10007,
+            'bjkl8': 10014,
+            'jx11x5': 10015,
+            'js11x5': 10016,
+            'ah11x5': 10017,
+            'sh11x5': 10018,
+            'ln11x5': 10019,
+            'hb11x5': 10020,
+            'gx11x5': 10022,
+            'jl11x5': 10023,
+            'nmg11x5': 10024,
+            'zj11x5': 10025,
+            'gxk3': 10026,
+            'jlk3': 10027,
+            'hebk3': 10028,
+            'nmgk3': 10029,
+            # 'ahk3': 10030,
+            'fjk3': 10031,
+            'hbk3': 10032,
+            # 'bjk3': 10033,
+            'tjklsf': 10034,
+            # 'bjpks': 10001,
+            # 'cqssc': 10002,
+            # 'tjssc': 10003,
+            # 'xjssc': 10004,
+            'gdklsf': 10005,
+            # 'sd11x5': 10008,
+            'cqklsf': 10009,
+            'gxklsf': 10038
+        }
+        id_dict = {
+            'gd11x5': 7,
+            'jsk3': 79,
+            'bjkl8': 100,
+            'jx11x5': 46,
+            'js11x5': 87,
+            'ah11x5': 89,
+            'sh11x5': 86,
+            'ln11x5': 53,
+            'hb11x5': 42,
+            'gx11x5': 112,
+            'jl11x5': 54,
+            'nmg11x5': 52,
+            'zj11x5': 88,
+            'gxk3': 73,
+            'jlk3': 81,
+            'hebk3': 83,
+            'nmgk3': 82,
+            'ahk3': 78,
+            'fjk3': 77,
+            'hbk3': 74,
+            'bjk3': 84,
+            'tjklsf': 65,
+            'bjpks': 3,
+            'cqssc': 68,
+            'tjssc': 69,
+            'xjssc': 66,
+            'gdklsf': 35,
+            # 'sd11x5': 10008,
+            'cqklsf': 62,
+            'gxklsf': 36
+        }
+        for key, value in lo_dict.items():
+            info = mysql.select('t_lottery', condition=[('id', id_dict[key])], fields=['lottery_result'], limit=1)
+            db_name = info.get('lottery_result')
+            if db_name:
+                kwargs = {
+                    'lot_code': value,
+                    'db_name': db_name,
+                    'id': id_dict[key]
+                }
+                url = 'https://www.cpyzj.com/req/cpyzj/lotHistory/queryNewestLotByCode'
+                api_fetch_data(url, **kwargs)
+        time.sleep(120)
 
 
 if __name__ == '__main__':
-    while 1:
-        main()
-        time.sleep(120)
+    main()
