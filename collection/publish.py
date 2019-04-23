@@ -77,9 +77,9 @@ class PublishChip(object):
         queue_name = config.WAIT_UPDATE_QUEUE
         qsize = mq.qsize(queue_name)
         print('queue_name', queue_name)
-        self.limit = self.limit if qsize > self.limit else qsize  # 每次更新的数量
+        limit = self.limit if qsize > self.limit else qsize  # 每次更新的数量
         queue_list = []
-        for i in range(self.limit):
+        for i in range(limit):
             queue_data = mq.get(queue_name)
             queue_list.append(queue_data)
 
@@ -102,7 +102,10 @@ class PublishChip(object):
             lottery_type = data.get('lottery_type', '')
 
             if lottery_type == 'HIGH_RATE':
-                # 高频彩
+                if len(expect) == 10:
+                    expect = list(expect)
+                    expect.insert(8, '0')
+                    expect = int(''.join(expect))
                 pass
             elif lottery_type == 'LOCAL':
                 # 地方彩

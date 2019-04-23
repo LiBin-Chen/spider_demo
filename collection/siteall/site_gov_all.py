@@ -28,8 +28,6 @@ __author__ = 'snow'
 __time__ = '2019/3/17'
 
 _logger = logging.getLogger('yzwl_spider')
-
-
 _cookies = {'MAINT_NOTIFY_201410': 'notified'}
 
 default_headers = {
@@ -387,8 +385,6 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             count += util.number_format(util.cleartext(details[i]['allmoney']), places=0)
 
     data_item['currentAward'] = util.modify_unit(count)
-    cp_id = open_code.replace(',', '').replace('+', '')
-    cp_sn = '17' + str(expect)
 
     if cp_genre == '9':
         match_results = data_item['matchResults']
@@ -410,8 +406,6 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
             except:
                 match_results[i]['score'] = '0:0'
     item = {
-        'cp_id': cp_id,
-        'cp_sn': cp_sn,
         'expect': expect,
         'open_time': open_time,
         'open_code': open_code,
@@ -421,6 +415,7 @@ def api_fetch_data(url=None, proxy=None, **kwargs):
         'open_video_url': '',
         'open_content': '',
         'open_result': json.dumps(data_item, ensure_ascii=True),
+        'source_sn': 17,
         'create_time': util.date()
     }
     # print('*' * 100)
@@ -562,7 +557,7 @@ def cmd():
     parser.add_argument('-p', '--past', help=u'下载历史数据',
                         dest='past', action='store', default=0)
     parser.add_argument('-s', '--sign', help=u'定时任务时使用获取到开奖结果即关闭程序的标记',
-                        dest='sign', action='store', default=0)
+                        dest='sign', action='store', default=1)
     parser.add_argument('-sd', '--sd', help=u'指定开始下载日期',
                         dest='sd', action='store', default='2010-10-23')
     parser.add_argument('-ed', '--ed', help=u'指定结束下载日期',

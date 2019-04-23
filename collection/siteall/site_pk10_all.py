@@ -1,6 +1,5 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-
 import os
 import sys
 import time
@@ -13,7 +12,7 @@ import threading
 from lxml import etree
 
 try:
-    from packages import yzwl, rabbitmq
+    from packages import yzwl
     from packages import Util as util
 except ImportError:
     _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -36,7 +35,6 @@ mysql = db.yzwl
 test_mysql = db.test_yzwl
 
 lock = threading.Lock()
-mq = rabbitmq.RabbitMQ()
 
 
 # def get_prolist(limit=0):
@@ -128,12 +126,12 @@ def _parse_detail_data(data=None, url=None, **kwargs):
     parse_xpath = '//div[@data-type="{0}"]//tr'.format(abbreviation)
     tr_list = root.xpath(parse_xpath)
     if not tr_list:
-        _logger.info('INFO: 该日期没有获取到数据; URL:%s' % (url))
+        _logger.info('INFO: 该日期没有获取到数据; URL:%s' % url)
         return
     # print('tr_list', tr_list)
     # print('tr_list', len(tr_list))
     # tr_list = reversed(tr_list)
-    tr_list = tr_list[:2] if 'today' in url else tr_list  # 获取最新一天的数据，只拿更新的数据
+    tr_list = tr_list[:3] if 'today' in url else tr_list  # 获取最新一天的数据，只拿更新的数据
     for tr in tr_list:
         expect_xpath = tr.xpath('.//td[1]//text()')
         open_code = tr.xpath('.//td[2]/div[1]//span//text()')
@@ -156,34 +154,21 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         open_time = open_date[:4] + '-' + open_date[4:6] + '-' + open_date[6:] + ' ' + expect_list[1]
         if 'toda' in open_time:
             open_time = util.date(format='%Y-%m-%d') + ' ' + open_time.split(' ')[-1]
-        cp_id = open_code.replace(',', '')  # 以中奖号+作为唯一id 并且开奖时间间隔大于15分钟  高频彩最低为20分钟，连着开同号概率极小
-        cp_sn = int(str(16) + expect)
         item = {
-            'abbreviation': kwargs.get('abbreviation'),
-            'cp_id': cp_id,
-            'cp_sn': cp_sn,
             'expect': expect,
             'open_time': open_time,
             'open_code': open_code,
             'open_url': url,
+            'source_sn': 16,
             'create_time': util.date(),
         }
-
 
         try:
             info = mysql.select(db_name, condition=[('expect', '=', expect)], limit=1)
             if not info:
                 mysql.insert(db_name, data=item)
-<<<<<<< HEAD
-                if not isinstance(item, list):
-                    item = [item]
-                mq.put_queue_list('lottery_open_result', item)
-                print('item', item)
-                _logger.info('INFO:数据保存 sql/队列 成功, 期号%s ; URL:%s' % (expect, url))
-=======
                 test_mysql.insert(db_name, data=item)
                 _logger.info('INFO:数据保存成功, 期号%s ; URL:%s' % (expect, url))
->>>>>>> 5eb4b02cd59b97c52c5a59b4d3d8dd67cd335938
             else:
                 _logger.info('INFO:数据已存在不做重复存入, 期号: %s ; URL:%s' % (expect, url))
         except Exception as e:
@@ -251,7 +236,7 @@ def api_fetch_data(goods_sn=None, keyword=None, proxy=None, numofresult=1, **kwa
         i = random.randint(0, proxy[0] - 1)
         proxies = {
             'http': 'http://' + proxy[1][i],
-            'https': 'http://' + proxy[1][i]
+            'https': 'https://' + proxy[1][i]
         }
 
     api_url = ''
@@ -297,7 +282,7 @@ def fetch_update_data(url=None, id=None, **kwargs):
 def main(**kwargs):
     sd = kwargs.get('sd', '')
     ed = kwargs.get('ed', '')
-    interval = kwargs.get('interval', 0)
+    interval = kwargs.get('interval', 60)
     past = kwargs.get('past', 0)
     dlist = util.specified_date(sd, ed)
 
@@ -314,7 +299,7 @@ def main(**kwargs):
                 'abbreviation': _data.get('abbreviation'),
             }
             lottery_chart_url = _data.get('lottery_chart_url')
-            if not past:
+            if past:
                 # 下载历史数据
                 for str_time in dlist:
                     str_time = ''.join(str_time.split('-'))
@@ -335,13 +320,13 @@ def cmd():
     parser.add_argument('-h', '--help', dest='help', help=u'获取帮助信息',
                         action='store_true', default=False)
     parser.add_argument('-p', '--past', help=u'默认最新一期数据',
-                        dest='past', action='store', default=1)
+                        dest='past', action='store', default=0)
     parser.add_argument('-sd', '--sd', help=u'从指定日期开始下载数据',
                         dest='sd', action='store', default='03/17/2019')
     parser.add_argument('-ed', '--ed', help=u'从指定日期结束下载数据',
                         dest='ed', action='store', default=None)
     parser.add_argument('-i', '--interval', dest='interval',
-                        help='指定暂停时间(默认0)，小于或等于0时则只会执行一次', default=1, type=int)
+                        help='指定暂停时间(默认0)，小于或等于0时则只会执行一次', default=60, type=int)
 
     args = parser.parse_args()
     if args.help:

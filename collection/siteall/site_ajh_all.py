@@ -23,12 +23,12 @@ mysql = db.local_yzwl
 _logger = logging.getLogger('yzwl_spider')
 
 
-def save_to_db(item, db_name):
+def save_data(item, db_name):
     mysql.insert(db_name, data=item)
     _logger.info('INFO:数据保存成功, 结果:%s' % item['desc'])
 
 
-def get_result(data, lo_type, **kwargs):
+def _parse_detail_data(data, lo_type, **kwargs):
     try:
         lottery_dict = {
             'jsk3': '江苏快3',
@@ -75,7 +75,7 @@ def get_result(data, lo_type, **kwargs):
                 'desc': result
             }
             # print(result)
-            save_to_db(item, 't_lottery_ajh')
+            save_data(item, 't_lottery_ajh')
     except Exception as e:
         print(e)
 
@@ -94,7 +94,7 @@ def api_fetch_data(**kwargs):
         r = session.get(url)
         if r.status_code == 200:
             data = r.json()
-            get_result(data, t, **kwargs)
+            _parse_detail_data(data, t, **kwargs)
             time.sleep(1)
 
 

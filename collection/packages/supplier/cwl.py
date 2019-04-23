@@ -139,8 +139,6 @@ def api_fetch_data(url=None, **kwargs):
         content = info['content']
         if not content and lotto_result_key != 'sd':
             return
-        cp_id = open_red_code.replace(',', '') + open_blue_code
-        cp_sn = '14' + str(expect)
 
         details_link = index_url + info['detailsLink']  # http://www.cwl.gov.cn/c/2019-03-14/450353.shtml
         video_link = index_url + info['videoLink']
@@ -189,8 +187,6 @@ def api_fetch_data(url=None, **kwargs):
         data_item['currentAward'] = util.modify_unit(count)
         if lotto_result_key in ['ssq', 'qlc']:
             item = {
-                # 'cp_id': cp_id,
-                # 'cp_sn': cp_sn,
                 'expect': expect,
                 'open_time': open_time,
                 'open_code': open_code,
@@ -201,14 +197,13 @@ def api_fetch_data(url=None, **kwargs):
                 'open_video_url': video_link,
                 'open_content': content,
                 'open_result': json.dumps(data_item, ensure_ascii=False),
+                'source_sn': 14,
                 'create_time': util.date()
             }
         else:
             # 福彩3d，试机号从360彩票网站获取
             # test_code = get_3d_test_code(expect)
             item = {
-                'cp_id': cp_id,
-                'cp_sn': cp_sn,
                 'expect': expect,
                 'open_time': open_time,
                 'open_code': open_code,
@@ -220,6 +215,7 @@ def api_fetch_data(url=None, **kwargs):
                 'open_video_url': video_link,
                 'open_content': content,
                 'open_result': json.dumps(data_item, ensure_ascii=False),
+                'source_sn': 14,
                 'create_time': util.date()
             }
             # print('item', item)

@@ -150,8 +150,6 @@ def api_fetch_data(url=None, **kwargs):
             count += util.number_format(util.cleartext(details[i]['allmoney']), places=0)
 
     data_item['currentAward'] = util.modify_unit(count)
-    cp_id = open_code.replace(',', '').replace('+', '')
-    cp_sn = '17' + str(expect)
 
     if lotto_result_key == 9:
         match_results = data_item['matchResults']
@@ -173,8 +171,6 @@ def api_fetch_data(url=None, **kwargs):
         #     except:
         #         match_results[i]['score'] = '0:0'
     item = {
-        # 'cp_id': cp_id,
-        # 'cp_sn': cp_sn,
         'expect': expect,
         'open_time': open_time,
         'open_code': open_code,
@@ -184,6 +180,7 @@ def api_fetch_data(url=None, **kwargs):
         'open_video_url': '',
         'open_content': '',
         'open_result': json.dumps(data_item, ensure_ascii=False),
+        'source_sn': 17,
         'create_time': util.date()
     }
     # print('item', item)

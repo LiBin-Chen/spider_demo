@@ -22,7 +22,28 @@ _logger = logging.getLogger('yzwl_spider')
 session = Util.get_session('http://nba.win007.com/index_cn.htm')
 
 
-def save_to_db(item, db_name):
+def fetch_search_data():
+    """
+        根据关键词抓取搜索数据
+    """
+    pass
+
+
+def fetch_search_list():
+    """
+        抓取搜索列表数据
+    """
+    pass
+
+
+def fetch_update_data():
+    """
+        更新彩票的开奖结果
+    """
+    pass
+
+
+def save_data(item, db_name):
     info = mysql.select(db_name, condition=[('match_id', '=', item['match_id'])])
     if not info:
         mysql.insert(db_name, data=item)
@@ -66,7 +87,7 @@ def get_basketball_match():
     return basketball_url
 
 
-def parse_data(data, team_dict, event_id):
+def _parse_detail_data(data, team_dict, event_id):
     match_id = data[0]
     match_time = int(time.mktime(time.strptime(data[2], '%Y-%m-%d %H:%M')))
     host_name = team_dict[data[3]]
@@ -92,10 +113,10 @@ def parse_data(data, team_dict, event_id):
         item['home_second_score'] = host_score_half
     if guest_score_half:
         item['away_second_score'] = guest_score_half
-    save_to_db(item, 't_basketball_match')
+    save_data(item, 't_basketball_match')
 
 
-def get_info(url, mark=0):
+def fetch_data(url, mark=0):
     try:
         session.headers.update({
             "Accept": "*/*",
@@ -133,9 +154,9 @@ def get_info(url, mark=0):
                         try:
                             if len(match) != 14:
                                 for m in match[4]:
-                                    parse_data(m, team_dict, event_id)
+                                    _parse_detail_data(m, team_dict, event_id)
                                 continue
-                            parse_data(match, team_dict, event_id)
+                            _parse_detail_data(match, team_dict, event_id)
                         except Exception as e:
                             print(e)
 
@@ -146,7 +167,7 @@ def get_info(url, mark=0):
                         for ym in eval(ym_list[0]):
                             new_url = re.sub(re.compile(r'_\d{4}_\d\.js\?'),
                                              '_{}_{}.js?'.format(str(ym[0]), str(ym[1])), url)
-                            get_info(new_url, mark=1)
+                            fetch_data(new_url, mark=1)
                         return
                     arr_data = re.findall(r'var arrData = (\[.*]);', js_data)
                     match_info = eval(arr_data[0].replace(',,,', ",'NULL','NULL',").replace(',,', ",'NULL',"))
@@ -154,9 +175,9 @@ def get_info(url, mark=0):
                         try:
                             if len(match) != 14:
                                 for m in match[4]:
-                                    parse_data(m, team_dict, event_id)
+                                    _parse_detail_data(m, team_dict, event_id)
                                 continue
-                            parse_data(match, team_dict, event_id)
+                            _parse_detail_data(match, team_dict, event_id)
                         except Exception as e:
                             print(e)
     except Exception as e:
@@ -182,7 +203,7 @@ def main():
                     js_src = re.findall(r'src="(/jsData/matchResult/.*?)">', html)
                     if js_src:
                         js_url = 'http://nba.win007.com' + js_src[0]
-                        get_info(js_url)
+                        fetch_data(js_url)
             except Exception as e:
                 print(e)
 

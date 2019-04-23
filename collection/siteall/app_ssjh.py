@@ -70,7 +70,7 @@ rules = {
 }
 
 
-def get_sign(key_list):
+def _get_sign(key_list):
     md = hashlib.md5()
     u_key = 'fdsajfkljasdfklsdjafkljasdff1421sda3f51sd32f1'
     base_str = u_key + ''.join(key_list)
@@ -78,7 +78,7 @@ def get_sign(key_list):
     return md.hexdigest().lower()
 
 
-def save_to_data(item, db_name):
+def save_data(item, db_name):
     info = mysql.select(db_name, condition=[('plan_id', item['plan_id']), ('keyword', item['keyword']), ('date', item['date']), ('expect', item['expect'])], limit=1)
     test_info = test_mysql.select(db_name, condition=[('plan_id', item['plan_id']), ('keyword', item['keyword']), ('date', item['date']), ('expect', item['expect'])], limit=1)
     if not info:
@@ -107,9 +107,39 @@ def save_to_data(item, db_name):
             _logger.info('INFO:  DB:%s 已存在的数据, 计划名:%s' % (db_name, item['plan_name']))
 
 
-def get_data(u_id, u_key, jh_id, cz, jh_flag):
+def _parse_detail_data(data, jh_id, jh_name):
+    detail_list = data.split('\r\n')
+    for d in detail_list:
+        d = d.replace('  ', ' ')
+        flag = re.findall(r'^(\d+-)?(\d+)[期|:]? ', d)
+        if flag and '【' in d:
+            key_list = d.split(' ')
+            if key_list[-1] == '中':
+                status = 0
+            elif key_list[-1] == '挂' or d[-1] == '-':
+                d = d.replace(' 挂', ' 错').replace(' -', ' 错')
+                status = 1
+            else:
+                d += ' 进行中'
+                status = 2
+            keyword = key_list[1].replace('神圣', '云彩').replace('少女', '云彩') if jh_name != '后二复试A' else key_list[1] + \
+                                                                                                     key_list[2]
+            keyword = re.findall(r'(^.*?)【', keyword)[0] if '【' in keyword else keyword
+            item = {
+                'plan_id': jh_id,
+                'keyword': keyword,
+                'plan_name': jh_name,
+                'date': time.strftime('%Y-%m-%d', time.localtime()),
+                'content': d.replace('神圣', '云彩').replace('少女', '云彩'),
+                'expect': flag[0][1],  # if jh_name not in ['福彩3D', '排列3', '当期900注'] else flag,
+                'status': status
+            }
+            save_data(item, 't_lottery_plan')
+
+
+def api_fetch_data(u_id, u_key, jh_id, cz, jh_flag):
     qi = '0'
-    sign = get_sign([u_id, u_key, cz, qi, jh_id, jh_flag])
+    sign = _get_sign([u_id, u_key, cz, qi, jh_id, jh_flag])
     url = 'http://www.shenshengjihua.com:8080/shensheng/getdata?cz={}&qi={}&jhid={}&jhflag={}&uid={}&t={}&sign={}'.format(
         cz, qi, jh_id, jh_flag, u_id, u_key, sign)
     r = session.get(url)
@@ -119,17 +149,8 @@ def get_data(u_id, u_key, jh_id, cz, jh_flag):
         return data
 
 
-def get_statistics(u_id, u_key, jh_id):
-    sign = get_sign([u_id, u_key, jh_id])
-    url = 'http://www.shenshengjihua.com:8080/shensheng/GetStatistics' \
-          '?userid={}&t={}&jhid={}&sign={}'.format(u_id, u_key, jh_id, sign)
-    r = session.get(url)
-    if r.status_code == 200:
-        data = r.json()
-
-
 def get_jhid_list(u_id, u_key):
-    sign = get_sign([u_id, u_key])
+    sign = _get_sign([u_id, u_key])
     url = 'http://www.shenshengjihua.com:8080/shensheng/GetJhList?userid={}&t={}&sign={}'.format(u_id, u_key, sign)
     r = session.get(url)
     if r.status_code == 200:
@@ -139,7 +160,7 @@ def get_jhid_list(u_id, u_key):
 
 def login(username, password):
     time_stamp = str(time.time())
-    sign = get_sign([time_stamp, username, password])
+    sign = _get_sign([time_stamp, username, password])
     url = 'http://www.shenshengjihua.com:8080/shensheng/login?' \
           'username={}&password={}&t={}&sign={}'.format(username, password, time_stamp, sign)
     r = session.get(url)
@@ -186,42 +207,15 @@ def main():
                     # }
                     # save_to_data(item=plan_dict, db_name='t_lottery_planid')
                     cz_type = jh['type']
-                    data = get_data(u_id, u_key, str(jh_id), str(cz_type), jh_flag)
+                    data = api_fetch_data(u_id, u_key, str(jh_id), str(cz_type), jh_flag)
                     while data['msgErr']:
                         _logger.error('账号状态出错，重新登录')
                         time.sleep(10)
                         u_id, u_key = login(username, password)
-                        data = get_data(u_id, u_key, str(jh_id), str(cz_type), jh_flag)
+                        data = api_fetch_data(u_id, u_key, str(jh_id), str(cz_type), jh_flag)
                     content = data['content']
                     # jh_flag = data['flag']
-                    detail_list = content.split('\r\n')
-                    for d in detail_list:
-                        d = d.replace('  ', ' ')
-                        flag = re.findall(r'^(\d+-)?(\d+)[期|:]? ', d)
-                        # if jh_name in ['福彩3D', '排列3', '当期900注']:
-                        #     flag = d.split(' ')[0]
-                        if flag and '【' in d:
-                            key_list = d.split(' ')
-                            if key_list[-1] == '中':
-                                status = 0
-                            elif key_list[-1] == '挂' or d[-1] == '-':
-                                d = d.replace(' 挂', ' 错').replace(' -', ' 错')
-                                status = 1
-                            else:
-                                d += ' 进行中'
-                                status = 2
-                            keyword = key_list[1].replace('神圣', '云彩').replace('少女', '云彩') if jh_name != '后二复试A' else key_list[1] + key_list[2]
-                            keyword = re.findall(r'(^.*?)【', keyword)[0] if '【' in keyword else keyword
-                            item = {
-                                'plan_id': jh_id,
-                                'keyword': keyword,
-                                'plan_name': jh_name,
-                                'date': time.strftime('%Y-%m-%d', time.localtime()),
-                                'content': d.replace('神圣', '云彩').replace('少女', '云彩'),
-                                'expect': flag[0][1],  # if jh_name not in ['福彩3D', '排列3', '当期900注'] else flag,
-                                'status': status
-                            }
-                            save_to_data(item, 't_lottery_plan')
+                    _parse_detail_data(content, jh_id, jh_name)
             except Exception as e:
                 _logger.error('error:{}'.format(e))
         time.sleep(120)
