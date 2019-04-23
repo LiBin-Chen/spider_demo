@@ -377,10 +377,3 @@ LOTTO_DICT = {
     'gxklsf': 10038
 }
 
-WEB_DICT = {
-    'jsh365': 'extreme_speed_tiger',  # 极速虎
-    'cpyzj': 'easy_lottery',  # 彩票易中奖
-    'cwl': 'welfare_net',  # 中国福彩网
-    'lottery': 'sports_net',  # 中国体彩网
-    'pk10': 'racing_car',  # 北京赛车pk10
-}
