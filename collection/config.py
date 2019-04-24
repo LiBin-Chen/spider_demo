@@ -21,7 +21,7 @@ APP_PATH and sys.path.insert(0, APP_PATH)
 '''
 
 # 队列主机
-AMQP_URL = 'amqp://guest:guest@192.168.2.209:5672'  # 本地测试
+AMQP_URL = 'amqp://guest:guest@192.168.2.171:5672'  # 本地测试
 
 
 # 抓取代理待处理队列

@@ -184,7 +184,7 @@ class UpdateChip(object):
         if not update_url:
             return
         supplier_name = update_url.split('.')[1]
-        if supplier_name is None:
+        if supplier_name is None or supplier_name == '1395p':
             return None
         headers = {
             'user-agent': random.choice(config.USER_AGENT_LIST),
