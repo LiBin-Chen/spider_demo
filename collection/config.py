@@ -21,7 +21,7 @@ APP_PATH and sys.path.insert(0, APP_PATH)
 '''
 
 # 队列主机
-AMQP_URL = 'amqp://guest:guest@192.168.2.209:5672'  # 本地测试
+AMQP_URL = 'amqp://guest:guest@192.168.2.171:5672'  # 本地测试
 
 
 # 抓取代理待处理队列
@@ -75,7 +75,7 @@ DATABASES = {
         {  # 本地测试数据库
             'user': 'root',
             'passwd': 'root',
-            'host': '192.168.2.209',
+            'host': '192.168.2.171',
             'port': 3306,
             'charset': 'utf8',
             'db': 'lottery_info',

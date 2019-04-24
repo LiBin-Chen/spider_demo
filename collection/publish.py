@@ -105,8 +105,7 @@ class PublishChip(object):
                 if len(expect) == 10:
                     expect = list(expect)
                     expect.insert(8, '0')
-                    expect = int(''.join(expect))
-                pass
+                    expect = ''.join(expect)
             elif lottery_type == 'LOCAL':
                 # 地方彩
                 lotto_sn = ''
@@ -116,7 +115,7 @@ class PublishChip(object):
 
             if not expect:
                 print('数据无效..')
-
+            data['expect'] = expect
             condition = {'expect': expect}
             result = self.check_exists(data, condition)
             if result:

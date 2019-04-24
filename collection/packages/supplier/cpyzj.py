@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import os
 import time
 import random
 import logging
@@ -30,7 +30,7 @@ def get_sign(key):
     :return:
     '''
     # 可增加动态获取文件地址的工具方法
-    with open('D:\yzwl-master\collection\static\js\md5.js') as f:
+    with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")) + '/static/js/md5.js') as f:
         js_data = f.read()
     ctx = execjs.compile(js_data)
     sign = ctx.call('md5', key)
