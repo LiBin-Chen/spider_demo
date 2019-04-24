@@ -710,3 +710,24 @@ def get_session(url=None):
     if url:
         session.get(url)
     return session
+
+
+def get_static_file(file_name=None):
+    '''
+    获取静态文件夹下的静态文件
+    :param file_name:
+    :return: 如果该文件不存在,则返回空
+    '''
+    if not file_name:
+        return None
+    file_type = file_name.split('.')[-1]
+    last_dir_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "../.."))
+    dir_path = os.path.join(os.path.join(last_dir_path, 'static'), file_type)
+    if file_name not in os.listdir(dir_path):
+        return None
+
+    file_path = os.path.join(dir_path, file_name)
+    return file_path
+
+
+get_static_file('md5.js')

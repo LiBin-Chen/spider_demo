@@ -30,8 +30,13 @@ def get_sign(key):
     :return:
     '''
     # 可增加动态获取文件地址的工具方法
-    with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")) + '/static/js/md5.js') as f:
+    file_path = util.get_static_file('md5.js')
+    if not file_path:
+        _logger.info("STATUS:400 ; INFO:' 文件不存在")
+        return None
+    with open(file_path, 'r') as f:
         js_data = f.read()
+
     ctx = execjs.compile(js_data)
     sign = ctx.call('md5', key)
     return sign
@@ -282,4 +287,4 @@ if __name__ == '__main__':
               'lottery_result': 'game_jssyxw_result', 'headers': {
             'user-agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36'},
               'proxy': None}
-    # print(fetch_update_data(url=None, **kwargs))
+    print(fetch_update_data(url=None, **kwargs))
