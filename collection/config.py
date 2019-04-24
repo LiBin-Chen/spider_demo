@@ -75,7 +75,7 @@ DATABASES = {
         {  # 本地测试数据库
             'user': 'root',
             'passwd': 'root',
-            'host': '192.168.2.209',
+            'host': '192.168.2.171',
             'port': 3306,
             'charset': 'utf8',
             'db': 'lottery_info',
