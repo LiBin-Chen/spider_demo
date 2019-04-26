@@ -29,15 +29,15 @@
 
     #提交更新  
     高频彩60秒提交一次更新队列,不符合更新要求的数据将被忽略
-    python3 put_queue.py -L 2 -i 60
+    python3 /usr/local/spider/collection/put_queue.py -L 2 -i 60
     低频彩60分钟提交一次更新队列,不符合更新要求的数据将被忽略
-    python3 put_queue.py -L 3 -i 60
+    python3 /usr/local/spider/collection/put_queue.py -L 3 -i 60
     
     #启动更新   全部彩种进行更新,间隔时间20秒,定时提交的队列为空时将忽略
-    python3 update.py -o 1 -i 20
+    python3 /usr/local/spider/collection/update.py -o 1 -i 20
     
     #提交入库  由待提交队列获取数据,去重后进行提交入库,每2秒监听一次待提交队列
-    python3 publish.py -i 2
+    python3 /usr/local/spider/collection/publish.py -i 2
 
 
 
