@@ -23,7 +23,6 @@ APP_PATH and sys.path.insert(0, APP_PATH)
 # 队列主机
 AMQP_URL = 'amqp://guest:guest@192.168.2.171:5672'  # 本地测试
 
-
 # 抓取代理待处理队列
 PROXY_QUEUE = 'search_proxy'
 # 默认队列
@@ -38,8 +37,6 @@ DELETE_QUEUE = 'delete_goods'
 SEND_EMAIL = 'send_email'
 # 队列每次推送数量
 QUEUE_LIMIT = 50
-
-
 
 '''
 数据采集相关
@@ -378,3 +375,26 @@ LOTTO_DICT = {
     'gxklsf': 10038
 }
 
+# 网站彩种 对应  数据库中的彩种
+JSH_KEY_DICT = {'bjscpks': 'pk10', 'gdsyxu': 'gd11x5', 'ahfceswxw': 'aheswxw', 'zjtcesxw': 'zjesxw',
+                'fjtcsslxq': 'fjsslxq', 'gdnyfcsnxq': 'gdfcsslxq', 'jsklsc': 'gxklsc', 'hbyzfcesxw': 'hebfcesxw',
+                'hnzyfceexw': 'hnfcesxw', 'hljljfceexw': 'hljeexw', 'hdswxw': 'hdswxw', 'jstc': 'jsqws',
+                'lnfcswxq': 'lnsswxq', 'shttcxs': 'shttcx4', 'gdszfc': 'czfc', 'xjfcewxq': 'xjfceswxq',
+                'gssyxw': 'gssyxw', 'gdklsf': 'gdklsf', 'gxklsf': 'gxklsf', 'hbsyxw': 'hebsyxw', 'hljklmj': 'hljklsfmj',
+                'hubeissyw': 'hbsyxw', 'jxsyxw': 'jxsyxw', 'lnklse': 'lnkl12', 'nmgssc': 'nmgssc', 'nmgsyxw': 'nmgsyxw',
+                'lnsyxw': 'lnsyxw', 'jlsyxw': 'jlsyxw', 'xjsyxw': 'xjsyxw', 'ynsyxw': 'ynsyxw', 'sxsyxw': 'shxsyxw',
+                'shanxisyxw': 'sxsyxw', 'gzssxw': 'gzsyxw', 'sxklsf': 'shxklsf', 'shanxiklsf': 'sxklsf',
+                'cqklsf': 'chqklsf', 'hnklsf': 'hnklsf', 'hljklsf': 'hljklsf', 'tjklsf': 'tjklsf', 'xjssc': 'xjssc',
+                'ynssc': 'ynssc', 'cqssc': 'cqssc', 'tjssc': 'tjssc', 'gsks': 'gsk3', 'gzks': 'gzk3', 'gxks': 'gxk3',
+                'hbks': 'hbk3', 'jxks': 'jxk3', 'fjks': 'fjk3', 'ahks': 'ahk3', 'jsks': 'jsk3', 'shks': 'shk3',
+                'jlks': 'jlk3', 'nmgks': 'nmgk3', 'hebeiks': 'hebk3', 'bjks': 'bjk3', 'hljsyxw': 'hljsyxw',
+                'shsyxw': 'shsyxw', 'jssyxw': 'jssyxw', 'zjsyxw': 'zjsyxw', 'ahsyxw': 'ahsyxw', 'fjsyxw': 'fjsyxw',
+                'zjklse': 'zjkl12', 'scklse': 'sckl12', 'shssl': 'shssl', 'xjxlc': 'xjxlc', 'hnxysc': 'hnxysc',
+                'sdqyh': 'sdqyh', 'gxssxw': 'gxsyxw', 'sdc': 'sdc', 'jssc': 'jspk10', 'sgft': 'sgft', 'jsssc': 'jsssc',
+                'jsft': 'jsft', 'metxyft': 'xyft', 'xyssc': 'xyssc', 'mssc': 'mspk10', 'msssc': 'msssc', 'msft': 'msft',
+                'klsc': 'klpk10', 'klft': 'klft', 'klssc': 'klssc', 'ynklsf': 'ynklsf', 'bjsyxw': 'bjsyxw',
+                'tjsyxw': 'tjsyxw', 'sdxyxw': 'sdxyxw', 'hljssc': 'hljssc', 'dfljy': 'dfljy', 'gdnyfchc': 'gdnyfchc',
+                'gdnyfcenxw': 'gdnyfcenxw', 'xjfcsswxq': 'xjfcsswxq', 'xjfcsbxq': 'xjfcsbxq',
+                'hbyzfchyce': 'hbyzfchyce', 'hbyzfcplw': 'hbyzfcplw', 'hbyzfcplq': 'hbyzfcplq',
+                'heyzfchycs': 'heyzfchycs', 'zjtcljy': 'zjtcljy', 'fjtceexw': 'fjtceexw', 'hljtcljy': 'hljtcljy',
+                'hljljfcsnxq': 'hljljfcsnxq', 'hljfcpne': 'hljfcpne'}
