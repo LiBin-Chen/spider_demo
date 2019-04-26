@@ -18,20 +18,22 @@ import logging
 import hashlib
 import copy
 import threading
-from queue import Queue
 
 from requests.utils import proxy_bypass
 
 try:
+    from queue import Queue
     from packages import yzwl
     from packages import rabbitmq
     from packages import Util as util
 except ImportError:
     _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.insert(0, _path)
+    from queue import Queue
     from packages import rabbitmq
     from packages import Util as util
     from packages import yzwl
+
 import json
 import requests
 import base64
@@ -529,7 +531,6 @@ class YzJshSpider(CrawlSpider):
             # del self.queue
             del self.mysql
             pass
-
         return wrap
 
 
@@ -566,7 +567,7 @@ def main():
     run_group.add_argument('-p', '--proxy', help='使用代理进行请求', action='store_true', default=False)
 
     opt_group = parser.add_argument_group(title='可选项操作组')
-    opt_group.add_argument('-S', '--start-date', default='04/24/2019', help='设置起始分类索引值，默认04/24/2019', )
+    opt_group.add_argument('-S', '--start-date', default='04/25/2019', help='设置起始分类索引值，默认04/24/2019', )
     opt_group.add_argument('-E', '--end-date', default=None, help='设置截止日期索引值，默认截止目前', )
     opt_group.add_argument('-A', '--abbreviation', default=None, help='指定彩种,abbreviation为t_lottery中的 彩票缩写', )
 
