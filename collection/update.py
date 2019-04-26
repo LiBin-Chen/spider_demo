@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-# 
-
-
+#
+import os
 import sys
 import copy
 import time
@@ -20,6 +19,13 @@ import config
 from packages import rabbitmq
 from packages import Util as util
 from packages import supplier
+try:
+    from queue import Queue
+except ImportError:
+    _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    sys.path.insert(0, _path)
+    from queue import Queue
+
 
 # global object
 mq = rabbitmq.RabbitMQ()
@@ -72,7 +78,6 @@ class UpdateChip(object):
             return 0
         # queue_name = 'default_goods_queue'
         qsize = mq.qsize(queue_name)
-        self.limit = 10
         self.limit = self.limit if qsize > self.limit else qsize  # 每次更新的数量
         queue_list = []
         for i in range(self.limit):
@@ -151,7 +156,6 @@ class UpdateChip(object):
         print('队列 %s 本次共有 %s 条数据更新成功，成功率：%s %%' %
               (queue_name, valid_num, valid_num * 1.0 / total_num * 100 if total_num > 0 else 0))
         print('完成 , 等待下一个队列!')
-        print('*' * 50)
 
     def write_update_info(self, num_list):
         '''记录更新信息
@@ -397,6 +401,10 @@ def main():
                         action='store_true', default=False)
     parser.add_argument('-i', '--interval-time', dest='interval', help='间隔时间，默认为1秒，\
                          0则仅运行一次', default=1, type=int)
+    parser.add_argument('-o', '--optype', help='指定队列进行更新，不选默认为所有预更新队列', dest='optype',
+                        type=int, default=1)  # store_true运行时有传参 则该变量为true   1 为全部队列进行更新
+    parser.add_argument('-p', '--supplier-list', help='打印彩种列表/彩种类型',
+                        action='store_true', default=False)
     act_group = parser.add_argument_group(title='操作选择项')
     act_group.add_argument('-n', '--no-proxy', help='不使用代理，选择将不使用代理更新',
                            action='store_true', default=False)
@@ -406,10 +414,9 @@ def main():
                            default=5, type=int)
     act_group.add_argument('-u', '--use', help='更新是否使用接口,默认不使用',
                            action='store_true', default=True)
-    act_group.add_argument('-l', '--limit', help='单次更新限制数量，默认为 %s' % config.QUEUE_LIMIT,
-                           default=config.QUEUE_LIMIT, type=int)
-    act_group.add_argument('-o', '--optype', help='指定队列进行更新，不选默认为所有预更新队列', dest='optype',
-                           action='store_const', const='cp', default=2)
+    act_group.add_argument('-l', '--limit', help='单次更新限制数量，默认为 %s' % 50,
+                           default=50, type=int)
+
     search_group = parser.add_argument_group(title='更新选择项')
     search_group.add_argument('-M', '--max-depth', help='指定搜索最大深度，默认为 10', default=10, type=int)
     notice_group = parser.add_argument_group(title='提醒选择项')
@@ -440,6 +447,10 @@ def main():
                 break
             print('-------------- sleep %s sec -------------' % args.interval)
             time.sleep(args.interval)
+    elif args.supplier_list:
+        type_dict = dict(zip(config.QNAME_KEY.keys(), config.QNAME_DICT.values()))
+        print('彩种类型:')
+        print('彩种类型:', type_dict)
     else:
         parser.print_usage()
 
