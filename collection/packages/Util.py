@@ -72,7 +72,8 @@ def strtotime(string, format="%Y-%m-%d %H:%M"):
     '''
     try:
         return int(time.mktime(time.strptime(string, format)))
-    except Exception:
+    except Exception as e:
+        print('e',e)
         return 0
 
 
@@ -616,7 +617,7 @@ def specified_date(start_date=None, end_date=None):
     :return:
     '''
     if not start_date:
-        start_date = datetime.date(2019, 7, 3).strftime('%d/%m/%Y')
+        start_date = datetime.date(2019, 24, 4).strftime('%d/%m/%Y')
     if not end_date:
         # end_date = datetime.date(2019, 5, 3).strftime('%d/%m/%Y')
         end_date = datetime.date.today().strftime('%m/%d/%Y')
@@ -730,4 +731,31 @@ def get_static_file(file_name=None):
     return file_path
 
 
-get_static_file('md5.js')
+def regx_find_num(text):
+    '''
+    使用正则提取数字
+    :param text:
+    :return:
+    [1-9]\d*　     正整数
+    -[1-9]\d* 　 负整数
+    -?[1-9]\d*　整数
+    [1-9]\d*|0　 非负整数
+    -[1-9]\d*|0　　 非正整数
+    [1-9]\d*\.\d*|0\.\d*[1-9]\d*$　　 正浮点数
+    -([1-9]\d*\.\d*|0\.\d*[1-9]\d*)$　 负浮点数
+    -?([1-9]\d*\.\d*|0\.\d*[1-9]\d*|0?\.0+|0)$　 浮点数
+
+    '''
+    comp = re.compile("[0-9]\d*")
+    list_str = comp.findall(text)
+    list_num = []
+    for item in list_str:
+        # item = int(item)
+        list_num.append(item)
+    return list_num
+
+
+# print('aa', regx_find_num('2017-09-21(周四)'))
+
+# print(time.mktime(time.strptime('2019-04-25 16:28:39', format)))
+# print(time.mktime('2019-04-25 16:28:39'.timetuple()))
