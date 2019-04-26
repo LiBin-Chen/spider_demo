@@ -63,7 +63,7 @@ class PublishChip(object):
             # ret = collection.find_one(condition)  # mongodb去重
             info = mysql.select(data['lottery_result'], condition=condition, limit=1)  # mysql去重
             if info:
-                print('该数据已存在')
+                print('该数据已存在: {0}'.format(data['lottery_result']))
                 return info
             else:
                 # if not ret:
@@ -81,7 +81,8 @@ class PublishChip(object):
         queue_list = []
         for i in range(limit):
             queue_data = mq.get(queue_name)
-            queue_list.append(queue_data)
+            if queue_data not in queue_list:  # 重复的数据不需要
+                queue_list.append(queue_data)
 
         if not queue_list:
             print('等待中，队列 %s 为空' % queue_name)
@@ -108,7 +109,6 @@ class PublishChip(object):
                     expect = ''.join(expect)
             elif lottery_type == 'LOCAL':
                 # 地方彩
-                lotto_sn = ''
                 pass
             else:
                 pass
@@ -122,13 +122,17 @@ class PublishChip(object):
                 return
             # 有效队列的总数（）
             valid_num += 1
-            print('获取到的数据: ', data)
-            # self.save_data(data)
+            # print('获取到的数据: ', data)
+            self.save_data(data)
 
     def save_data(self, data):
         db_name = data.get('lottery_result', '')
-        mysql.insert(db_name, data=data)
-        _logger.info('INFO:  DB:%s 数据保存成功, 期号%s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
+        try:
+
+            mysql.insert(db_name, data=data)
+            _logger.info('INFO:  DB:%s 数据保存成功, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
+        except Exception as e:
+            _logger.info('INFO:  DB:%s 数据保存失败, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
 
 
 def main():
@@ -136,8 +140,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, add_help=False)
     parser.add_argument('-h', '--help', dest='help', help='获取帮助信息',
                         action='store_true', default=False)
-    parser.add_argument('-i', '--interval-time', dest='interval', help='间隔时间，默认为1秒，\
-                         0则仅运行一次', default=1, type=int)
+    parser.add_argument('-i', '--interval-time', dest='interval', help='间隔时间，默认为2秒，\
+                         0则仅运行一次', default=2, type=int)
     act_group = parser.add_argument_group(title='操作选择项')
     act_group.add_argument('-o', '--optype', help='指定队列进行更新，不选默认为所有预更新队列', dest='optype',
                            action='store_const', const='cp', default=1)
