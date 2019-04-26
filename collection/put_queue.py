@@ -16,7 +16,7 @@ except ImportError:
 import pika
 import requests
 import pymongo
-
+import datetime
 import config
 from packages import Util as util
 from packages import yzwl
@@ -41,7 +41,7 @@ class PutQueue:
         self.get_put_message()
 
         print('Done!')
-        _logger.info('INFO: 成功提交更新彩种数量: {1}'.format(self.qname, self._total_number))
+        _logger.info('INFO: {0} 成功提交更新彩种 {1} 数量: {2}'.format(self.qname, self.lottery_type, self._total_number))
         # _logger.info('INFO: 提交队列: {0} ; 提交更新彩种数量: {1}'.format(self.qname, self._total_number))
 
     def _init_args(self, **kwargs):
@@ -52,7 +52,8 @@ class PutQueue:
         self.__del = set()
         self.supplier = kwargs.get('supplier')  # 指定id进行更新
         self.lotto_type = kwargs.get('lotto_type', '')  # 指定更新彩种类型
-        self.start_id = kwargs.get('start_id', 0)  # 指定起始id进行更新
+        # self.start_id = kwargs.get('start_id', 0)  # 指定起始id进行更新   #20190424 加入彩种区间控制 作用不大,暂否
+        # self.end_id = kwargs.get('end_id', 0)  # 指定结束id进行结束
         self.threshold = kwargs.get('threshold', 0)
         self.all = kwargs.get('all', False)
         self.expire_time = kwargs.get('expire_time', config.DATA_CACHE_TIME)  # 过期时间
@@ -73,10 +74,11 @@ class PutQueue:
         '''
         # 过期时间
         condition = {}
+        self.lottery_type = ''
         if self.lotto_type in config.QNAME_KEY.keys():
             type_dict = dict(zip(config.QNAME_DICT.values(), config.QNAME_DICT.keys()))  # 获取指定的彩种类型
-            lottery_type = type_dict[config.QNAME_KEY[self.lotto_type]]
-            condition = {'id': ('>=', self.start_id), 'lottery_type': lottery_type}
+            self.lottery_type = type_dict[config.QNAME_KEY[self.lotto_type]]
+            condition = {'lottery_type': self.lottery_type}
 
         fields = ('id', 'abbreviation', 'lottery_name', 'lottery_type', 'update_url', 'lottery_result', 'province')
 
@@ -93,16 +95,64 @@ class PutQueue:
             data = mysql.select('t_lottery', fields=fields)
         elif self.supplier:
             # 对指定的彩种进行更新
-            data = mysql.select('t_lottery', condition=[('id', '=', self.supplier)], fields=fields)
-        elif condition:
-            # 根据起始id和彩种类型进行更新  eg: id>0 类型为高频  #常用方法为指定彩种类型进行更新
+            data = mysql.select('t_lottery', condition=[('id', '=', self.supplier)], fields=fields, limit=1)
+
+        elif self.lotto_type:
+            # 根据指定的id区间进行更新   | 彩种类型
             data = mysql.select('t_lottery', condition=condition, fields=fields)
         else:
             print('参数有误..')
 
+        if isinstance(data, dict):
+            data = [data]
         self._total_number = len(data)
-
         for vo in data:
+            lottery_name = vo.get('lottery_name')
+            # 增加时间控制 对没有必要提交至更新库的彩种进行筛选
+            lottery_result = vo.get('lottery_result')
+            info = mysql.select(lottery_result, fields=('open_time', 'create_time'), order='open_time DESC', limit=1)
+            if info:
+                open_time = info.get('open_time', '')
+                open_time_stamp = int(time.mktime(open_time.timetuple())) if open_time else 0
+                now_time = int(time.time())
+
+                if self.lotto_type == 2:  # 20分钟
+                    interval_time = 60 * 18
+                elif self.lotto_type == 3:  # 每天
+                    interval_time = 60 * 60 * 23.5
+                else:
+                    interval_time = 0
+
+                if interval_time and abs(now_time - open_time_stamp) < interval_time:  # 地方彩  低于23小时则不进行更新
+                    _logger.info('INFO: 彩种: {0}  上次开奖时间: {1} 当前时间: {2} 本次退出更新'.format(lottery_name, open_time,
+                                                                                      util.date()))
+                    self._total_number -= 1
+                    continue
+            elif self.supplier:
+
+                # 针对全国性彩种的定期更新,做定期更新时间优化
+                week_day = datetime.date.today().isoweekday()
+                interval_time = 60 * 60 * 23
+                if self.supplier in [8]:  # ssq 2,4,7 开奖 4-7 72
+                    interval_time = interval_time * 2 if int(week_day) != 7 else interval_time * 3
+                elif self.supplier in [12]:  # qlc 1,3,5 开奖
+                    interval_time = interval_time * 2
+                elif self.supplier in [1]:  # dlt 1,3,6 开奖 3-6  72
+                    interval_time = interval_time * 2 if int(week_day) != 6 else interval_time * 3
+                elif self.supplier in [14]:  # qxc 2,5,7 开奖 2-5 72
+                    interval_time = interval_time * 2 if int(week_day) != 5 else interval_time * 3
+                else:  # sd pls plw 每天开奖
+                    interval_time = interval_time
+
+                if abs(now_time - open_time_stamp) < interval_time:  # 全国彩类型  低于23小时则不进行更新
+                    self._total_number -= 1
+                    _logger.info(
+                        'INFO: 彩种: {0}  上次开奖时间: {1} 当前时间: {2} 本次间隔时间{3}秒 退出更新'.format(lottery_name, open_time,
+                                                                                      util.date(), interval_time))
+                    sys.exit()
+            else:
+                pass  # 其他彩种进行定时更新
+
             vo['lottery_name'] = vo['province'] + vo['lottery_name']
             del vo['province']
 
@@ -120,14 +170,14 @@ def run(args):
     if not isinstance(args, argparse.Namespace):
         print('参数有误')
         return
-    sleep_time = args.sleep_time
+    interval = args.interval
     while 1:
         try:
             PutQueue(**args.__dict__)
-            if args.sleep_time <= 0:
+            if args.interval <= 0:
                 break
-            print('------------- sleep %s sec -------------' % sleep_time)
-            time.sleep(sleep_time)
+            print('------------- sleep %s sec -------------' % interval)
+            time.sleep(interval)
         except Exception as e:
             if 'params_error' in e:
                 break
@@ -151,17 +201,19 @@ def main():
     parser = argparse.ArgumentParser(description="提交更新彩种至更新队列", add_help=False)
     parser.add_argument('-h', '--help', dest='help', help='获取帮助信息',
                         action='store_true', default=False)
-    parser.add_argument('-a', '--all', dest='all', help='提交全部彩种至更新队列,默认为否', action='store_true', default=False)
-    parser.add_argument('-lt', '--lotto-type', dest='lotto_type', help='从数据库提交指定彩种到对应产品队列', type=int,
-                        default=2)  # 2,3,4,5,6
-    parser.add_argument('-s', '--supplier', dest='supplier', help='指定彩种ID进行更新', type=int)
-    parser.add_argument('-t', '--sleep-time', dest='sleep_time',
+    parser.add_argument('-a', '--all', dest='all', help='提交全部彩种至更新队列,默认为否', action='store_true')
+    parser.add_argument('-L', '--lotto-type', dest='lotto_type', help='从数据库提交指定彩种到对应产品队列', type=int,
+                        default=0)  # 2,3,4,5,6
+    parser.add_argument('-s', '--supplier', dest='supplier', help='指定彩种ID进行更新', type=int, default=0)
+    parser.add_argument('-i', '--interval', dest='interval',
                         help='指定暂停时间(默认5s)，小于或等于0时则只会执行一次',
-                        default=120, type=int)
+                        default=0, type=int)
     parser.add_argument('-p', '--supplier-list', help='打印彩种列表/彩种类型',
                         action='store_true', default=False)
-    parser.add_argument('--start-id', dest='start_id', help='指定提交的起始',
-                        default=0, type=int)
+    # parser.add_argument('-S', '--start-id', dest='start_id', help='指定提交的起始',
+    #                     default=0, type=int)
+    # parser.add_argument('-E', '--end-id', dest='end_id', help='指定提交的起始',
+    #                     default=0, type=int)
     parser.add_argument('-q', '--queue-max-num', dest='threshold',
                         help='指定队列数量最大提交阀值，即更新队列数量小于该数目时提交更新队列\
                         （默认10，小于或等于0时为不限制）', default=0, type=int)
@@ -187,11 +239,17 @@ def main():
         type_dict = dict(zip(config.QNAME_KEY.keys(), config.QNAME_DICT.keys()))
         print('彩种类型:')
         print('彩种类型:', type_dict)
+        print('\n')
         print('彩种列表:')
         print('彩种列表:', data)
-    else:
-        print('args', args)
+    elif args.lotto_type or args.all or args.supplier:
+        type_list = [2, 3, 4, 5, 6]
+        if args.lotto_type and args.lotto_type not in type_list:
+            print('请选择一个有效的彩种类型 : {0}'.format(type_list))
+            sys.exit()
         run(args)
+    else:
+        parser.print_help()
 
 
 if __name__ == '__main__':
