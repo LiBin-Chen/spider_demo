@@ -33,7 +33,6 @@ default_headers = {
 }
 
 
-
 def fetch_data(url, proxy=None, headers=None, **kwargs):
     '''
     获取页面数据
@@ -99,7 +98,6 @@ def _parse_detail_data(data=None, url=None, **kwargs):
     root = etree.HTML(data)
     if abbreviation == 'gdklsf':
         abbreviation = 'gdkl10'
-
     parse_xpath = '//div[@data-type="{0}"]//tr'.format(abbreviation)
     tr_list = root.xpath(parse_xpath)
 
@@ -204,9 +202,8 @@ def fetch_update_data(url=None, **kwargs):
 
 
 if __name__ == '__main__':
-    kwargs = {'abbreviation': 'jsk3', 'lottery_name': '快3', 'lottery_type': 'HIGH_RATE',
-              'update_url': 'https://www.pk10.me/draw-jsk3-today.html',
-              'headers': {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20120101 Firefox/29.0'},
-              'proxy': None}
+    kwargs = {"id": 3, "abbreviation": "pk10", "lottery_name": "\u5317\u4eac\u8d5b\u8f66PK10",
+              "lottery_type": "HIGH_RATE", "update_url": "https://www.pk10.me/draw-pk10-today.html",
+              "lottery_result": "game_pk10_result"}
     url = kwargs.get('pks_open_url')
     print(fetch_update_data(url=None, **kwargs))
