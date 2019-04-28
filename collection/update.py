@@ -193,8 +193,6 @@ class UpdateChip(object):
         headers = {
             'user-agent': random.choice(config.USER_AGENT_LIST),
         }
-        if 'cjcp' in update_url:
-            return None
         try:
             if not hasattr(supplier, supplier_name):
                 module_name = 'supplier.{0}'.format(supplier_name)
