@@ -76,7 +76,6 @@ class PublishChip(object):
     def get_update_data(self):
         queue_name = config.WAIT_UPDATE_QUEUE
         qsize = mq.qsize(queue_name)
-        print('queue_name', queue_name)
         limit = self.limit if qsize > self.limit else qsize  # 每次更新的数量
         queue_list = []
         for i in range(limit):
@@ -117,20 +116,24 @@ class PublishChip(object):
                 print('数据无效..')
             data['expect'] = expect
             condition = {'expect': expect}
-            result = self.check_exists(data, condition)
-            if result:
-                return
-            # 有效队列的总数（）
-            valid_num += 1
+            info = self.check_exists(data, condition)
+            if info:
+                valid_num += 1
             # print('获取到的数据: ', data)
-            self.save_data(data)
+            self.save_data(data, info)
 
-    def save_data(self, data):
+    def save_data(self, data, info):
         db_name = data.get('lottery_result', '')
         try:
+            if not info:
+                mysql.insert(db_name, data=data)
+                _logger.info('INFO:  DB:%s 数据保存成功, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
+            else:
+                data['create_time'] = info['create_time']
+                data['update_time'] = util.date()
+                mysql.update(db_name, condition={"id": info["id"]}, data=data)
+                _logger.info('INFO:  DB:%s 数据保存成功, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
 
-            mysql.insert(db_name, data=data)
-            _logger.info('INFO:  DB:%s 数据保存成功, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
         except Exception as e:
             _logger.info('INFO:  DB:%s 数据保存失败, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
 
