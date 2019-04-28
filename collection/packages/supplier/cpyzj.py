@@ -282,9 +282,9 @@ def fetch_update_data(url=None, **kwargs):
 
 
 if __name__ == '__main__':
-    kwargs = {'id': 87, 'abbreviation': 'jssyxw', 'lottery_name': '11选5', 'lottery_type': 'HIGH_RATE',
-              'update_url': 'https://www.cpyzj.com/open-awards-detail.html?lotCode=10016&lotGroupCode=1',
-              'lottery_result': 'game_jssyxw_result', 'headers': {
+    kwargs = {'id': 100, 'abbreviation': 'bjkl8', 'lottery_name': '快乐8', 'lottery_type': 'HIGH_RATE',
+              'update_url': 'https://www.cpyzj.com/open-awards-detail.html?lotCode=10014&lotGroupCode=1',
+              'lottery_result': 'game_bjklb_result', 'headers': {
             'user-agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36'},
               'proxy': None}
     print(fetch_update_data(url=None, **kwargs))

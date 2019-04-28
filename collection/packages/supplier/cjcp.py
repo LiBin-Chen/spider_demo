@@ -65,7 +65,6 @@ def fetch_data(url, proxy=None, headers=None, **kwargs):
             proxies = {'http': 'http://' + proxy[1][i]}
 
         rs = requests.get(url, headers=None, cookies=None, timeout=30)
-        print('rs', rs.text)
     except Exception as e:
         # 将进行重试，可忽略
         _logger.info('STATUS:-400 ; INFO:数据请求异常, %s ; URL:%s' % (util.traceback_info(e), url))
