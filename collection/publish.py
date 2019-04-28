@@ -132,7 +132,7 @@ class PublishChip(object):
                 data['create_time'] = info['create_time']
                 data['update_time'] = util.date()
                 mysql.update(db_name, condition={"id": info["id"]}, data=data)
-                _logger.info('INFO:  DB:%s 数据保存成功, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
+                _logger.info('INFO:  DB:%s 数据更新成功, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
 
         except Exception as e:
             _logger.info('INFO:  DB:%s 数据保存失败, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
