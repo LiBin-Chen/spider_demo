@@ -10,7 +10,6 @@ import random
 import logging
 import requests
 import argparse
-import threading
 from lxml import etree
 
 try:
@@ -24,8 +23,7 @@ except ImportError:
     import packages.Util as util
     from siteall.check_list import get_gov_expexc
 
-__author__ = 'snow'
-__time__ = '2019/3/17'
+
 
 _logger = logging.getLogger('yzwl_spider')
 _cookies = {'MAINT_NOTIFY_201410': 'notified'}
@@ -94,7 +92,6 @@ def fetch_data(url, proxy=None, headers=None, **kwargs):
             rs.status_code, proxies['http'] if proxy else '', url))
         return -405
     # 强制utf-8
-    # rs.encoding = 'utf-8'
     rs.encoding = rs.apparent_encoding
 
     return _parse_detail_data(rs.content, url=url, **kwargs)
@@ -113,35 +110,31 @@ def _parse_detail_data(**kwargs):
 
 def save_data(url, db_name, item):
     info = mysql.select(db_name, condition=[('expect', '=', item['expect'])], limit=1)
+    item['create_time'] = util.date()
     if not info:
-        item['create_time']: util.date()
         mysql.insert(db_name, data=item)
         _logger.info('INFO:  DB:%s 数据保存成功, 期号%s ; URL:%s' % (db_name, item['expect'], url))
 
     else:
-        item['update_time']: util.date()
+        item['update_time'] = util.date()
+        item['create_time'] = info['create_time'] if info['create_time'] else util.date()
+        del item['open_time']
         mysql.update(db_name, condition=[('expect', '=', item['expect'])], data=item)
         _logger.info('INFO:  DB:%s 数据已存在 更新成功, 期号: %s ; URL:%s' % (db_name, item['expect'], url))
 
 
-def fetch_search_data(keyword=None, id=None, data_dict=None, headers=None, proxy=None, **kwargs):
+def fetch_search_data(**kwargs):
     '''
     根据关键词抓取搜索数据
     '''
     pass
 
 
-def fetch_search_list(url, id=None, headers=None, proxy=None, **kwargs):
+def fetch_search_list(**kwargs):
     '''
     抓取搜索列表数据
     '''
-    data_dict = {
-        'detail': [],
-        'list': [],
-        'url': []
-    }
-    fetch_search_data(id=id, data_dict=data_dict, headers=headers, proxy=proxy, url=url, **kwargs)
-    return data_dict
+    pass
 
 
 def api_fetch_data(url=None, proxy=None, **kwargs):
@@ -478,7 +471,7 @@ def cmd():
     parser = argparse.ArgumentParser(description=__doc__, add_help=False)
     parser.add_argument('-h', '--help', dest='help', help=u'获取帮助信息',
                         action='store_true', default=False)
-    parser.add_argument('-p', '--past', help=u'下载历史数据 数量 默认过去5期',
+    parser.add_argument('-p', '--past', help=u'下载历史数据 数量 默认过去10期',
                         dest='past', action='store', default=5)
     parser.add_argument('-C', '--cp', help='指定更新彩种(可多选)，不选默认为所有彩种',
                         nargs='+')
