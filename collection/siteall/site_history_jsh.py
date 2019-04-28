@@ -59,11 +59,6 @@ try:
 except ImportError:
     sys.path[0] = os.path.dirname(os.path.split(os.path.realpath(__file__))[0])
     import config
-import packages.Util as util
-
-from packages import yzwl
-
-import sys
 
 _logger = logging.getLogger('yzwl_spider')
 mq = rabbitmq.RabbitMQ()
@@ -374,23 +369,22 @@ class YzJshSpider(CrawlSpider):
         date_list = util.specified_date(self.start_date, end_date=self.end_date)
         for _url in lotto_url:
             # 指定彩种控制
-            if self.abbreviation:
-                abbreviation = dict(zip(config.JSH_KEY_DICT.values(), config.JSH_KEY_DICT.keys()))
-                if abbreviation[self.abbreviation] not in _url:
-                    # 非指定的数据不进行抓取(指定彩种的情况下使用该选项)
-                    continue
+            if self.abbreviation and self.abbreviation not in _url:
+                # 非指定的数据不进行抓取(指定彩种的情况下使用该选项)
+                continue
 
             if 'gp-' in _url:
                 try:
                     result_key = _url.split('gp-')[-1].split('.html')[0]
                     if result_key == 'bjpks':
                         continue  # 不需要该数据
-                    info = self.mysql.select('t_lottery', condition={'abbreviation': config.JSH_KEY_DICT[result_key]},
-                                             fields=('lottery_result'), limit=1)
-                    lottery_result = info.get('lottery_result', ) if info else ''
+                    # info = self.mysql.select('t_lottery', condition={'abbreviation': config.JSH_KEY_DICT[result_key]},
+                    #                          fields=('lottery_result'), limit=1)
+                    lottery_result = config.JSH_KEY_DICT.get(result_key, '')
                 except KeyError as e:
                     _logger.info('{0} 网站蜘蛛彩种{1} 错误提示 请人工检查 {2}  e:{3}'.format(self.name, result_key, _url, e))
                     lottery_result = ''
+
                 for history_date in date_list:
                     'https://www.jsh365.com/award/gp-shsyxw/2019-04-24.html'
                     'https://www.jsh365.com/award/gp-shsyxw.html'
@@ -531,6 +525,7 @@ class YzJshSpider(CrawlSpider):
             # del self.queue
             del self.mysql
             pass
+
         return wrap
 
 
