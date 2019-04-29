@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import datetime
 import time
 import json
 import random
@@ -127,6 +127,10 @@ def _parse_detail_data(data=None, url=None, **kwargs):
         open_time = open_date[:4] + '-' + open_date[4:6] + '-' + open_date[6:] + ' ' + expect_list[1]
         if 'toda' in open_time:
             open_time = util.date(format='%Y-%m-%d') + ' ' + open_time.split(' ')[-1]
+            now_date = util.date(format='%Y-%m-%d %H:%M:%S')
+            if open_time > now_date:
+                open_time = str(datetime.date.today() - datetime.timedelta(days=1)) + ' ' + open_time.split(' ')[-1]
+
         item = {
             'expect': expect,
             'open_time': open_time,
