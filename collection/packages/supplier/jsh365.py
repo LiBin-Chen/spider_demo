@@ -17,7 +17,6 @@ except ImportError:
     import packages.yzwl as yzwl
     import packages.Util as util
 
-__author__ = 'snow'
 '''
 极速虎网封装函数    jsh365
 
@@ -33,7 +32,7 @@ default_headers = {
     'Accept-Encoding': 'gzip, deflate, br',
     'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
     'Cache-Control': 'max-age=0',
-    'Connection': 'keep-alive',
+    # 'Connection': 'keep-alive',
     'Host': 'www.jsh365.com',
     'Upgrade-Insecure-Requests': '1',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36',
@@ -56,15 +55,15 @@ def fetch_data(url, proxy=None, headers=None, **kwargs):
         获取数据异常时返回信息为负值，成功为字典类型数据
     '''
 
-    if isinstance(headers, dict):
-        default_headers = headers
+    # if isinstance(headers, dict):
+    #     default_headers = headers
     try:
-        proxies = None
         if proxy:
             i = random.randint(0, proxy[0] - 1)
             proxies = {'http': 'http://' + proxy[1][i]}
-
-        rs = requests.get(url, headers=default_headers, cookies=None, timeout=30)
+        session=requests.session()
+        session.keep_alive = False
+        rs = session.get(url, headers=default_headers, cookies=None, timeout=30)
     except Exception as e:
         # 将进行重试，可忽略
         _logger.info('STATUS:-400 ; INFO:数据请求异常, %s ; URL:%s' % (util.traceback_info(e), url))
@@ -231,9 +230,8 @@ def fetch_update_data(url=None, **kwargs):
 
 
 if __name__ == '__main__':
-    kwargs = {'abbreviation': 'gssyxw', 'lottery_name': '11选5', 'lottery_type': 'HIGH_RATE',
-              'update_url': 'https://www.jsh365.com/award/gp-sxsyxw.html', 'lottery_result': 'game_gssyxw_result',
-              'headers': {
-                  'user-agent': 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; QQDownload 732; .NET4.0C; .NET4.0E) Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; SV1; QQDownload 732; .NET4.0C; .NET4.0E) '},
-              'proxy': None, 'id': None, 'status': None, 'count': 1}
-    fetch_update_data(**kwargs)
+    kwargs = {"id": 3, "abbreviation": "pk10", "lottery_name": "\u5317\u4eac\u8d5b\u8f66PK10",
+              "lottery_type": "HIGH_RATE", "update_url": "https://www.jsh365.com/award/dp-ahfceswxw.html",
+              "lottery_result": "game_pk10_result"}
+    while 1:
+        print(fetch_update_data(**kwargs))
