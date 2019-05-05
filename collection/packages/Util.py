@@ -1,43 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''
-  @desc    :
-  @time    : 2018/11/28 15:27
-  @file    : Util.py
-  @author  : snow
-  @modify  :
-'''
 
-import logging
 import math
 import random
+import requests
+import logging
+import pandas as pd
+from packages import yzwl
+from numpy import unicode
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import re, sys, time, datetime, locale, traceback, subprocess, os, signal, smtplib, urllib
-import pandas as pd
-import requests
-from numpy import unicode
-
-# from packages import db
-from packages import yzwl
-
-try:
-    import zlkg.config as config
-except ImportError:
-    pass
 
 try:
     import json
+    import zlkg.config as config
 except ImportError:
+    import config
     import simplejson as json
 
 '''
 工具函数，封装常用操作
 '''
-
-
-# mysql = db.yzwl
 
 
 def date(timestamp=None, format='%Y-%m-%d %H:%M:%S'):
@@ -73,7 +58,7 @@ def strtotime(string, format="%Y-%m-%d %H:%M"):
     try:
         return int(time.mktime(time.strptime(string, format)))
     except Exception as e:
-        print('e',e)
+        print('e', e)
         return 0
 
 
@@ -283,7 +268,7 @@ def sendmail(to_email, subject=None, body=None, attachment=None, **kwargs):
     发送邮件
 
     @param to_email     发送对方邮件，可为列表、字符串、元祖
-    @param subject      邮件主题，默认为 system@hqchip.com
+    @param subject      邮件主题，默认为 system@test.com
     @param body         邮件内容
     @param attachment   附件
         支持直接字符串路径 '/var/usr/file' 或者多个附件 ['/var/usr/file1','/var/usr/file2']
@@ -316,9 +301,9 @@ def sendmail(to_email, subject=None, body=None, attachment=None, **kwargs):
     # 创建一个带附件的实例
     msg = MIMEMultipart()
     # 添加邮件头部信息
-    msg['From'] = kwargs.get('SMTP_FROM', 'system@hqchip.com')
+    msg['From'] = kwargs.get('SMTP_FROM', 'system@test.com')
     msg['To'] = ','.join(to_email)
-    msg['Subject'] = 'FROM : %s' % kwargs.get('SMTP_FROM', 'system@hqchip.com') if subject is None else subject
+    msg['Subject'] = 'FROM : %s' % kwargs.get('SMTP_FROM', 'system@test.com') if subject is None else subject
     msg['Date'] = time.ctime(time.time())
     msg.attach(MIMEText(body, 'html', 'utf-8'))
 
@@ -351,7 +336,7 @@ def sendmail(to_email, subject=None, body=None, attachment=None, **kwargs):
         smtp.connect(kwargs.get('SMTP_HOST'), kwargs.get('SMTP_PORT', 25))
         smtp.starttls()
         smtp.login(kwargs.get('SMTP_USER'), kwargs.get('SMTP_PASSWORD'))
-        smtp.sendmail(kwargs.get('SMTP_FROM', 'system@hqchip.com'), to_email, msg.as_string())
+        smtp.sendmail(kwargs.get('SMTP_FROM', 'system@test.com'), to_email, msg.as_string())
         smtp.close()
 
         return True
@@ -619,34 +604,15 @@ def specified_date(start_date=None, end_date=None):
     if not start_date:
         start_date = datetime.date(2019, 24, 4).strftime('%d/%m/%Y')
     if not end_date:
-        # end_date = datetime.date(2019, 5, 3).strftime('%d/%m/%Y')
         end_date = datetime.date.today().strftime('%m/%d/%Y')
 
     print(start_date, end_date)
-    dframe = pd.date_range(start_date, end_date)
+    data_frame = pd.date_range(start_date, end_date)
     dlist = []
-    for _frame in dframe:
+    for _frame in data_frame:
         dlist.append(_frame.strftime('%Y-%m-%d'))
 
     return dlist
-
-
-# def get_lottery_key(province=None, lottery_name=None):
-#     '''
-#     根据地区/彩种名称获取彩种关键词和数据库名称
-#     :param province:
-#     :return:
-#     '''
-#     if not province:
-#         return None
-#     data = mysql.select('t_open_info_spider', condition=[('province', '=', '全国')],
-#                         fields=('abbreviation', 'lottery_name', 'province', 'lottery_result'))
-#     if not data or lottery_name:
-#         return None
-#     for _data in data:
-#         if _data['lottery_name'] == lottery_name:
-#             return _data['abbreviation'], _data['lottery_result']
-#     return data
 
 
 def modify_unit(number=None):
@@ -680,17 +646,10 @@ def modify_unit(number=None):
 def get_prolist(limit=10):
     """
     获取代理列表
-    从url获取改为从数据库获取
+
     """
     try:
-        db = yzwl.DbClass()
-        mysql = db.yzwl
-        count = mysql.count('proxies') - limit
-        end_number = random.randint(1, count)
-        condition = [('pid', '>=', end_number), ('is_pay', '=', 1), ('is_use', '=', 1)]
-        data = mysql.select('proxies', condition=condition, limit=limit)
-        if isinstance(data, dict):
-            return [1, {'ip': data['ip']}]
+        data = []
         dlist = []
         for _data in data:
             # item = {
@@ -715,7 +674,7 @@ def get_session(url=None):
 
 def get_static_file(file_name=None):
     '''
-    获取静态文件夹下的静态文件
+    获取static静态文件夹下的静态文件
     :param file_name:
     :return: 如果该文件不存在,则返回空
     '''
@@ -754,8 +713,3 @@ def regx_find_num(text):
         list_num.append(item)
     return list_num
 
-
-# print('aa', regx_find_num('2017-09-21(周四)'))
-
-# print(time.mktime(time.strptime('2019-04-25 16:28:39', format)))
-# print(time.mktime('2019-04-25 16:28:39'.timetuple()))

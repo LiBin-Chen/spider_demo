@@ -1,36 +1,31 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 #
-import logging
 import sys
-import copy
 import time
-import random
+import config
+import logging
 import argparse
-import threading
-import multiprocessing
+from packages import yzwl
+from packages import rabbitmq
+from packages import Util as util
 
 try:
     import json
 except ImportError:
     import simplejson as json
-# thrid-party
-import requests
-# project
-import config
-from packages import rabbitmq
-from packages import yzwl
-from packages import Util as util
-from packages import supplier
 
 # global object
 db = yzwl.DbClass()
-mysql = db.local_yzwl
+mysql = db.yzwl
 mq = rabbitmq.RabbitMQ()
-collection = db.mongo['test_mongo']
-_logger = logging.getLogger('yzwl_spider')
-''''
-数据去重,筛选,入库
+collection = db.mongo['collection_name']
+_logger = logging.getLogger('demo_spider')
+
+'''持久化存储模块
+
+@description
+    数据出口
 '''
 
 
@@ -56,14 +51,17 @@ class PublishChip(object):
         self._max_depth = kwargs.get('max_depth', 10)
 
     def check_exists(self, data, condition=None):
-        """检测是否存在,已存在返回True，否则返回False"""
+        """
+        检测是否存在,已存在返回True，否则返回False
+        可加入其它去重方式
+        """
         if not condition:
             return {}
         try:
             # ret = collection.find_one(condition)  # mongodb去重
-            info = mysql.select(data['lottery_result'], condition=condition, limit=1)  # mysql去重
+            info = mysql.select(data['demo'], condition=condition, limit=1)  # mysql去重
             if info:
-                print('该数据已存在: {0}'.format(data['lottery_result']))
+                print('该数据已存在: {0}'.format(data['demo']))
                 return info
             else:
                 # if not ret:
@@ -92,50 +90,33 @@ class PublishChip(object):
         total_num = len(queue_list)
         for data in queue_list:
             # 无效队列数据
-            if 'id' in data:
-                del data['id']
-            expect = data.get('expect', '')
             '''
-            期号定义规则
+            #进行入库前的二次清洗
+            #可定义入库规则.去重规则和索引规则
+            #可同时推送至队列或者elasticsearch等第三方
             '''
-            # expect
-            lottery_type = data.get('lottery_type', '')
-
-            if lottery_type == 'HIGH_RATE':
-                if len(expect) == 10:
-                    expect = list(expect)
-                    expect.insert(8, '0')
-                    expect = ''.join(expect)
-            elif lottery_type == 'LOCAL':
-                # 地方彩
-                pass
-            else:
-                pass
-
-            if not expect:
-                print('数据无效..')
+            expect = 'demo'
             data['expect'] = expect
             condition = {'expect': expect}
             info = self.check_exists(data, condition)
             if info:
                 valid_num += 1
-            # print('获取到的数据: ', data)
             self.save_data(data, info)
 
     def save_data(self, data, info):
-        db_name = data.get('lottery_result', '')
+        db_name = data.get('demo', '')
         try:
             if not info:
                 mysql.insert(db_name, data=data)
-                _logger.info('INFO:  DB:%s 数据保存成功, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
+                _logger.info('INFO:  DB:%s 数据保存成功, 期号 %s ; 产品:%s' % (db_name, data['expect'], data.get('name')))
             else:
                 data['create_time'] = info['create_time']
                 data['update_time'] = util.date()
                 mysql.update(db_name, condition={"id": info["id"]}, data=data)
-                _logger.info('INFO:  DB:%s 数据更新成功, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
+                _logger.info('INFO:  DB:%s 数据更新成功, 期号 %s ; 产品: %s' % (db_name, data['expect'], data.get('name')))
 
         except Exception as e:
-            _logger.info('INFO:  DB:%s 数据保存失败, 期号 %s ; 彩种:%s' % (db_name, data['expect'], data.get('lottery_name')))
+            _logger.info('INFO:  DB:%s 数据保存失败 %s, 期号 %s ; 产品: %s ' % (db_name, e, data['expect'], data.get('name')))
 
 
 def main():
@@ -162,7 +143,6 @@ def main():
             args.queues = [config.QNAME_KEY[key] for key in config.QNAME_KEY]
         else:
             args.queues = [config.QNAME_KEY[args.optype]]
-
         while 1:
             PublishChip(**args.__dict__)
             if args.interval <= 0:

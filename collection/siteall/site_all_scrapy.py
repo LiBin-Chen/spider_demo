@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 """
-2019-04-25
-www.jsh365.com整站数据爬虫
 
+www.test.com整站数据爬虫
+本代码仅作参考
 requirements:
     scrapy>=1.2.0
     lxml
@@ -12,16 +12,31 @@ requirements:
 import os
 import re
 import sys
-import argparse
+import copy
+import json
+import base64
+import scrapy
 import random
 import logging
 import hashlib
-import copy
-import threading
-
+import requests
+import argparse
+from scrapy.http import Request
 from requests.utils import proxy_bypass
+from scrapy.utils.python import to_bytes
+from six.moves.urllib.parse import unquote
+from scrapy.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
+from scrapy.utils.httpobj import urlparse_cached
+from scrapy.exceptions import DropItem, IgnoreRequest, NotConfigured
 
 try:
+    from urllib2 import _parse_proxy
+except ImportError:
+    from urllib.request import _parse_proxy
+
+try:
+    import config
     from queue import Queue
     from packages import yzwl
     from packages import rabbitmq
@@ -29,44 +44,22 @@ try:
 except ImportError:
     _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.insert(0, _path)
+    import config
     from queue import Queue
     from packages import rabbitmq
     from packages import Util as util
     from packages import yzwl
 
-import json
-import requests
-import base64
 
-try:
-    from urllib2 import _parse_proxy
-except ImportError:
-    from urllib.request import _parse_proxy
-import scrapy
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors import LinkExtractor
-from scrapy.exceptions import DropItem, IgnoreRequest, NotConfigured
-from scrapy.http import Request
-from scrapy.utils.python import to_bytes
-# six
-# from six.moves.urllib.request import getproxies, proxy_bypass
-from six.moves.urllib.parse import unquote
-from scrapy.utils.httpobj import urlparse_cached
 
 sys.__APP_LOG__ = False
-try:
-    import config
-except ImportError:
-    sys.path[0] = os.path.dirname(os.path.split(os.path.realpath(__file__))[0])
-    import config
 
-_logger = logging.getLogger('yzwl_spider')
+_logger = logging.getLogger('demo_spider')
 mq = rabbitmq.RabbitMQ()
 db = yzwl.DbClass()
 
-lock = threading.Lock()
 settings = {
-    'BOT_NAME': 'yzpksspider',
+    'BOT_NAME': 'demospider',
     'ROBOTSTXT_OBEY': False,
     'COOKIES_ENABLED': True,
     'CONCURRENT_ITEMS': 100,
@@ -101,7 +94,7 @@ settings = {
 }
 # 过滤规则
 filter_rules = (
-    'https://www.pk10.me/',
+    'https://www.test.me/',
     '/',
 
 )
@@ -200,7 +193,7 @@ class ProxyRequestMiddleware(object):
 
     def _fill_queue(self, limit_num=30):
         """填充队列"""
-        resp = requests.get('http://proxy.elecfans.net/proxys.php?key=nTAZhs5QxjCNwiZ6&num={0}'.format(limit_num))
+        resp = requests.get('http://test.com?key=&num={0}'.format(limit_num))
         dlist = json.loads(resp.text)['data']
         for vo in dlist:
             self.queue.put({'ip': vo['ip']})
@@ -233,16 +226,7 @@ class ProxyRequestMiddleware(object):
 
 
 class GoodsItem(scrapy.Item):
-    expect = scrapy.Field()  # 开奖期号
-    open_time = scrapy.Field()  # 开奖时间
-    open_code = scrapy.Field()  # 开奖号码
-    open_url = scrapy.Field()  # 开奖url
-    open_result = scrapy.Field()  # 开奖结果
-    create_time = scrapy.Field()  # 创建时间
-    update_time = scrapy.Field()  # 更新时间
-    source_sn = scrapy.Field()  # 网站标识
-    trend_chart = scrapy.Field()  # 走势图
-    lottery_result = scrapy.Field()  # 保存标识库
+    demo = scrapy.Field()  # 定义存储数据字段
 
 
 class MetaItemPipeline(object):
@@ -250,9 +234,9 @@ class MetaItemPipeline(object):
 
     def __init__(self, crawler):
         name = 'spider_' + crawler.spider.name + '_item'
-        # self.mongo = yzwl.db.mongo[name]
-        # self.mongo.ensure_index('expect', unique=True)
-        self.mysql = db.local_yzwl
+        # self.mongo = yzwl.db.mongo[collection_name]
+        # self.mongo.ensure_index('demo', unique=True)  #通常使用非关系型数据库作为去重
+        self.mysql = db.yzwl
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -260,38 +244,36 @@ class MetaItemPipeline(object):
 
     def process_item(self, item, spider):
         """保存数据"""
-        expect = item.get('expect')
-        if not expect:
+        demo = item.get('demo')
+        if not demo:
             raise DropItem("item data type error")
         # self.put_queue(item)
         data = copy.deepcopy(dict(item))
         if not data:
             raise DropItem("item data is empty")
 
-        # info = self.mongo.find_one({'expect': data['expect']})
-        lottery_result = item.get('lottery_result', '')
-        if not lottery_result:
-            raise DropItem("lottery_result is empty")
+        # info = self.mongo.find_one({'demo': data['demo']})
+        demo_test = item.get('demo_test', '')
+        if not demo_test:
+            raise DropItem("demo_test is empty")
             # return
-        condition = {'expect': expect}
-        # mysql 并发造成资源争抢 会造成死锁
-        # with lock:
+        condition = {'demo': demo}
         try:
-            info = self.mysql.select(lottery_result, condition=condition, limit=1)
+            info = self.mysql.select(demo_test, condition=condition, limit=1)
             if not info:
                 # self.mongo.insert(data)
                 item['create_time'] = util.date()
                 item['update_time'] = util.date()
-                self.mysql.insert(lottery_result, data=item)
-                # _logger.info('success insert mysql : %s' % data['expect'])
+                self.mysql.insert(demo_test, data=item)
+                # _logger.info('success insert mysql : %s' % data['demo'])
             else:
                 item['create_time'] = info['create_time']
                 item['update_time'] = util.date()
                 # self.mongo.update({'_id': info['_id']}, {"$set": data})
-                self.mysql.update(lottery_result, condition=condition, data=item)
-                # _logger.info('success update mysql : %s' % data['expect'])
+                self.mysql.update(demo_test, condition=condition, data=item)
+                # _logger.info('success update mysql : %s' % data['demo'])
         except Exception as e:
-            _logger.info('error op mysql : {0}  : e {1}'.format(data['expect'], e))
+            _logger.info('error op mysql : {0}  : e {1}'.format(data['demo'], e))
         raise DropItem('success process')
 
     # def put_queue(self, queue_list):
@@ -309,23 +291,22 @@ class MetaItemPipeline(object):
         pass
 
 
-class YzPksSpider(CrawlSpider):
-    """jsh365.com 蜘蛛"""
-    name = 'pks'
-    allowed_domains = ['www.pk10.me', 'https://www.pk10.me/']
+class DemoSpider(CrawlSpider):
+    name = 'demo'
+    allowed_domains = ['www.test.me', 'https://www.test.me/']
     # 类别页面
-    start_urls = ['https://www.pk10.me/']
+    start_urls = ['https://www.test.me/']
 
     def __init__(self, name=None, **kwargs):
         self.mysql = db.local_yzwl
-        self.head_url = 'https://www.pk10.me'
+        self.head_url = 'https://www.test.me'
         self._init_args(**kwargs)
         self.headers = {
             'Accept': '*/*',
             'Accept-Encoding': 'gzip, deflate, sdch',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36',
         }
-        super(YzPksSpider, self).__init__(name, **kwargs)
+        super(DemoSpider, self).__init__(name, **kwargs)
 
     def _init_args(self, **kwargs):
         start_url = kwargs.get('START_URL', '')
@@ -345,91 +326,51 @@ class YzPksSpider(CrawlSpider):
             yield Request(url=url, headers=self.headers, callback=self.parse_resp)
 
     def parse_resp(self, resp):
+        '''
+        第一层处理,类别获取后进行下一层抓取
+        :param resp: 
+        :return: 
+        '''
         item = GoodsItem()
-        category = resp.xpath('//ul[@class="nav-plus"]//li//a//@href').extract()
+        category = []
         date_list = util.specified_date(self.start_date, end_date=self.end_date)
         for category_url in category:
             if self.abbreviation and self.abbreviation not in category_url:
                 # 非指定的数据不进行抓取(指定彩种的情况下使用该选项)
                 continue
 
-            if 'javascript' in category_url:
-                continue
-            today_url = self.head_url + category_url
-            if not 'today' in today_url:
-                continue
-
+            '''
+            抓取规则
+            '''
+            today_url = ''
             # 获取保存的数据库
             result_key = category_url.split('-')[1]
-            lottery_result = config.PKS_KEY_DICT.get(result_key, '')
+            demo_test = config.PKS_KEY_DICT.get(result_key, '')
 
             for history_date in date_list:
                 date_time = ''.join(history_date.split('-'))
                 url = today_url.replace('today', date_time)
                 yield scrapy.Request(url=url, headers=self.headers, callback=self.parse_product,
-                                     meta={'item': item, 'result_key': result_key, 'history_date': history_date,
-                                           'lottery_result': lottery_result})
+                                     meta={'item': item})
 
     def code_util(self, open_code_list):
         '''开奖号码处理'''
-        code_list = []
-        for _code in open_code_list:
-            code = util.cleartext(_code)
-            if code:
-                code_list.append(code)
-        open_code = ','.join(code_list)
-
+        open_code = '1,2,3'
         return open_code
 
     def parse_product(self, resp):
-        '''彩种信息页'''
+        '''
+        第二层的数据获取/如需继续获取下一层数据请调用 parse_detail 进行解析
+        :param resp: 
+        :return: 
+        '''
         item = resp.meta.get('item')
-        history_date = resp.meta.get('history_date')
-        lottery_result = resp.meta.get('lottery_result')
-        result_key = resp.meta.get('result_key')
 
         item = {
-            'expect': '',
-            'open_time': '',
-            'open_code': '',
-            'open_url': '',
-            'open_result': '',
-            'create_time': '',
-            'update_time': '',
-            'source_sn': 16,
-            'trend_chart': '',
+            'demo': ''
         }
-        item['lottery_result'] = lottery_result
-        # 获取详情页url
 
-        parse_xpath = '//div[@data-type="{0}"]//tr'.format(result_key)
-        tr_list = resp.xpath(parse_xpath)
-        for tr in tr_list:
-            expect_xpath = tr.xpath('.//td[1]//text()').extract()
-            open_code = tr.xpath('.//td[2]/div[1]//span//text()').extract()
-            if not expect_xpath:
-                # print('空...')
-                continue
-            expect_list = []
-            for _expect in expect_xpath:
-                _expect = util.cleartext(_expect)
-                if _expect:
-                    expect_list.append(_expect)
-            open_code_list = []
-            for _code in open_code:
-                _code = util.cleartext(_code)
-                if _code:
-                    open_code_list.append(_code)
-            open_code = ','.join(open_code_list)
-            expect = expect_list[0]
-            open_time = history_date + ' ' + expect_list[1]
-
-            item['expect'] = expect
-            item['open_code'] = open_code
-            item['open_time'] = open_time
-            item['open_url'] = resp.url
-
-            yield item
+        yield item
 
     def parse_detail(self, resp):
         '''
@@ -490,7 +431,7 @@ def main():
     opt_group = parser.add_argument_group(title='可选项操作组')
     opt_group.add_argument('-S', '--start-date', default='04/25/2019', help='设置起始分类索引值，默认04/24/2019', )
     opt_group.add_argument('-E', '--end-date', default=None, help='设置截止日期索引值，默认截止目前', )
-    opt_group.add_argument('-A', '--abbreviation', default=None, help='指定彩种,abbreviation为t_lottery中的 彩票缩写', )
+    opt_group.add_argument('-A', '--abbreviation', default=None, help='指定产品,产品 keyword', )
 
     gen_group = parser.add_argument_group(title='通用选择项')
     gen_group.add_argument('-u', '--url', help='设置URL，运行操作设置该项则为起始爬取URL，\

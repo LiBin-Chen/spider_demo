@@ -16,23 +16,32 @@ except ImportError:
     import simplejson as json
 import requests
 import config
-from packages import rabbitmq
-from packages import Util as util
-from packages import supplier
+from queue import Queue
+
 try:
-    from queue import Queue
+    from packages import rabbitmq
+    from packages import Util as util
+    from packages import supplier
 except ImportError:
     _path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.insert(0, _path)
-    from queue import Queue
+    from packages import rabbitmq
+    from packages import Util as util
+    from packages import supplier
 
+'''更新控制模块
+
+@description
+    此模块控制调用packages/supplier下的子模块
+    可独立出来进行多机器启动
+'''
 
 # global object
 mq = rabbitmq.RabbitMQ()
 
 
 class UpdateChip(object):
-    """更新元器件"""
+    """更新产品"""
 
     def __init__(self, **kwargs):
         self._init_args(**kwargs)
@@ -60,7 +69,7 @@ class UpdateChip(object):
     def run(self):
         """运行"""
         qnum = len(self.queues)
-        handler = getattr(self, 'update_data')  # 更新数据
+        handler = getattr(self, 'update_data')  # 更新数据/ 也可以加入其它的方式控制 如 历史采集. 搜索采集等,此处仅指定更新模块
         if qnum > 1:
             plist = []
             for qname in self.queues:
@@ -76,20 +85,20 @@ class UpdateChip(object):
         """更新指定队列数据"""
         if not queue_name:
             return 0
-        # queue_name = 'default_goods_queue'
         qsize = mq.qsize(queue_name)
         self.limit = self.limit if qsize > self.limit else qsize  # 每次更新的数量
         queue_list = []
+
         for i in range(self.limit):
             queue_data = mq.get(queue_name)
-            queue_list.append(queue_data)
+            if queue_data and queue_data not in queue_list:
+                queue_list.append(queue_data)
 
         if not queue_list:
             print('等待中，队列 %s 为空' % queue_name)
             return 0
         proxy = None
-        # if not self.no_proxy:
-        if 0:
+        if not self.no_proxy:
             proxy = self.get_prolist()
         tlist = []
         data_list = []
@@ -101,30 +110,30 @@ class UpdateChip(object):
                 continue
             if 'proxy' in data:
                 del data['proxy']
+
+            try:
+                if len(tlist) > 30:
+                    for t in tlist:
+                        t.join(45)
+            except (KeyboardInterrupt, SystemExit):
+                mq.put(queue_name, queue_data)
+                return 0
+
             # 有效队列的总数（非型号总数）
             total_num += 1
             t = threading.Thread(target=self.fetch_update_data,
                                  args=(data_list, proxy), kwargs=data)
             tlist.append(t)
             t.start()
-            time.sleep(0.1)
+            time.sleep(1)
 
-        try:
-            for t in tlist:
-                t.join(45)
-        except (KeyboardInterrupt, SystemExit):
-            mq.put(queue_name, queue_data)
-            return 0
         del data, queue_list
-
         valid_num = 0
         delete_list = []
 
         # 所有线程执行完毕后 再进行数据处理
-        # print('data_list', data_list)
         for data in data_list:
             if not data:
-                print('data----: ', data)
                 continue
             if data['status'] == 200:
                 mq.put(config.WAIT_UPDATE_QUEUE, data['dlist'])  # 等待提交数据
@@ -132,7 +141,7 @@ class UpdateChip(object):
                 id = data.get('dlist').get('id', )
                 lottery_name = data.get('dlist').get('lottery_name', )
                 status = data.get('status')
-                config.LOG.info('ID：{0} ;彩种: {1} ;数据获取成功：{2} ;提交到入库队列:  {3} !'.format(id, lottery_name, status,
+                config.LOG.info('ID：{0} ;产品: {1} ;数据获取成功：{2} ;提交到入库队列:  {3} !'.format(id, lottery_name, status,
                                                                                       config.WAIT_UPDATE_QUEUE))
                 continue
             else:
@@ -165,7 +174,6 @@ class UpdateChip(object):
         '''
         if not num_list:
             return None
-        # mq.put('crawler_update_stats', {'data': num_list, 'time': util.unixtime()})
         mq.put('crawler_update_stats', {'data': num_list, 'time': util.date()})
 
     def fetch_update_data(self, data_list=[], proxy=None, **kwargs):
@@ -187,8 +195,10 @@ class UpdateChip(object):
         update_url = kwargs.get('update_url', '')
         if not update_url:
             return
+        if '360' in update_url:
+            return
         supplier_name = update_url.split('.')[1]
-        if supplier_name is None or supplier_name == '1395p':
+        if supplier_name is None:
             return None
         headers = {
             'user-agent': random.choice(config.USER_AGENT_LIST),
@@ -223,10 +233,14 @@ class UpdateChip(object):
             if 'proxy' in kwargs:
                 del kwargs['proxy']
             data_list.append(kwargs)
-            config.LOG.exception('STATUS: -402, ID: %(id)s', {'id': util.u2b(kwargs['id'])})
+            config.LOG.exception('STATUS: -402, ID: %(id)s 错误: %s',
+                                 {'id': util.u2b(kwargs['id']), 'e': util.traceback_info(e)}, e)
 
     def fetch_search_data(self, data_list=[], err_list=[], proxy=None, supp=None, **kwargs):
-        """根据搜索关键词获取产品产品数据（可能为url也可能为详细信息）"""
+        """
+        根据搜索关键词获取产品产品数据（可能为url也可能为详细信息）
+
+        """
         if not supp or 'keyword' not in kwargs:
             return None
         headers = {
@@ -297,20 +311,11 @@ class UpdateChip(object):
                     for data in res['detail']:
                         data_dict['detail'].append(data)
         for data in data_dict['detail']:
-            if data.get('status') != 200:
-                print('已丢弃无效数据')
-                continue
-            if 'product_id' not in data and 'list' in data and data['list']:
-                _data = copy.copy(data)
-                del _data['list']
-                for row in data['list']:
-                    row.update(_data)
-                    if 'goods_sn' not in row:
-                        continue
-                    data_list.append(row)
-                continue
-            else:
-                data_list.append(data)
+            pass
+            data_list.append(data)
+            '''
+            此处进行每条数据的清洗整理
+            '''
         return data_list
 
     def _crawl(self, fn, dlist, headers=None, proxy=None):
@@ -374,7 +379,7 @@ class UpdateChip(object):
         """获取代理列表"""
         prolist = []
         limit = 10 if self.limit < 10 else self.limit
-        url = 'http://proxy.elecfans.net/proxys.php?key=nTAZhs5QxjCNwiZ6&num={0}'.format(limit)
+        url = 'http://test.com?key=&num={0}'.format(limit)
         if self.optype == 'hot':
             if self.pay:
                 url += '&type=pay'
@@ -401,12 +406,12 @@ def main():
                          0则仅运行一次', default=1, type=int)
     parser.add_argument('-o', '--optype', help='指定队列进行更新，不选默认为所有预更新队列', dest='optype',
                         type=int, default=1)  # store_true运行时有传参 则该变量为true   1 为全部队列进行更新
-    parser.add_argument('-p', '--supplier-list', help='打印彩种列表/彩种类型',
+    parser.add_argument('-p', '--supplier-list', help='打印产品列表/产品类型',
                         action='store_true', default=False)
     act_group = parser.add_argument_group(title='操作选择项')
     act_group.add_argument('-n', '--no-proxy', help='不使用代理，选择将不使用代理更新',
                            action='store_true', default=False)
-    act_group.add_argument('-t', '--pay', help='是否使用复位代理,默认不使用',
+    act_group.add_argument('-t', '--pay', help='是否使用付费代理,默认不使用',
                            action='store_true', default=False)
     act_group.add_argument('-E', '--exception-threshold', help='异常阈值，超过此数量将记录进mongodb中，默认为5',
                            default=5, type=int)
@@ -447,8 +452,8 @@ def main():
             time.sleep(args.interval)
     elif args.supplier_list:
         type_dict = dict(zip(config.QNAME_KEY.keys(), config.QNAME_DICT.values()))
-        print('彩种类型:')
-        print('彩种类型:', type_dict)
+        print('产品类型:')
+        print('产品类型:', type_dict)
     else:
         parser.print_usage()
 

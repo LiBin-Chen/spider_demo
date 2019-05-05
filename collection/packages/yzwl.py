@@ -70,21 +70,20 @@ class MySQL(object):
 
 class DbClass(object):
 
-    def __init__(self, config=None, collection=None, db_name=None):
+    def __init__(self, config=None, collection=None, db_name=None, db_type=0):
         self.__yzwl = None
-        self.__local_yzwl = None
-        self.__test_yzwl = None
         self.__mongo = None
         self.__supplier = None
+        self.db_type = db_type
         self.config = config if config else setting.DATABASES
-        self.__del = []  # 原来用set,报错
+        self.__del = []
         self.collection = collection
-        self.db_name = db_name  # 默认是 lottery_info 库
+        self.db_name = db_name
 
     @property
     def yzwl(self):
         if not self.__yzwl:
-            _db_config = self.config['mysql'][0].copy()
+            _db_config = self.config['mysql'][self.db_type].copy()
             _db_config['tablepre'] = ''
             # _db_config['tablepre'] = 'zl_'
             _db_config['db_fields_cache'] = 0
@@ -97,40 +96,11 @@ class DbClass(object):
         return self.__yzwl
 
     @property
-    def test_yzwl(self):
-        if not self.__test_yzwl:
-            _db_config = self.config['mysql'][1].copy()
-            _db_config['tablepre'] = ''
-            # _db_config['tablepre'] = 'zl_'
-            _db_config['db_fields_cache'] = 0
-            _db_config['data_type'] = 'dict'
-            self.__test_yzwl = db_mysql(**_db_config)
-            if self.__test_yzwl not in self.__del:
-                self.__del.append(self.__test_yzwl)
-        return self.__test_yzwl
-
-    @property
-    def local_yzwl(self):
-        if not self.__local_yzwl:
-            _db_config = self.config['mysql'][2].copy()
-            _db_config['tablepre'] = ''
-            # _db_config['tablepre'] = 'zl_'
-            _db_config['db_fields_cache'] = 0
-            _db_config['data_type'] = 'dict'
-            if self.db_name:
-                _db_config['db'] = self.db_name
-            self.__local_yzwl = db_mysql(**_db_config)
-            if self.__local_yzwl not in self.__del:
-                self.__del.append(self.__local_yzwl)
-        return self.__local_yzwl
-
-    @property
     def supplier(self):
         if not self.__supplier:
             self.__supplier = MySQL(self.config)
             if self.supplier not in self.__del:
                 self.__del.append(self.supplier)
-            # self.__del.add(self.supplier)
         return self.__supplier
 
     @property
@@ -142,12 +112,8 @@ class DbClass(object):
             _config = self.config['mongo'][0] + _collection
             conn = pymongo.MongoClient(_config)
             self.__mongo = conn.get_database()
-            # print('conn', conn)
-            # self.__del.add(conn)
             if conn not in self.__del:
                 self.__del.append(conn)
-            # print('self.mongo', self.mongo)
-            # self.__del.add(self.mongo)
             if self.mongo not in self.__del:
                 self.__del.append(self.mongo)
         return self.__mongo
@@ -179,32 +145,4 @@ db = DbSession()
 
 # 测试
 if __name__ == '__main__':
-    # mongo的测试
-    # db = DbSession()
-    # col = db.mongo['BTCUSDT.BINANCE']
-    # print(col)
-    # col.save({'a': 1})
-    # data = col.find_one()
-    # print('data', data)
-
-    # mysql 测试
-    mysql = db.yzwl
-
-    data = mysql.select('t_lottery', fields=('abbreviation'))
-    item = {}
-    for _data in range(len(data)):
-        item[_data] = data[_data]['abbreviation']
-
-    print(json.dumps(item, indent=4))
-
-    exit()
-    limit = 2
-    count = 0
-    print('1111')
-    while 1:
-        data = mysql.select('t_game_basketball_event', condition=[('id', '>', count)],
-                            limit=limit)  # 不指定fields 则获取所有的字段
-        count += limit
-        print(data)
-        if not data:
-            break
+    pass

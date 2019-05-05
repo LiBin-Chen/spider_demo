@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
+import pika
 import time
 import socket
 import select
@@ -14,7 +14,6 @@ try:
     import json
 except ImportError:
     import simplejson as json
-import pika
 
 
 def catch_except(fn):
@@ -228,9 +227,5 @@ class RabbitMQ(object):
 
 
 if __name__ == '__main__':
-    rab = RabbitMQ()
-    # rab.get('sss')
-    # rab.put_queue_list('test1',{'test':1})
-    data = rab.get_queue_list('test1', limit=4)
-    print(data)
-    # rab.put('balance1',{'test':1})
+    pass
+    # test

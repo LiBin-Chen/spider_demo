@@ -5,8 +5,6 @@
 # 比较式
 from packages import Util
 
-__author__ = 'snow'
-__time__ = '2019/3/11'
 
 _comparison = {'eq': '=', 'neq': '<>', 'gt': '>', 'egt': '>=', 'lt': '<', 'elt': '<=', 'notlike': 'NOT LIKE',
                'notin': 'NOT IN', '!like': 'NOT LIKE'}
@@ -58,9 +56,9 @@ def implode_condition(args, encape='`'):
 
     args : 条件语句
     示例        [('id',1),'|',('status','<',1)] 其等价于 id = 1 or status < 1
-                [('id',1),'|',[('status','<',1),('name','like','qaulau')]] 其等价于 id = '1' or (status < '1' AND name like '%qaulau%')
-                [('id',1),'|',[('status','<',1),('name','like','qaulau'),[('like','like','computer'),'|',('age','>',18)]]]
-                其等价于 id = '1' or (status < '1' AND name like '%qaulau%' AND (`like` like '%computer%' or `age` > 18))
+                [('id',1),'|',[('status','<',1),('name','like','name')]] 其等价于 id = '1' or (status < '1' AND name like '%name%')
+                [('id',1),'|',[('status','<',1),('name','like','name'),[('like','like','computer'),'|',('age','>',18)]]]
+                其等价于 id = '1' or (status < '1' AND name like '%name%' AND (`like` like '%computer%' or `age` > 18))
                 [('id',1),('status','<',1)] 其等价于 id = 1 and status < 1
                 {'id':1,'status':('<',1)}  其等价于 id = 1 and status < 1
     '''
@@ -118,12 +116,12 @@ class db_mysql:
 
 
     以下方法中codition为限制条件，可以为字典和列表
-              example ： {'name':'qaulau'}
+              example ： {'name':'name'}
 
 
               data 为更新或添加的数据，可以为字典或者列表（列表必须为列表或元祖对，即[(key,val),...]）
                    键值对应为字段名
-              example : insert('order',data = {'name':'qaulau','create_time':121545015})
+              example : insert('order',data = {'name':'name','create_time':121545015})
 
     添加字段自动匹配，对于数据表中不存在的字段会自动过滤（仅针对更新和插入的数据集，限制条件不在此列）
 
