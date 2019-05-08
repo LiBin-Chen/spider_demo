@@ -15,7 +15,7 @@ import re, sys, time, datetime, locale, traceback, subprocess, os, signal, smtpl
 
 try:
     import json
-    import zlkg.config as config
+    import config as config
 except ImportError:
     import config
     import simplejson as json
