@@ -1,1 +1,17 @@
-
+// LTE-V only PSS RB
+            // Lte-v Phy 配置时会加上2个PSC（协议36101-1 Table A.8.2.1 Note1）
+            // LTE-V协议只规定了Full RB数目（协议36521-1 Table 6.2.3G.1.1.3-1）
+            // Partial RB数目由SE文档规定，10MHz和20MHz场景，PSS+PSC RB = 10 RB时，做Partial RB测试
+            // SE文档规定，LTE-V没有1RB场景，10MHz和20MHz都用3RB测试代替1RB测试
+            // 1.4M
+            {0, 0, 0},
+            // 3M
+            {3, 8, 12},
+            // 5M
+            {3, 8, 20},
+            // 10M
+            {3, 8, 48},
+            // 15M
+            {0, 0, 0},
+            // 20M
+            {3, 8, 96}
