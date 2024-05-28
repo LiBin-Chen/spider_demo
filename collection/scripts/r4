@@ -1,0 +1,788 @@
+
+[2024-05-28 10:00:07.328554][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -57.00][]
+[2024-05-28 10:00:07.330480][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ARB:REPetition CONT
+[2024-05-28 10:00:07.330558][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ARB:REPetition CONT)
+[2024-05-28 10:00:07.330638][1][configure_source_arb_repetition_execute][609]Start to Call libCommandTree.so Function GetParaListData Get Parameter of Command CONFigure:SOURce:ARB:REPetition
+[2024-05-28 10:00:07.330680][1][configure_source_arb_repetition_execute][619]Start to Set g_ArbParamsStruct.RptMode Enable true,assignment CONTinuous to RF struct g_ArbParamsStruct.RptMode,if Generator is ON,send parameters to RF,else exit function
+[2024-05-28 10:00:07.330717][1][configure_source_arb_repetition_execute][635] receive temprptmode equal to now,return noerror 
+[2024-05-28 10:00:07.330801][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ARB:REPetition CONT][]
+[2024-05-28 10:00:07.333500][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:STATe?
+[2024-05-28 10:00:07.333580][1][RecvDataCallBackFunction_sep][873]Add Inst0 Job Thread Done[1]!
+[2024-05-28 10:00:07.333658][1][ExecuteTXStateCmd][282][140160657278720][inst0]Start To ExcuteCommand
+[2024-05-28 10:00:07.333723][1][configure_source_state_execute_querycmd][1432]Start to Get inst0 status: 1,ON
+[2024-05-28 10:00:07.333744][1][ExecuteTXStateCmd][287][140160657278720][inst0]ExcuteCommand Done(status: 0; type: 2)
+[2024-05-28 10:00:07.333777][1][ExecuteTXStateCmd][326][inst0]Query Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:STATe?][ON]
+[2024-05-28 10:00:07.335215][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:STATe?
+[2024-05-28 10:00:07.335284][1][RecvDataCallBackFunction_sep][873]Add Inst0 Job Thread Done[1]!
+[2024-05-28 10:00:07.335329][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RELiability:ALL?
+[2024-05-28 10:00:07.335349][1][ExecuteTXStateCmd][282][140160657278720][inst0]Start To ExcuteCommand
+[2024-05-28 10:00:07.335414][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RELiability:ALL?)
+[2024-05-28 10:00:07.335430][1][configure_source_state_execute_querycmd][1432]Start to Get inst0 status: 1,ON
+[2024-05-28 10:00:07.335469][1][ExecuteTXStateCmd][287][140160657278720][inst0]ExcuteCommand Done(status: 0; type: 2)
+[2024-05-28 10:00:07.335518][1][ExecuteTXStateCmd][326][inst0]Query Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:STATe?][ON]
+[2024-05-28 10:00:07.335593][1][RecvDataCallBackFunction_sep][1204][inst0]Query Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RELiability:ALL?][0, OK]
+[2024-05-28 10:00:07.335633][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ARB:SEGMents:CURRent?
+[2024-05-28 10:00:07.335732][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ARB:SEGMents:CURRent?)
+[2024-05-28 10:00:07.335799][1][configure_source_trigger_arb_segments_current_querycmd][1542]Command is CONFigure:SOURce:ARB:SEGMents:CURRent
+[2024-05-28 10:00:07.335827][1][configure_source_trigger_arb_segments_current_querycmd][1554]if Generator status is ON,and baseband mode is ARB,call libGen.so Function RF_ArbQuerySeg,else exit
+[2024-05-28 10:00:07.335871][1][configure_source_trigger_arb_segments_current_querycmd][1571]Generator status is ON,start to Get baseband mode from g_BaseBandMode = 1,if arb,send value to RF,Else exit
+[2024-05-28 10:00:07.335900][1][configure_source_trigger_arb_segments_current_querycmd][1590]Start to Call libGen.so Function RF_ArbQuerySeg
+[2024-05-28 10:00:07.335936][1][configure_source_trigger_arb_segments_current_querycmd][1594]RF_ArbQuerySeg return value is 0,current segment is 0
+[2024-05-28 10:00:07.335965][1][configure_source_trigger_arb_segments_current_querycmd][1602]current segment name is Hisi_Ltev_B100_Rx_Qpsk.wv
+[2024-05-28 10:00:07.336067][1][configure_source_trigger_arb_segments_current_querycmd][1630]Start to Call libCommandTree.so Function SetParaListData [CONFigure:SOURce:ARB:SEGMents:CURRent][0][0]
+[2024-05-28 10:00:07.336173][1][RecvDataCallBackFunction_sep][1204][inst0]Query Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ARB:SEGMents:CURRent?][0,"Hisi_Ltev_B100_Rx_Qpsk.wv"]
+[2024-05-28 10:00:07.337792][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -70.00
+[2024-05-28 10:00:07.337857][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -70.00)
+[2024-05-28 10:00:07.337929][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:07.337973][1][SetupLevel][258][inst0]Set Level -70.000000.
+[2024-05-28 10:00:07.337996][1][SetNormal_Level][2329]Set Level Enable 1
+[2024-05-28 10:00:07.338034][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,0),TxPower(-70.000000,1)
+[2024-05-28 10:00:07.338759][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,0),TxPower(-70.000000,1)
+[2024-05-28 10:00:07.338793][1][SetupLevel][277][inst0]Set Level -70.00 OK.
+[2024-05-28 10:00:07.338818][1][SetNormal_Level][2329]Set Level Enable 0
+[2024-05-28 10:00:07.338906][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -70.00][]
+[2024-05-28 10:00:07.340644][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:SCENario:SALone RA18
+[2024-05-28 10:00:07.340740][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:SCENario:SALone RA18)
+[2024-05-28 10:00:07.340826][1][SetupStandAlone][1272]Begin SetupStandAlone, Cur = RF18
+[2024-05-28 10:00:07.340866][1][SetupStandAlone][1292]The Same As PreStandAlone RF18
+[2024-05-28 10:00:07.340950][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:SCENario:SALone RA18][]
+[2024-05-28 10:00:07.341676][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF
+[2024-05-28 10:00:07.341767][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF)
+[2024-05-28 10:00:07.341911][1][SetTxPortStateAll][1724]Begin SetTxPortStateAll
+[2024-05-28 10:00:07.341979][1][SetTxPortStateAll][1778]Set Value From 16 To 0
+[2024-05-28 10:00:07.342000][1][SetTxPortStateAll][1802]Current TX Already ON
+[2024-05-28 10:00:07.342023][1][SetTxPortStateAll][1816]Global And Normal
+[2024-05-28 10:00:07.342048][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:07.342087][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:07.342799][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:07.342830][1][SetTxPortStateAll][1846]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:07.342870][1][SetTxPortStateAll][1914]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,None][0]
+[2024-05-28 10:00:07.342987][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF][]
+[2024-05-28 10:00:07.343027][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA5,ON
+[2024-05-28 10:00:07.343173][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA5,ON)
+[2024-05-28 10:00:07.343340][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:07.343437][1][SetTxPortState][1491]RF5(decV), 16(bitV), Switcher[ON]
+[2024-05-28 10:00:07.343464][1][SetTxPortState][1506]Set Value From 0 To 16
+[2024-05-28 10:00:07.343487][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:07.343510][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:07.343534][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:07.343572][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:07.344280][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:07.344317][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:07.344375][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF5][0]
+[2024-05-28 10:00:07.344544][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA5,ON][]
+[2024-05-28 10:00:08.263253][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:SCENario:SALone RA18
+[2024-05-28 10:00:08.263374][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:SCENario:SALone RA18)
+[2024-05-28 10:00:08.263473][1][SetupStandAlone][1272]Begin SetupStandAlone, Cur = RF18
+[2024-05-28 10:00:08.263522][1][SetupStandAlone][1292]The Same As PreStandAlone RF18
+[2024-05-28 10:00:08.263616][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:SCENario:SALone RA18][]
+[2024-05-28 10:00:08.264565][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF
+[2024-05-28 10:00:08.264651][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF)
+[2024-05-28 10:00:08.264817][1][SetTxPortStateAll][1724]Begin SetTxPortStateAll
+[2024-05-28 10:00:08.264894][1][SetTxPortStateAll][1778]Set Value From 16 To 0
+[2024-05-28 10:00:08.264917][1][SetTxPortStateAll][1802]Current TX Already ON
+[2024-05-28 10:00:08.264941][1][SetTxPortStateAll][1816]Global And Normal
+[2024-05-28 10:00:08.264966][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.265008][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:08.265849][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:08.265885][1][SetTxPortStateAll][1846]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.265925][1][SetTxPortStateAll][1914]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,None][0]
+[2024-05-28 10:00:08.266052][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF][]
+[2024-05-28 10:00:08.266094][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA5,ON
+[2024-05-28 10:00:08.266184][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA5,ON)
+[2024-05-28 10:00:08.266323][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:08.266379][1][SetTxPortState][1491]RF5(decV), 16(bitV), Switcher[ON]
+[2024-05-28 10:00:08.266411][1][SetTxPortState][1506]Set Value From 0 To 16
+[2024-05-28 10:00:08.266441][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:08.266470][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:08.266499][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.266541][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:08.267287][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:08.267319][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.267357][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF5][0]
+[2024-05-28 10:00:08.267467][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA5,ON][]
+[2024-05-28 10:00:08.269765][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -88.20
+[2024-05-28 10:00:08.269848][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -88.20)
+[2024-05-28 10:00:08.269931][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:08.269976][1][SetupLevel][258][inst0]Set Level -88.200000.
+[2024-05-28 10:00:08.269999][1][SetNormal_Level][2329]Set Level Enable 1
+[2024-05-28 10:00:08.270035][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,0),TxPower(-88.200000,1)
+[2024-05-28 10:00:08.270765][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,0),TxPower(-88.200000,1)
+[2024-05-28 10:00:08.270801][1][SetupLevel][277][inst0]Set Level -88.20 OK.
+[2024-05-28 10:00:08.270826][1][SetNormal_Level][2329]Set Level Enable 0
+[2024-05-28 10:00:08.270915][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -88.20][]
+[2024-05-28 10:00:08.482595][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:SCENario:SALone RA18
+[2024-05-28 10:00:08.482705][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:SCENario:SALone RA18)
+[2024-05-28 10:00:08.482794][1][SetupStandAlone][1272]Begin SetupStandAlone, Cur = RF18
+[2024-05-28 10:00:08.482834][1][SetupStandAlone][1292]The Same As PreStandAlone RF18
+[2024-05-28 10:00:08.482921][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:SCENario:SALone RA18][]
+[2024-05-28 10:00:08.483806][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF
+[2024-05-28 10:00:08.483887][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF)
+[2024-05-28 10:00:08.484037][1][SetTxPortStateAll][1724]Begin SetTxPortStateAll
+[2024-05-28 10:00:08.484106][1][SetTxPortStateAll][1778]Set Value From 16 To 0
+[2024-05-28 10:00:08.484128][1][SetTxPortStateAll][1802]Current TX Already ON
+[2024-05-28 10:00:08.484152][1][SetTxPortStateAll][1816]Global And Normal
+[2024-05-28 10:00:08.484180][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.484222][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-88.200000,0)
+[2024-05-28 10:00:08.484984][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-88.200000,0)
+[2024-05-28 10:00:08.485017][1][SetTxPortStateAll][1846]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.485055][1][SetTxPortStateAll][1914]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,None][0]
+[2024-05-28 10:00:08.485181][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF][]
+[2024-05-28 10:00:08.485299][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA6,ON
+[2024-05-28 10:00:08.485389][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA6,ON)
+[2024-05-28 10:00:08.485477][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:08.485517][1][SetTxPortState][1491]RF6(decV), 32(bitV), Switcher[ON]
+[2024-05-28 10:00:08.485541][1][SetTxPortState][1506]Set Value From 0 To 32
+[2024-05-28 10:00:08.485557][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:08.485572][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:08.485587][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.485614][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(32,1),TxPower(-88.200000,0)
+[2024-05-28 10:00:08.486357][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(32,1),TxPower(-88.200000,0)
+[2024-05-28 10:00:08.486389][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.486427][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF6][0]
+[2024-05-28 10:00:08.486537][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA6,ON][]
+[2024-05-28 10:00:08.488745][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -88.20
+[2024-05-28 10:00:08.488824][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -88.20)
+[2024-05-28 10:00:08.488901][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:08.488952][1][SetupLevel][252][inst0]The Same Value -88.20 With PrevSetting, Nothing To Do.
+[2024-05-28 10:00:08.489043][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -88.20][]
+[2024-05-28 10:00:08.702618][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:SCENario:SALone RA18
+[2024-05-28 10:00:08.702736][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:SCENario:SALone RA18)
+[2024-05-28 10:00:08.702823][1][SetupStandAlone][1272]Begin SetupStandAlone, Cur = RF18
+[2024-05-28 10:00:08.702864][1][SetupStandAlone][1292]The Same As PreStandAlone RF18
+[2024-05-28 10:00:08.702950][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:SCENario:SALone RA18][]
+[2024-05-28 10:00:08.704033][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF
+[2024-05-28 10:00:08.704106][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF)
+[2024-05-28 10:00:08.704251][1][SetTxPortStateAll][1724]Begin SetTxPortStateAll
+[2024-05-28 10:00:08.704330][1][SetTxPortStateAll][1778]Set Value From 32 To 0
+[2024-05-28 10:00:08.704352][1][SetTxPortStateAll][1802]Current TX Already ON
+[2024-05-28 10:00:08.704375][1][SetTxPortStateAll][1816]Global And Normal
+[2024-05-28 10:00:08.704398][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.704437][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-88.200000,0)
+[2024-05-28 10:00:08.705209][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-88.200000,0)
+[2024-05-28 10:00:08.705241][1][SetTxPortStateAll][1846]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.705279][1][SetTxPortStateAll][1914]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,None][0]
+[2024-05-28 10:00:08.705400][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF][]
+[2024-05-28 10:00:08.705443][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA5,ON
+[2024-05-28 10:00:08.705514][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA5,ON)
+[2024-05-28 10:00:08.705604][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:08.705656][1][SetTxPortState][1491]RF5(decV), 16(bitV), Switcher[ON]
+[2024-05-28 10:00:08.705679][1][SetTxPortState][1506]Set Value From 0 To 16
+[2024-05-28 10:00:08.705715][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:08.705738][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:08.705760][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.705805][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-88.200000,0)
+[2024-05-28 10:00:08.706525][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-88.200000,0)
+[2024-05-28 10:00:08.706556][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.706593][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF5][0]
+[2024-05-28 10:00:08.706713][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA5,ON][]
+[2024-05-28 10:00:08.706743][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA6,ON
+[2024-05-28 10:00:08.706813][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA6,ON)
+[2024-05-28 10:00:08.706902][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:08.706948][1][SetTxPortState][1491]RF6(decV), 32(bitV), Switcher[ON]
+[2024-05-28 10:00:08.706979][1][SetTxPortState][1506]Set Value From 16 To 48
+[2024-05-28 10:00:08.707001][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:08.707023][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:08.707045][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.707080][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,1),TxPower(-88.200000,0)
+[2024-05-28 10:00:08.707800][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,1),TxPower(-88.200000,0)
+[2024-05-28 10:00:08.707830][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.707865][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF6][0]
+[2024-05-28 10:00:08.707972][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA6,ON][]
+[2024-05-28 10:00:08.710219][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -75.00
+[2024-05-28 10:00:08.710306][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -75.00)
+[2024-05-28 10:00:08.710391][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:08.710436][1][SetupLevel][258][inst0]Set Level -75.000000.
+[2024-05-28 10:00:08.710459][1][SetNormal_Level][2329]Set Level Enable 1
+[2024-05-28 10:00:08.710496][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,0),TxPower(-75.000000,1)
+[2024-05-28 10:00:08.711233][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,0),TxPower(-75.000000,1)
+[2024-05-28 10:00:08.711267][1][SetupLevel][277][inst0]Set Level -75.00 OK.
+[2024-05-28 10:00:08.711292][1][SetNormal_Level][2329]Set Level Enable 0
+[2024-05-28 10:00:08.711382][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -75.00][]
+[2024-05-28 10:00:08.824356][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:SCENario:SALone RA18
+[2024-05-28 10:00:08.824444][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:SCENario:SALone RA18)
+[2024-05-28 10:00:08.824535][1][SetupStandAlone][1272]Begin SetupStandAlone, Cur = RF18
+[2024-05-28 10:00:08.824576][1][SetupStandAlone][1292]The Same As PreStandAlone RF18
+[2024-05-28 10:00:08.824665][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:SCENario:SALone RA18][]
+[2024-05-28 10:00:08.825720][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF
+[2024-05-28 10:00:08.825801][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF)
+[2024-05-28 10:00:08.825950][1][SetTxPortStateAll][1724]Begin SetTxPortStateAll
+[2024-05-28 10:00:08.826024][1][SetTxPortStateAll][1778]Set Value From 48 To 0
+[2024-05-28 10:00:08.826046][1][SetTxPortStateAll][1802]Current TX Already ON
+[2024-05-28 10:00:08.826068][1][SetTxPortStateAll][1816]Global And Normal
+[2024-05-28 10:00:08.826091][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.826133][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-75.000000,0)
+[2024-05-28 10:00:08.826877][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-75.000000,0)
+[2024-05-28 10:00:08.826908][1][SetTxPortStateAll][1846]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.826952][1][SetTxPortStateAll][1914]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,None][0]
+[2024-05-28 10:00:08.827071][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF][]
+[2024-05-28 10:00:08.827099][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA5,ON
+[2024-05-28 10:00:08.827171][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA5,ON)
+[2024-05-28 10:00:08.827261][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:08.827313][1][SetTxPortState][1491]RF5(decV), 16(bitV), Switcher[ON]
+[2024-05-28 10:00:08.827337][1][SetTxPortState][1506]Set Value From 0 To 16
+[2024-05-28 10:00:08.827362][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:08.827383][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:08.827406][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.827444][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-75.000000,0)
+[2024-05-28 10:00:08.828173][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-75.000000,0)
+[2024-05-28 10:00:08.828204][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.828241][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF5][0]
+[2024-05-28 10:00:08.828356][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA5,ON][]
+[2024-05-28 10:00:08.828383][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA6,ON
+[2024-05-28 10:00:08.828456][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA6,ON)
+[2024-05-28 10:00:08.828545][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:08.828586][1][SetTxPortState][1491]RF6(decV), 32(bitV), Switcher[ON]
+[2024-05-28 10:00:08.828618][1][SetTxPortState][1506]Set Value From 16 To 48
+[2024-05-28 10:00:08.828639][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:08.828660][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:08.828694][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.828728][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,1),TxPower(-75.000000,0)
+[2024-05-28 10:00:08.829440][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,1),TxPower(-75.000000,0)
+[2024-05-28 10:00:08.829470][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.829505][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF6][0]
+[2024-05-28 10:00:08.829612][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA6,ON][]
+[2024-05-28 10:00:08.831857][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -65.00
+[2024-05-28 10:00:08.831946][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -65.00)
+[2024-05-28 10:00:08.832022][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:08.832063][1][SetupLevel][258][inst0]Set Level -65.000000.
+[2024-05-28 10:00:08.832093][1][SetNormal_Level][2329]Set Level Enable 1
+[2024-05-28 10:00:08.832129][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,0),TxPower(-65.000000,1)
+[2024-05-28 10:00:08.832864][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,0),TxPower(-65.000000,1)
+[2024-05-28 10:00:08.832900][1][SetupLevel][277][inst0]Set Level -65.00 OK.
+[2024-05-28 10:00:08.832927][1][SetNormal_Level][2329]Set Level Enable 0
+[2024-05-28 10:00:08.833020][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -65.00][]
+[2024-05-28 10:00:08.949165][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:SCENario:SALone RA18
+[2024-05-28 10:00:08.949203][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:SCENario:SALone RA18)
+[2024-05-28 10:00:08.949234][1][SetupStandAlone][1272]Begin SetupStandAlone, Cur = RF18
+[2024-05-28 10:00:08.949247][1][SetupStandAlone][1292]The Same As PreStandAlone RF18
+[2024-05-28 10:00:08.949280][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:SCENario:SALone RA18][]
+[2024-05-28 10:00:08.949927][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF
+[2024-05-28 10:00:08.949958][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF)
+[2024-05-28 10:00:08.950009][1][SetTxPortStateAll][1724]Begin SetTxPortStateAll
+[2024-05-28 10:00:08.950033][1][SetTxPortStateAll][1778]Set Value From 48 To 0
+[2024-05-28 10:00:08.950040][1][SetTxPortStateAll][1802]Current TX Already ON
+[2024-05-28 10:00:08.950049][1][SetTxPortStateAll][1816]Global And Normal
+[2024-05-28 10:00:08.950057][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.950071][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-65.000000,0)
+[2024-05-28 10:00:08.950432][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-65.000000,0)
+[2024-05-28 10:00:08.950443][1][SetTxPortStateAll][1846]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.950456][1][SetTxPortStateAll][1914]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,None][0]
+[2024-05-28 10:00:08.950504][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF][]
+[2024-05-28 10:00:08.950774][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA5,ON
+[2024-05-28 10:00:08.950804][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA5,ON)
+[2024-05-28 10:00:08.950838][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:08.950854][1][SetTxPortState][1491]RF5(decV), 16(bitV), Switcher[ON]
+[2024-05-28 10:00:08.950861][1][SetTxPortState][1506]Set Value From 0 To 16
+[2024-05-28 10:00:08.950870][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:08.950877][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:08.950885][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.950899][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-65.000000,0)
+[2024-05-28 10:00:08.951229][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-65.000000,0)
+[2024-05-28 10:00:08.951240][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.951253][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF5][0]
+[2024-05-28 10:00:08.951290][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA5,ON][]
+[2024-05-28 10:00:08.951601][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA6,ON
+[2024-05-28 10:00:08.951631][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA6,ON)
+[2024-05-28 10:00:08.951664][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:08.951680][1][SetTxPortState][1491]RF6(decV), 32(bitV), Switcher[ON]
+[2024-05-28 10:00:08.951699][1][SetTxPortState][1506]Set Value From 16 To 48
+[2024-05-28 10:00:08.951708][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:08.951715][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:08.951723][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:08.951738][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,1),TxPower(-65.000000,0)
+[2024-05-28 10:00:08.952060][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,1),TxPower(-65.000000,0)
+[2024-05-28 10:00:08.952071][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:08.952083][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF6][0]
+[2024-05-28 10:00:08.952119][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA6,ON][]
+[2024-05-28 10:00:08.954492][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -55.00
+[2024-05-28 10:00:08.954525][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -55.00)
+[2024-05-28 10:00:08.954553][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:08.954568][1][SetupLevel][258][inst0]Set Level -55.000000.
+[2024-05-28 10:00:08.954576][1][SetNormal_Level][2329]Set Level Enable 1
+[2024-05-28 10:00:08.954589][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,0),TxPower(-55.000000,1)
+[2024-05-28 10:00:08.954930][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,0),TxPower(-55.000000,1)
+[2024-05-28 10:00:08.954942][1][SetupLevel][277][inst0]Set Level -55.00 OK.
+[2024-05-28 10:00:08.954950][1][SetNormal_Level][2329]Set Level Enable 0
+[2024-05-28 10:00:08.954985][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -55.00][]
+[2024-05-28 10:00:09.074525][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:SCENario:SALone RA18
+[2024-05-28 10:00:09.074630][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:SCENario:SALone RA18)
+[2024-05-28 10:00:09.074746][1][SetupStandAlone][1272]Begin SetupStandAlone, Cur = RF18
+[2024-05-28 10:00:09.074791][1][SetupStandAlone][1292]The Same As PreStandAlone RF18
+[2024-05-28 10:00:09.074901][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:SCENario:SALone RA18][]
+[2024-05-28 10:00:09.075360][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF
+[2024-05-28 10:00:09.075452][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF)
+[2024-05-28 10:00:09.075597][1][SetTxPortStateAll][1724]Begin SetTxPortStateAll
+[2024-05-28 10:00:09.075672][1][SetTxPortStateAll][1778]Set Value From 48 To 0
+[2024-05-28 10:00:09.075705][1][SetTxPortStateAll][1802]Current TX Already ON
+[2024-05-28 10:00:09.075727][1][SetTxPortStateAll][1816]Global And Normal
+[2024-05-28 10:00:09.075751][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.075797][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-55.000000,0)
+[2024-05-28 10:00:09.076607][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-55.000000,0)
+[2024-05-28 10:00:09.076638][1][SetTxPortStateAll][1846]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.076675][1][SetTxPortStateAll][1914]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,None][0]
+[2024-05-28 10:00:09.076811][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF][]
+[2024-05-28 10:00:09.076852][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA5,ON
+[2024-05-28 10:00:09.076943][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA5,ON)
+[2024-05-28 10:00:09.077093][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:09.077167][1][SetTxPortState][1491]RF5(decV), 16(bitV), Switcher[ON]
+[2024-05-28 10:00:09.077196][1][SetTxPortState][1506]Set Value From 0 To 16
+[2024-05-28 10:00:09.077223][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:09.077245][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:09.077274][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.077320][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-55.000000,0)
+[2024-05-28 10:00:09.078056][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-55.000000,0)
+[2024-05-28 10:00:09.078087][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.078125][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF5][0]
+[2024-05-28 10:00:09.078232][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA5,ON][]
+[2024-05-28 10:00:09.078260][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA6,ON
+[2024-05-28 10:00:09.078335][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA6,ON)
+[2024-05-28 10:00:09.078431][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:09.078481][1][SetTxPortState][1491]RF6(decV), 32(bitV), Switcher[ON]
+[2024-05-28 10:00:09.078510][1][SetTxPortState][1506]Set Value From 16 To 48
+[2024-05-28 10:00:09.078537][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:09.078562][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:09.078585][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.078626][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,1),TxPower(-55.000000,0)
+[2024-05-28 10:00:09.079355][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,1),TxPower(-55.000000,0)
+[2024-05-28 10:00:09.079386][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.079423][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF6][0]
+[2024-05-28 10:00:09.079543][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA6,ON][]
+[2024-05-28 10:00:09.081413][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -45.00
+[2024-05-28 10:00:09.081485][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -45.00)
+[2024-05-28 10:00:09.081567][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:09.081610][1][SetupLevel][258][inst0]Set Level -45.000000.
+[2024-05-28 10:00:09.081632][1][SetNormal_Level][2329]Set Level Enable 1
+[2024-05-28 10:00:09.081669][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,0),TxPower(-45.000000,1)
+[2024-05-28 10:00:09.082399][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,0),TxPower(-45.000000,1)
+[2024-05-28 10:00:09.082433][1][SetupLevel][277][inst0]Set Level -45.00 OK.
+[2024-05-28 10:00:09.082456][1][SetNormal_Level][2329]Set Level Enable 0
+[2024-05-28 10:00:09.082550][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -45.00][]
+[2024-05-28 10:00:09.199031][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:SCENario:SALone RA18
+[2024-05-28 10:00:09.199066][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:SCENario:SALone RA18)
+[2024-05-28 10:00:09.199099][1][SetupStandAlone][1272]Begin SetupStandAlone, Cur = RF18
+[2024-05-28 10:00:09.199114][1][SetupStandAlone][1292]The Same As PreStandAlone RF18
+[2024-05-28 10:00:09.199142][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:SCENario:SALone RA18][]
+[2024-05-28 10:00:09.199831][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF
+[2024-05-28 10:00:09.199858][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF)
+[2024-05-28 10:00:09.199907][1][SetTxPortStateAll][1724]Begin SetTxPortStateAll
+[2024-05-28 10:00:09.199929][1][SetTxPortStateAll][1778]Set Value From 48 To 0
+[2024-05-28 10:00:09.199937][1][SetTxPortStateAll][1802]Current TX Already ON
+[2024-05-28 10:00:09.199944][1][SetTxPortStateAll][1816]Global And Normal
+[2024-05-28 10:00:09.199952][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.199966][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-45.000000,0)
+[2024-05-28 10:00:09.200305][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-45.000000,0)
+[2024-05-28 10:00:09.200316][1][SetTxPortStateAll][1846]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.200330][1][SetTxPortStateAll][1914]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,None][0]
+[2024-05-28 10:00:09.200369][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF][]
+[2024-05-28 10:00:09.200911][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA5,ON
+[2024-05-28 10:00:09.200935][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA5,ON)
+[2024-05-28 10:00:09.200967][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:09.200982][1][SetTxPortState][1491]RF5(decV), 16(bitV), Switcher[ON]
+[2024-05-28 10:00:09.200990][1][SetTxPortState][1506]Set Value From 0 To 16
+[2024-05-28 10:00:09.200997][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:09.201004][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:09.201011][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.201024][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-45.000000,0)
+[2024-05-28 10:00:09.201341][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-45.000000,0)
+[2024-05-28 10:00:09.201351][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.201364][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF5][0]
+[2024-05-28 10:00:09.201400][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA5,ON][]
+[2024-05-28 10:00:09.201992][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA6,ON
+[2024-05-28 10:00:09.202015][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA6,ON)
+[2024-05-28 10:00:09.202046][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:09.202061][1][SetTxPortState][1491]RF6(decV), 32(bitV), Switcher[ON]
+[2024-05-28 10:00:09.202068][1][SetTxPortState][1506]Set Value From 16 To 48
+[2024-05-28 10:00:09.202075][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:09.202083][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:09.202090][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.202102][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,1),TxPower(-45.000000,0)
+[2024-05-28 10:00:09.202416][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,1),TxPower(-45.000000,0)
+[2024-05-28 10:00:09.202426][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.202438][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF6][0]
+[2024-05-28 10:00:09.202471][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA6,ON][]
+[2024-05-28 10:00:09.204588][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -35.00
+[2024-05-28 10:00:09.204614][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -35.00)
+[2024-05-28 10:00:09.204642][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:09.204657][1][SetupLevel][258][inst0]Set Level -35.000000.
+[2024-05-28 10:00:09.204665][1][SetNormal_Level][2329]Set Level Enable 1
+[2024-05-28 10:00:09.204677][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,0),TxPower(-35.000000,1)
+[2024-05-28 10:00:09.205016][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(48,0),TxPower(-35.000000,1)
+[2024-05-28 10:00:09.205051][1][SetupLevel][277][inst0]Set Level -35.00 OK.
+[2024-05-28 10:00:09.205074][1][SetNormal_Level][2329]Set Level Enable 0
+[2024-05-28 10:00:09.205162][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -35.00][]
+[2024-05-28 10:00:09.325412][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:SCENario:SALone RA18
+[2024-05-28 10:00:09.325508][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:SCENario:SALone RA18)
+[2024-05-28 10:00:09.325595][1][SetupStandAlone][1272]Begin SetupStandAlone, Cur = RF18
+[2024-05-28 10:00:09.325635][1][SetupStandAlone][1292]The Same As PreStandAlone RF18
+[2024-05-28 10:00:09.325739][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:SCENario:SALone RA18][]
+[2024-05-28 10:00:09.326533][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF
+[2024-05-28 10:00:09.326615][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF)
+[2024-05-28 10:00:09.326774][1][SetTxPortStateAll][1724]Begin SetTxPortStateAll
+[2024-05-28 10:00:09.326844][1][SetTxPortStateAll][1778]Set Value From 48 To 0
+[2024-05-28 10:00:09.326865][1][SetTxPortStateAll][1802]Current TX Already ON
+[2024-05-28 10:00:09.326887][1][SetTxPortStateAll][1816]Global And Normal
+[2024-05-28 10:00:09.326910][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.326953][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-35.000000,0)
+[2024-05-28 10:00:09.327694][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-35.000000,0)
+[2024-05-28 10:00:09.327727][1][SetTxPortStateAll][1846]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.327766][1][SetTxPortStateAll][1914]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,None][0]
+[2024-05-28 10:00:09.327878][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF][]
+[2024-05-28 10:00:09.327906][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA5,ON
+[2024-05-28 10:00:09.327980][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA5,ON)
+[2024-05-28 10:00:09.328077][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:09.328126][1][SetTxPortState][1491]RF5(decV), 16(bitV), Switcher[ON]
+[2024-05-28 10:00:09.328148][1][SetTxPortState][1506]Set Value From 0 To 16
+[2024-05-28 10:00:09.328169][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:09.328191][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:09.328214][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.328253][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-35.000000,0)
+[2024-05-28 10:00:09.328980][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-35.000000,0)
+[2024-05-28 10:00:09.329011][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.329048][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF5][0]
+[2024-05-28 10:00:09.329156][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA5,ON][]
+[2024-05-28 10:00:09.331310][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -22.00
+[2024-05-28 10:00:09.331386][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -22.00)
+[2024-05-28 10:00:09.331465][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:09.331507][1][SetupLevel][258][inst0]Set Level -22.000000.
+[2024-05-28 10:00:09.331529][1][SetNormal_Level][2329]Set Level Enable 1
+[2024-05-28 10:00:09.331563][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,0),TxPower(-22.000000,1)
+[2024-05-28 10:00:09.332290][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,0),TxPower(-22.000000,1)
+[2024-05-28 10:00:09.332321][1][SetupLevel][277][inst0]Set Level -22.00 OK.
+[2024-05-28 10:00:09.332345][1][SetNormal_Level][2329]Set Level Enable 0
+[2024-05-28 10:00:09.332434][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -22.00][]
+[2024-05-28 10:00:09.542526][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:SCENario:SALone RA18
+[2024-05-28 10:00:09.542613][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:SCENario:SALone RA18)
+[2024-05-28 10:00:09.542715][1][SetupStandAlone][1272]Begin SetupStandAlone, Cur = RF18
+[2024-05-28 10:00:09.542758][1][SetupStandAlone][1292]The Same As PreStandAlone RF18
+[2024-05-28 10:00:09.542844][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:SCENario:SALone RA18][]
+[2024-05-28 10:00:09.543666][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF
+[2024-05-28 10:00:09.543805][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF)
+[2024-05-28 10:00:09.543982][1][SetTxPortStateAll][1724]Begin SetTxPortStateAll
+[2024-05-28 10:00:09.544054][1][SetTxPortStateAll][1778]Set Value From 16 To 0
+[2024-05-28 10:00:09.544075][1][SetTxPortStateAll][1802]Current TX Already ON
+[2024-05-28 10:00:09.544097][1][SetTxPortStateAll][1816]Global And Normal
+[2024-05-28 10:00:09.544125][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.544165][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-22.000000,0)
+[2024-05-28 10:00:09.544993][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-22.000000,0)
+[2024-05-28 10:00:09.545024][1][SetTxPortStateAll][1846]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.545060][1][SetTxPortStateAll][1914]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,None][0]
+[2024-05-28 10:00:09.545189][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF][]
+[2024-05-28 10:00:09.545218][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA6,ON
+[2024-05-28 10:00:09.545295][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA6,ON)
+[2024-05-28 10:00:09.545388][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:09.545436][1][SetTxPortState][1491]RF6(decV), 32(bitV), Switcher[ON]
+[2024-05-28 10:00:09.545463][1][SetTxPortState][1506]Set Value From 0 To 32
+[2024-05-28 10:00:09.545485][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:09.545508][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:09.545530][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.545567][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(32,1),TxPower(-22.000000,0)
+[2024-05-28 10:00:09.546308][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(32,1),TxPower(-22.000000,0)
+[2024-05-28 10:00:09.546340][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.546377][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF6][0]
+[2024-05-28 10:00:09.546538][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA6,ON][]
+[2024-05-28 10:00:09.548338][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -22.00
+[2024-05-28 10:00:09.548423][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -22.00)
+[2024-05-28 10:00:09.548502][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:09.548554][1][SetupLevel][252][inst0]The Same Value -22.00 With PrevSetting, Nothing To Do.
+[2024-05-28 10:00:09.548637][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -22.00][]
+[2024-05-28 10:00:09.822272][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:LIST OFF
+[2024-05-28 10:00:09.822348][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:LIST OFF)
+[2024-05-28 10:00:09.822430][1][configure_source_list_execute][1567][inst0]GetParaListData(CONFigure:SOURce:LIST)
+[2024-05-28 10:00:09.822525][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:LIST OFF][]
+[2024-05-28 10:00:09.823494][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:BBMode ARB
+[2024-05-28 10:00:09.823560][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:BBMode ARB)
+[2024-05-28 10:00:09.823626][1][SetupBBMode][27][inst0]Begin Setup BaseBand Mode.
+[2024-05-28 10:00:09.823662][1][SetupBBMode][41][inst0]The Same Value 1 With PrevSetting, Nothing To Do.
+[2024-05-28 10:00:09.823753][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:BBMode ARB][]
+[2024-05-28 10:00:09.824664][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ARB:FILE 'Hisi_Ltev_B100_Tx.wv'
+[2024-05-28 10:00:09.824737][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ARB:FILE 'Hisi_Ltev_B100_Tx.wv')
+[2024-05-28 10:00:09.824819][1][configure_source_arb_file_execute][1068]Start to Call libCommandTree.so Function GetParaListData Get Parameter of Command CONFigure:SOURce:ARB:FILE
+[2024-05-28 10:00:09.824861][1][configure_source_arb_file_execute][1077]ARB file name is: 'Hisi_Ltev_B100_Tx.wv',length is 22
+[2024-05-28 10:00:09.824889][1][configure_source_arb_file_execute][1099]old ARB file name is /home/NXT-MF/Data/wv/Hisi_Ltev_B100_Rx_Qpsk.wv,new ARB file name is /home/NXT-MF/Data/wv/Hisi_Ltev_B100_Tx.wv
+[2024-05-28 10:00:09.824910][1][configure_source_arb_file_execute][1101]fopen ARB file
+[2024-05-28 10:00:09.824986][1][configure_source_arb_file_execute][1111]fopen return 0,Success
+[2024-05-28 10:00:09.825010][1][SetReliabilityCommand][371]Start to set reliability tree
+[2024-05-28 10:00:09.825044][1][SetReliabilityCommand][464]Start to Call libCommandTree.so Function SetParaListData Set Parameter of Command [CONFigure:SOURce:RELiability:ALL][0, OK][0]
+[2024-05-28 10:00:09.825094][1][configure_source_arb_file_execute][1193]fread ARB file to get STRU_WAVE_FILE_GEN_INFO_HEADER(name,time,version,segmentcount,CheckSumCode)
+[2024-05-28 10:00:09.825149][1][configure_source_arb_file_execute][1203]Judge current load arb file is equal old file or not
+[2024-05-28 10:00:09.825173][1][configure_source_arb_file_execute][1211]fopen the last ARB file
+[2024-05-28 10:00:09.825208][1][configure_source_arb_file_execute][1216]fread the last ARB file
+[2024-05-28 10:00:09.825246][1][configure_source_arb_file_execute][1222]Judge old ARB file and new ARB file m_iCheckSumCode is equal or not,old m_iCheckSumCode = -342869962,new m_iCheckSumCode = 80010782
+[2024-05-28 10:00:09.825311][1][configure_source_arb_file_execute][1252]ARB SegmentNumber: 1
+[2024-05-28 10:00:09.825336][1][configure_source_arb_file_execute][1262]AuthCode: User
+[2024-05-28 10:00:09.825423][1][configure_source_arb_file_execute][1456]The segment head number sum is 35651791,m_iMkrCnt = 3
+[2024-05-28 10:00:09.825450][1][configure_source_arb_file_execute][1463]m_iMkrDuration[0] = 1,m_iMkrStartPos[0] = 1
+[2024-05-28 10:00:09.825480][1][configure_source_arb_file_execute][1463]m_iMkrDuration[1] = 1,m_iMkrStartPos[1] = 1000
+[2024-05-28 10:00:09.825505][1][configure_source_arb_file_execute][1463]m_iMkrDuration[2] = 1,m_iMkrStartPos[2] = 2999
+[2024-05-28 10:00:09.825528][1][configure_source_arb_file_execute][1466]The segment head number sum is 35655797
+[2024-05-28 10:00:09.825550][1][configure_source_arb_file_execute][1471]The segment head number sum is 35655797
+[2024-05-28 10:00:09.825579][1][configure_source_arb_file_execute][1483]Judge arb file is full or not,ARB file checkcode is 80010782,all arb number sum is 0,The calculated number is 35655797,if Not equal,ARB file is error
+[2024-05-28 10:00:09.825604][1][configure_source_arb_file_execute][1498]Current ARB file crcprotect is 80010782,Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:CRCProtect YES
+[2024-05-28 10:00:09.825680][1][configure_source_arb_file_execute][1535]Update Additional Samples Max To 4915200
+[2024-05-28 10:00:09.825707][1][configure_source_arb_file_execute][1540]Start to change command CONFigure:SOURce:ARB:SAMPles:RANGe 4915199
+[2024-05-28 10:00:09.825783][1][configure_source_arb_file_execute][1574]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:FILE:DATE 2021-4-9;11:33:31
+[2024-05-28 10:00:09.825839][1][configure_source_arb_file_execute][1597]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:FILE:VERSion M.1.0.2.232-17805
+[2024-05-28 10:00:09.825883][1][configure_source_arb_file_execute][1617]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:CRATe 3.072000e+07
+[2024-05-28 10:00:09.825922][1][configure_source_arb_file_execute][1631]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:FILE:OPTion User
+[2024-05-28 10:00:09.825976][1][configure_source_arb_file_execute][1645]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:SAMPles 4915200
+[2024-05-28 10:00:09.826014][1][configure_source_arb_file_execute][1658]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:LOFFset 6.792779e+00
+[2024-05-28 10:00:09.826050][1][configure_source_arb_file_execute][1672]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:POFFset -1.679931e-01
+[2024-05-28 10:00:09.826086][1][configure_source_arb_file_execute][1686]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:MSEGment:NUMBer 0
+[2024-05-28 10:00:09.826130][1][configure_source_arb_file_execute][1700]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:MSEGment:CRATe 3.072000e+07
+[2024-05-28 10:00:09.826172][1][configure_source_arb_file_execute][1713]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:MSEGment:SAMPles 4915200
+[2024-05-28 10:00:09.826210][1][configure_source_arb_file_execute][1726]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:MSEGment:DURation 0.16
+[2024-05-28 10:00:09.826248][1][configure_source_arb_file_execute][1740]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:MSEGment:NAME Hisi_Ltev_B100_Tx.wv
+[2024-05-28 10:00:09.826290][1][configure_source_arb_file_execute][1754]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:MSEGment:PAR 6.792779e+00
+[2024-05-28 10:00:09.826331][1][configure_source_arb_file_execute][1768]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:MSEGment:POFFset -1.679931e-01
+[2024-05-28 10:00:09.826370][1][configure_source_arb_file_execute][1782]Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:SEGMents:NEXT 0
+[2024-05-28 10:00:09.826431][1][configure_source_arb_file_execute][1805]fclose ARB file,nColseReturn = 0
+[2024-05-28 10:00:09.826478][1][configure_source_arb_file_execute][1809]Get baseband mode from g_BaseBandMode,if Generator ON and Baseband mode is ARB,send parameters to RF,else exit function
+[2024-05-28 10:00:09.826509][1][configure_source_arb_file_execute][1813]TX Was ON, Close It First
+[2024-05-28 10:00:09.826542][1][CloseRFWhenTXON][515]Start To Set g_TxParamsStruct.Enable true,assignment false to g_TxParamsStruct.Enable
+[2024-05-28 10:00:09.826583][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(0,1),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(32,0),TxPower(-22.000000,0)
+[2024-05-28 10:00:09.826633][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(0,1),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(32,0),TxPower(-22.000000,0)
+[2024-05-28 10:00:09.826660][1][CloseRFWhenTXON][521]Start To Set g_TxParamsStruct.Enable false
+[2024-05-28 10:00:09.826686][1][ExitARB][1049]Start to Call libGen.so Function RF_ArbAbort to Stop ARB
+[2024-05-28 10:00:09.826713][1][ExitARB][1053]libGen.so Function RF_ArbAbort return value :0
+[2024-05-28 10:00:09.826734][1][configure_source_arb_file_execute][1820]Then Open TX Again
+[2024-05-28 10:00:09.826758][1][OpenRFWhenTXON][300]Start To Set RF Parameter Depended BaseBandMode ARB
+[2024-05-28 10:00:09.826782][1][OpenRFWhenTXON][303]Start To Open ARB File: '/home/NXT-MF/Data/wv/Hisi_Ltev_B100_Tx.wv'
+[2024-05-28 10:00:09.826820][1][OpenRFWhenTXON][359]Load ARB
+[2024-05-28 10:00:09.827002][1][OpenRFWhenTXON][362]RF_ArbLoad Return Value :0
+[2024-05-28 10:00:09.827036][1][SendToRFARBMarkInfo][888]Start to Call libGen.so Function RF_SetUsrDefMkr, period:0,markerstate:0,MarkerNumber:0
+[2024-05-28 10:00:09.827063][1][SendToRFARBMarkInfo][908]libGen.so Function RF_SetUsrDefMkr return value is:0
+[2024-05-28 10:00:09.827086][1][SendToRFMarkDelay][937]Start to Call libGen.so Function RF_SetMkrDelay to set marker2:0
+[2024-05-28 10:00:09.827110][1][SendToRFMarkDelay][945]RF_SetMkrDelay marker2 return value :0
+[2024-05-28 10:00:09.827132][1][SendToRFMarkDelay][962]Start to Call libGen.so Function RF_SetMkrDelay to set marker3:0
+[2024-05-28 10:00:09.827156][1][SendToRFMarkDelay][971]RF_SetMkrDelay marker3 return value :0
+[2024-05-28 10:00:09.827182][1][SendToRFMarkDelay][987]Start to Call libGen.so Function RF_SetMkrDelay to set marker4:0
+[2024-05-28 10:00:09.827206][1][SendToRFMarkDelay][996]RF_SetMkrDelay marker4 return value :0
+[2024-05-28 10:00:09.827230][1][SendToRFMarkDelay][1013]Start to Call libGen.so Function RF_SetMkrDelay to set RestartMarker:0
+[2024-05-28 10:00:09.827254][1][SendToRFMarkDelay][1021]RF_SetMkrDelay Restartmarker return value :0
+[2024-05-28 10:00:09.827278][1][Set_ARB_Trigger_Enable][1081]Set all ArbTriggerStruct ArbMultiSegTrigSrc,ReTrig,AutoStart,TrigDelay,TrigSrc enable 1
+[2024-05-28 10:00:09.827310][1][Send_RF_ARB_Trigger][1196]Start to Call libGen.so Function RF_ArbSetTrig,send RF struct
+(ArbMultiSegTrigSrc=(0,1),ReTrig=(1,1),TrigDelay=(0.000000,1),TrigSrc=(0,1),AutoStart=(1,1),TrigSlope=(0,0),Cont.10ms Offset=(0.00,1))
+[2024-05-28 10:00:09.827345][1][Send_RF_ARB_Trigger][1208]libGen.so Function RF_ArbSetTrig return value :0
+[2024-05-28 10:00:09.827367][1][Set_ARB_Trigger_Enable][1081]Set all ArbTriggerStruct ArbMultiSegTrigSrc,ReTrig,AutoStart,TrigDelay,TrigSrc enable 0
+[2024-05-28 10:00:09.827390][1][Set_ARB_Para_Enable][1135]Set all ArbParamsStruct AdditionalSamples,FreqMHzOffset,MulSegMode;RptMode;RptTimes;Samples; enable 1
+[2024-05-28 10:00:09.827420][1][Send_RF_ARB_Para][1288]Start to Call libGen.so Function RF_ArbSetParams,send RF struct
+(AdditionalSamples=(0,1),FreqMHzOffset=(0.000000,1),MulSegMode=(0,1),RptMode=(1,1),RptTimes=(1,1),Samples=(0,1))
+[2024-05-28 10:00:09.827447][1][Send_RF_ARB_Para][1300]libGen.so Function RF_ArbSetParams return value :0
+[2024-05-28 10:00:09.827468][1][Set_ARB_Para_Enable][1135]Set all ArbParamsStruct AdditionalSamples,FreqMHzOffset,MulSegMode;RptMode;RptTimes;Samples; enable 0
+[2024-05-28 10:00:09.827513][1][OpenRFWhenTXON][392]ARB File Load Completed
+[2024-05-28 10:00:09.827538][1][SendBaseBandModeToRF][497]Call RF_SetSource(0,1)
+[2024-05-28 10:00:09.827570][1][SendBaseBandModeToRF][505]RF_SetSource Return 0
+[2024-05-28 10:00:09.827592][1][SetTxStructEnable][534]set RF struct(Enable,FreqMHz,Port,TxPower,Attenuator,DigitalGain) enable 1
+[2024-05-28 10:00:09.827614][1][OpenRFWhenTXON][455]current list status is OFF,Start to config common to RF, assignment g_TxParamsStruct.Enable true,Get cset mode
+[2024-05-28 10:00:09.827640][1][OpenRFWhenTXON][466]libCommandTree.so Function GetParaListData Get Parameter current cset mode is 0,Start to assignment value 32 to g_TxParamsStruct.Port
+[2024-05-28 10:00:09.827685][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,1),DigitalGain(0.000000,1),Enable(1,1),FreqMHz(5920.000000,1),DUCMHz(0.000000,0),Port(32,1),TxPower(-22.000000,1)
+[2024-05-28 10:00:09.828645][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,1),DigitalGain(0.000000,1),Enable(1,1),FreqMHz(5920.000000,1),DUCMHz(0.000000,0),Port(32,1),TxPower(-22.000000,1)
+[2024-05-28 10:00:09.828677][1][SetTxStructEnable][534]set RF struct(Enable,FreqMHz,Port,TxPower,Attenuator,DigitalGain) enable 0
+[2024-05-28 10:00:09.828707][1][OpenRFWhenTXON][477]Start to Call libGen.so Function RF_ArbStart
+[2024-05-28 10:00:09.828737][1][OpenRFWhenTXON][480]libGen.so Function [RF_ArbStart] Send to RF return value :0
+[2024-05-28 10:00:09.828835][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ARB:FILE 'Hisi_Ltev_B100_Tx.wv'][]
+[2024-05-28 10:00:09.830619][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ARB:FILE?
+[2024-05-28 10:00:09.830712][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ARB:FILE?)
+[2024-05-28 10:00:09.830843][1][RecvDataCallBackFunction_sep][1204][inst0]Query Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ARB:FILE?]['Hisi_Ltev_B100_Tx.wv']
+[2024-05-28 10:00:09.832454][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ARB:FILE:DATE?
+[2024-05-28 10:00:09.832544][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ARB:FILE:DATE?)
+[2024-05-28 10:00:09.832676][1][RecvDataCallBackFunction_sep][1204][inst0]Query Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ARB:FILE:DATE?]["2021-4-9;11:33:31"]
+[2024-05-28 10:00:09.834256][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:FREQuency 5920.0000MHz
+[2024-05-28 10:00:09.834331][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:FREQuency 5920.0000MHz)
+[2024-05-28 10:00:09.834417][1][SetupFrequency][26][inst0]Begin Setup Frequency.
+[2024-05-28 10:00:09.834462][1][SetupFrequency][39][inst0]The Same Value 5920.000000 With PrevSetting, Nothing To Do.
+[2024-05-28 10:00:09.834553][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:FREQuency 5920.0000MHz][]
+[2024-05-28 10:00:09.837004][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -57.00
+[2024-05-28 10:00:09.837097][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -57.00)
+[2024-05-28 10:00:09.837171][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:09.837214][1][SetupLevel][258][inst0]Set Level -57.000000.
+[2024-05-28 10:00:09.837245][1][SetNormal_Level][2329]Set Level Enable 1
+[2024-05-28 10:00:09.837283][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(32,0),TxPower(-57.000000,1)
+[2024-05-28 10:00:09.838023][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(32,0),TxPower(-57.000000,1)
+[2024-05-28 10:00:09.838065][1][SetupLevel][277][inst0]Set Level -57.00 OK.
+[2024-05-28 10:00:09.838089][1][SetNormal_Level][2329]Set Level Enable 0
+[2024-05-28 10:00:09.838175][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -57.00][]
+[2024-05-28 10:00:09.839924][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ARB:REPetition CONT
+[2024-05-28 10:00:09.840016][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ARB:REPetition CONT)
+[2024-05-28 10:00:09.840103][1][configure_source_arb_repetition_execute][609]Start to Call libCommandTree.so Function GetParaListData Get Parameter of Command CONFigure:SOURce:ARB:REPetition
+[2024-05-28 10:00:09.840146][1][configure_source_arb_repetition_execute][619]Start to Set g_ArbParamsStruct.RptMode Enable true,assignment CONTinuous to RF struct g_ArbParamsStruct.RptMode,if Generator is ON,send parameters to RF,else exit function
+[2024-05-28 10:00:09.840168][1][configure_source_arb_repetition_execute][635] receive temprptmode equal to now,return noerror 
+[2024-05-28 10:00:09.840260][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ARB:REPetition CONT][]
+[2024-05-28 10:00:09.842721][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:STATe?
+[2024-05-28 10:00:09.842809][1][RecvDataCallBackFunction_sep][873]Add Inst0 Job Thread Done[1]!
+[2024-05-28 10:00:09.842891][1][ExecuteTXStateCmd][282][140160657278720][inst0]Start To ExcuteCommand
+[2024-05-28 10:00:09.842960][1][configure_source_state_execute_querycmd][1432]Start to Get inst0 status: 1,ON
+[2024-05-28 10:00:09.842981][1][ExecuteTXStateCmd][287][140160657278720][inst0]ExcuteCommand Done(status: 0; type: 2)
+[2024-05-28 10:00:09.843027][1][ExecuteTXStateCmd][326][inst0]Query Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:STATe?][ON]
+[2024-05-28 10:00:09.844852][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:STATe?
+[2024-05-28 10:00:09.844928][1][RecvDataCallBackFunction_sep][873]Add Inst0 Job Thread Done[1]!
+[2024-05-28 10:00:09.844991][1][ExecuteTXStateCmd][282][140160657278720][inst0]Start To ExcuteCommand
+[2024-05-28 10:00:09.845007][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RELiability:ALL?
+[2024-05-28 10:00:09.845087][1][configure_source_state_execute_querycmd][1432]Start to Get inst0 status: 1,ON
+[2024-05-28 10:00:09.845101][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RELiability:ALL?)
+[2024-05-28 10:00:09.845123][1][ExecuteTXStateCmd][287][140160657278720][inst0]ExcuteCommand Done(status: 0; type: 2)
+[2024-05-28 10:00:09.845172][1][ExecuteTXStateCmd][326][inst0]Query Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:STATe?][ON]
+[2024-05-28 10:00:09.845250][1][RecvDataCallBackFunction_sep][1204][inst0]Query Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RELiability:ALL?][0, OK]
+[2024-05-28 10:00:09.845287][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ARB:SEGMents:CURRent?
+[2024-05-28 10:00:09.845362][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ARB:SEGMents:CURRent?)
+[2024-05-28 10:00:09.845433][1][configure_source_trigger_arb_segments_current_querycmd][1542]Command is CONFigure:SOURce:ARB:SEGMents:CURRent
+[2024-05-28 10:00:09.845459][1][configure_source_trigger_arb_segments_current_querycmd][1554]if Generator status is ON,and baseband mode is ARB,call libGen.so Function RF_ArbQuerySeg,else exit
+[2024-05-28 10:00:09.845545][1][configure_source_trigger_arb_segments_current_querycmd][1571]Generator status is ON,start to Get baseband mode from g_BaseBandMode = 1,if arb,send value to RF,Else exit
+[2024-05-28 10:00:09.845600][1][configure_source_trigger_arb_segments_current_querycmd][1590]Start to Call libGen.so Function RF_ArbQuerySeg
+[2024-05-28 10:00:09.845633][1][configure_source_trigger_arb_segments_current_querycmd][1594]RF_ArbQuerySeg return value is 0,current segment is 0
+[2024-05-28 10:00:09.845656][1][configure_source_trigger_arb_segments_current_querycmd][1602]current segment name is Hisi_Ltev_B100_Tx.wv
+[2024-05-28 10:00:09.845723][1][configure_source_trigger_arb_segments_current_querycmd][1630]Start to Call libCommandTree.so Function SetParaListData [CONFigure:SOURce:ARB:SEGMents:CURRent][0][0]
+[2024-05-28 10:00:09.845856][1][RecvDataCallBackFunction_sep][1204][inst0]Query Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ARB:SEGMents:CURRent?][0,"Hisi_Ltev_B100_Tx.wv"]
+[2024-05-28 10:00:09.847561][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:RFSettings:LEVel -70.00
+[2024-05-28 10:00:09.847644][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:RFSettings:LEVel -70.00)
+[2024-05-28 10:00:09.847730][1][SetupLevel][238][inst0]Begin Setup Level.
+[2024-05-28 10:00:09.847777][1][SetupLevel][258][inst0]Set Level -70.000000.
+[2024-05-28 10:00:09.847799][1][SetNormal_Level][2329]Set Level Enable 1
+[2024-05-28 10:00:09.847842][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(32,0),TxPower(-70.000000,1)
+[2024-05-28 10:00:09.848587][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(32,0),TxPower(-70.000000,1)
+[2024-05-28 10:00:09.848626][1][SetupLevel][277][inst0]Set Level -70.00 OK.
+[2024-05-28 10:00:09.848654][1][SetNormal_Level][2329]Set Level Enable 0
+[2024-05-28 10:00:09.848752][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:RFSettings:LEVel -70.00][]
+[2024-05-28 10:00:09.850569][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:SCENario:SALone RA18
+[2024-05-28 10:00:09.850661][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:SCENario:SALone RA18)
+[2024-05-28 10:00:09.850757][1][SetupStandAlone][1272]Begin SetupStandAlone, Cur = RF18
+[2024-05-28 10:00:09.850796][1][SetupStandAlone][1292]The Same As PreStandAlone RF18
+[2024-05-28 10:00:09.850887][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:SCENario:SALone RA18][]
+[2024-05-28 10:00:09.851564][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF
+[2024-05-28 10:00:09.851644][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF)
+[2024-05-28 10:00:09.851792][1][SetTxPortStateAll][1724]Begin SetTxPortStateAll
+[2024-05-28 10:00:09.851863][1][SetTxPortStateAll][1778]Set Value From 32 To 0
+[2024-05-28 10:00:09.851884][1][SetTxPortStateAll][1802]Current TX Already ON
+[2024-05-28 10:00:09.851909][1][SetTxPortStateAll][1816]Global And Normal
+[2024-05-28 10:00:09.851945][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.851985][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:09.852711][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(0,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:09.852747][1][SetTxPortStateAll][1846]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.852788][1][SetTxPortStateAll][1914]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,None][0]
+[2024-05-28 10:00:09.852905][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe:ALL RA18,OFF,OFF,OFF,OFF,OFF,OFF,OFF,OFF][]
+[2024-05-28 10:00:09.852956][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ROUTe:USAGe RA5,ON
+[2024-05-28 10:00:09.853050][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ROUTe:USAGe RA5,ON)
+[2024-05-28 10:00:09.853180][1][SetTxPortState][1453]Begin SetTxPortState
+[2024-05-28 10:00:09.853242][1][SetTxPortState][1491]RF5(decV), 16(bitV), Switcher[ON]
+[2024-05-28 10:00:09.853277][1][SetTxPortState][1506]Set Value From 0 To 16
+[2024-05-28 10:00:09.853306][1][SetTxPortState][1531]Current TX Already ON
+[2024-05-28 10:00:09.853333][1][SetTxPortState][1545]Global And Normal
+[2024-05-28 10:00:09.853362][1][SetNormal_Port][2413]Set Port Enable 1
+[2024-05-28 10:00:09.853409][1][Send_RF_Tx][628]RF_SetTx
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:09.854254][1][Send_RF_Tx][636]RF_SetTx return 0,
+[Attenuator(0.000000,0),DigitalGain(0.000000,0),Enable(1,0),FreqMHz(5920.000000,0),DUCMHz(0.000000,0),Port(16,1),TxPower(-70.000000,0)
+[2024-05-28 10:00:09.854281][1][SetTxPortState][1575]Configure Completed, Reset Port Enable To False.
+[2024-05-28 10:00:09.854319][1][SetTxPortState][1643]Start to Call libCommandTree.so Function SetParaListData Get Parameter of Command [CONFigure:SOURce:ROUTe][SALone,RF5][0]
+[2024-05-28 10:00:09.854436][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:ROUTe:USAGe RA5,ON][]
+[2024-05-28 10:00:11.339861][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:LIST OFF
+[2024-05-28 10:00:11.339977][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:LIST OFF)
+[2024-05-28 10:00:11.340061][1][configure_source_list_execute][1567][inst0]GetParaListData(CONFigure:SOURce:LIST)
+[2024-05-28 10:00:11.340180][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:LIST OFF][]
+[2024-05-28 10:00:11.340954][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:BBMode ARB
+[2024-05-28 10:00:11.341049][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:BBMode ARB)
+[2024-05-28 10:00:11.341123][1][SetupBBMode][27][inst0]Begin Setup BaseBand Mode.
+[2024-05-28 10:00:11.341160][1][SetupBBMode][41][inst0]The Same Value 1 With PrevSetting, Nothing To Do.
+[2024-05-28 10:00:11.341243][1][RecvDataCallBackFunction_sep][1268][inst0]Setting Succeed! Send To CMDP [ 7240][0][CONFigure:SOURce:BBMode ARB][]
+[2024-05-28 10:00:11.342162][1][RecvDataCallBackFunction_sep][828]Receive Command is [0:7240]CONFigure:SOURce:ARB:FILE 'Hisi_Ltev_B100_Rx_Qpsk.wv'
+[2024-05-28 10:00:11.342261][1][RecvDataCallBackFunction_sep][895][140160787957504][inst0]Start To ExcuteCommand(CONFigure:SOURce:ARB:FILE 'Hisi_Ltev_B100_Rx_Qpsk.wv')
+[2024-05-28 10:00:11.342342][1][configure_source_arb_file_execute][1068]Start to Call libCommandTree.so Function GetParaListData Get Parameter of Command CONFigure:SOURce:ARB:FILE
+[2024-05-28 10:00:11.342383][1][configure_source_arb_file_execute][1077]ARB file name is: 'Hisi_Ltev_B100_Rx_Qpsk.wv',length is 27
+[2024-05-28 10:00:11.342410][1][configure_source_arb_file_execute][1099]old ARB file name is /home/NXT-MF/Data/wv/Hisi_Ltev_B100_Tx.wv,new ARB file name is /home/NXT-MF/Data/wv/Hisi_Ltev_B100_Rx_Qpsk.wv
+[2024-05-28 10:00:11.342432][1][configure_source_arb_file_execute][1101]fopen ARB file
+[2024-05-28 10:00:11.342482][1][configure_source_arb_file_execute][1111]fopen return 0,Success
+[2024-05-28 10:00:11.342502][1][SetReliabilityCommand][371]Start to set reliability tree
+[2024-05-28 10:00:11.342535][1][SetReliabilityCommand][464]Start to Call libCommandTree.so Function SetParaListData Set Parameter of Command [CONFigure:SOURce:RELiability:ALL][0, OK][0]
+[2024-05-28 10:00:11.342585][1][configure_source_arb_file_execute][1193]fread ARB file to get STRU_WAVE_FILE_GEN_INFO_HEADER(name,time,version,segmentcount,CheckSumCode)
+[2024-05-28 10:00:11.342650][1][configure_source_arb_file_execute][1203]Judge current load arb file is equal old file or not
+[2024-05-28 10:00:11.342673][1][configure_source_arb_file_execute][1211]fopen the last ARB file
+[2024-05-28 10:00:11.342709][1][configure_source_arb_file_execute][1216]fread the last ARB file
+[2024-05-28 10:00:11.342746][1][configure_source_arb_file_execute][1222]Judge old ARB file and new ARB file m_iCheckSumCode is equal or not,old m_iCheckSumCode = 80010782,new m_iCheckSumCode = -342869962
+[2024-05-28 10:00:11.342801][1][configure_source_arb_file_execute][1252]ARB SegmentNumber: 1
+[2024-05-28 10:00:11.342825][1][configure_source_arb_file_execute][1262]AuthCode: User
+[2024-05-28 10:00:11.342913][1][configure_source_arb_file_execute][1456]The segment head number sum is 35651793,m_iMkrCnt = 3
+[2024-05-28 10:00:11.342953][1][configure_source_arb_file_execute][1463]m_iMkrDuration[0] = 1,m_iMkrStartPos[0] = 1
+[2024-05-28 10:00:11.342977][1][configure_source_arb_file_execute][1463]m_iMkrDuration[1] = 1,m_iMkrStartPos[1] = 1000
+[2024-05-28 10:00:11.343001][1][configure_source_arb_file_execute][1463]m_iMkrDuration[2] = 1,m_iMkrStartPos[2] = 2999
+[2024-05-28 10:00:11.343024][1][configure_source_arb_file_execute][1466]The segment head number sum is 35655799
+[2024-05-28 10:00:11.343047][1][configure_source_arb_file_execute][1471]The segment head number sum is 35655799
+[2024-05-28 10:00:11.343073][1][configure_source_arb_file_execute][1483]Judge arb file is full or not,ARB file checkcode is -342869962,all arb number sum is 0,The calculated number is 35655799,if Not equal,ARB file is error
+[2024-05-28 10:00:11.343098][1][configure_source_arb_file_execute][1498]Current ARB file crcprotect is -342869962,Start to Call libCommandTree.so Function SetParaListData CONFigure:SOURce:ARB:CRCProtect YES
+[2024-05-28 10:00:11.343166][1][configure_source_arb_file_execute][1535]Update Additional Samples Max To 4915200
